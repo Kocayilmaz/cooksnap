@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
+import personCountReducer from "./personCountSlice";
 
 export const makeStore = () =>
   configureStore({
-    reducer: {},
+    reducer: {
+      personCount: personCountReducer,
+    },
   });
 
 export type AppStore = ReturnType<typeof makeStore>;
