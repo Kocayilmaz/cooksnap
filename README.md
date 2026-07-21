@@ -1,38 +1,47 @@
-# NePişirsem
+# CookSnap
 
-Elindeki yemeği (çiğ malzeme ya da hazır/dondurulmuş ürün) fotoğraflayınca, kaç kişilik ve
-hangi araçla (fırın / tava / tencere) pişireceğine göre AI'nın tarif önerdiği bir uygulama.
+Snap a photo of a food item — a raw ingredient or a ready-made/frozen product — and get an
+AI-generated recipe based on how many people you're cooking for and which equipment you have
+(oven / pan / pot).
 
-## Fikir
+## Idea
 
-1. Fotoğraf yükle — çiğ malzeme (örn. köfte harcı) veya paketli/hazır ürün (örn. dondurulmuş lazanya).
-2. Kaç kişilik olduğunu seç.
-3. Elindeki pişirme araçlarını işaretle (fırın / tava / tencere).
-4. AI ürünü tanır, seçilen araçlara göre kişi sayısına ölçeklenmiş tarif(ler) döner.
+1. Upload a photo — a raw ingredient (e.g. meatball mix) or a packaged/ready product (e.g. frozen
+   lasagna).
+2. Choose how many people you're cooking for.
+3. Select the cooking equipment you have (oven / pan / pot).
+4. The AI recognizes the item and returns recipe(s) scaled to your serving size, for each
+   equipment option you selected.
 
-## AI motoru — çoklu sağlayıcı, ücretsiz + premium
+## AI engine — multiple providers, free + premium
 
-- **Ücretsiz mod (varsayılan):** Gemini (görsel tanıma) + Groq (tarif metni), kullanıcı başına
-  limitli (rate limit).
-- **Premium mod:** Kullanıcı kendi Claude veya OpenAI API key'ini girerse limit kalkar, daha
-  kaliteli çıktı alır. Key hiçbir zaman sunucuda saklanmaz, sadece tarayıcıda tutulur.
+- **Free mode (default):** Gemini (image recognition) + Groq (recipe text), rate-limited per user.
+- **Premium mode:** If the user provides their own Claude or OpenAI API key, the rate limit is
+  lifted and output quality improves. The key is never stored on the server — only in the
+  browser.
 
 ## Stack
 
 - **Frontend:** Next.js (App Router) + TypeScript + Tailwind CSS + Redux Toolkit
-- **Backend:** Next.js API routes (Gemini / Groq / Claude / OpenAI çağrıları)
-- **Veri:** Firebase (Firestore) — favori tarifler + ücretsiz mod kullanım sayacı
-- **Test:** Playwright (e2e — fotoğraf yükle → tarif al akışı)
+- **Backend:** Next.js API routes (Gemini / Groq / Claude / OpenAI calls)
+- **Data:** Firebase (Firestore) — saved recipes + free-mode usage counter
+- **Testing:** Playwright (e2e — upload photo → get recipe flow)
 - **CI/CD:** GitHub Actions → Vercel
 
-## Durum
+## Status
 
-Proje henüz iskelet aşamasında; özellikler günlük küçük commit'lerle geliştiriliyor.
+Still at the scaffolding stage; features are being built incrementally through small daily
+commits.
 
-## Geliştirme
+## Development
 
 ```bash
 npm run dev
 ```
 
-[http://localhost:3000](http://localhost:3000) adresinde açılır.
+Open [http://localhost:3000](http://localhost:3000).
+
+## Localization
+
+The app UI will support multiple languages (Turkish included); English is used for the codebase,
+repo, and this README since the project may be shared publicly.
