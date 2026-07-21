@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import personCountReducer from "./personCountSlice";
+import equipmentReducer from "./equipmentSlice";
 
 export const makeStore = () =>
   configureStore({
     reducer: {
       personCount: personCountReducer,
+      equipment: equipmentReducer,
     },
   });
 
