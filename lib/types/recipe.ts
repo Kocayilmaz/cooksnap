@@ -16,6 +16,8 @@ export interface RecipeSuggestion {
   equipment: Equipment;
   title: string;
   steps: string[];
+  /** YouTube tarif videosu bulunabildiyse video id'si (best-effort, YOUTUBE_API_KEY yoksa null). */
+  videoId?: string | null;
 }
 
 export interface RecipeResponse {

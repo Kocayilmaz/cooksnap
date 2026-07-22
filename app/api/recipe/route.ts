@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import type { ApiErrorResponse, RecipeRequest, RecipeResponse } from "@/lib/types/recipe";
+import type {
+  ApiErrorResponse,
+  RecipeRequest,
+  RecipeResponse,
+  RecipeSuggestion,
+} from "@/lib/types/recipe";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
 import { RECIPE_MODE_KEYS, type RecipeMode } from "@/lib/redux/recipeModeSlice";
 import {
@@ -8,6 +13,7 @@ import {
   ProviderRequestError,
   recognizeFoodItem,
 } from "@/lib/ai/providers";
+import { findRecipeVideoId } from "@/lib/ai/youtube";
 
 const MIN_PEOPLE = 1;
 const MAX_PEOPLE = 12;
@@ -30,6 +36,25 @@ function validateRequest(body: unknown): body is RecipeRequest {
   if (!RECIPE_MODE_KEYS.includes(mode as RecipeMode)) return false;
 
   return true;
+}
+
+/**
+ * Her tarife best-effort bir YouTube videosu ekler. Video özelliği
+ * çekirdek işlev değil (YOUTUBE_API_KEY yapılandırılmamış olabilir), bu
+ * yüzden hata durumunda videoId null bırakılır ve asıl tarif yanıtı
+ * etkilenmez.
+ */
+async function attachVideos(recipes: RecipeSuggestion[]): Promise<RecipeSuggestion[]> {
+  return Promise.all(
+    recipes.map(async (recipe) => {
+      try {
+        const videoId = await findRecipeVideoId(recipe.title);
+        return { ...recipe, videoId };
+      } catch {
+        return { ...recipe, videoId: null };
+      }
+    }),
+  );
 }
 
 export async function POST(request: Request) {
@@ -65,7 +90,8 @@ export async function POST(request: Request) {
       body.equipment,
       body.mode,
     );
-    return NextResponse.json<RecipeResponse>({ recipes });
+    const recipesWithVideos = await attachVideos(recipes);
+    return NextResponse.json<RecipeResponse>({ recipes: recipesWithVideos });
   } catch (error) {
     if (error instanceof ProviderNotConfiguredError) {
       return NextResponse.json<ApiErrorResponse>({ error: error.message }, { status: 503 });
