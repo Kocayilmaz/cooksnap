@@ -53,6 +53,21 @@ test("genişletilmiş ekipman seçenekleri gösterilir ve toggle edilebilir", as
   await expect(page.getByRole("button", { name: "Wok" })).toBeVisible();
 });
 
+test("ekipman seçimi sayfa yenilenince kalıcı kalır", async ({ page }) => {
+  await page.goto("/");
+
+  const airfryer = page.getByRole("button", { name: "Airfryer" });
+  const pot = page.getByRole("button", { name: "Tencere", exact: true });
+
+  await airfryer.click();
+  await pot.click();
+
+  await page.reload();
+
+  await expect(page.getByRole("button", { name: "Airfryer" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Tencere", exact: true })).toHaveAttribute("aria-pressed", "true");
+});
+
 test("sadece malzeme metni girilse bile tarif butonu etkinleşir", async ({ page }) => {
   await page.goto("/");
 
