@@ -5,16 +5,31 @@ import { Provider } from "react-redux";
 import { makeStore } from "./store";
 import { readStoredApiKey, writeStoredApiKey } from "./localApiKeyStorage";
 import { readStoredUserProfile, writeStoredUserProfile } from "./localUserProfileStorage";
+import { setKey, setProvider } from "./apiKeySlice";
+import { setName, setLanguage, setCountry } from "./userProfileSlice";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
-  const [store] = useState(() => {
+  const [store] = useState(() => makeStore());
+
+  // localStorage sadece client'ta var; sunucu ile ilk client render'ında farklı
+  // preloadedState kullanmak (aria-pressed gibi form-dışı özniteliklerde) React'ın
+  // "hydration mismatch" sonrası düzeltmediği kalıcı bir tutarsızlığa yol açıyordu.
+  // Bunun yerine her zaman varsayılan state ile başlayıp saklanan değerleri mount
+  // sonrası bir efektte dispatch ediyoruz — bu normal bir re-render, hydration değil.
+  useEffect(() => {
     const storedApiKey = readStoredApiKey();
+    if (storedApiKey) {
+      store.dispatch(setProvider(storedApiKey.provider));
+      store.dispatch(setKey(storedApiKey.key));
+    }
+
     const storedUserProfile = readStoredUserProfile();
-    return makeStore({
-      ...(storedApiKey ? { apiKey: storedApiKey } : {}),
-      ...(storedUserProfile ? { userProfile: storedUserProfile } : {}),
-    });
-  });
+    if (storedUserProfile) {
+      store.dispatch(setName(storedUserProfile.name));
+      store.dispatch(setLanguage(storedUserProfile.language));
+      store.dispatch(setCountry(storedUserProfile.country));
+    }
+  }, [store]);
 
   useEffect(() => {
     let previous = store.getState().apiKey;

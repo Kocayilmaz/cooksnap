@@ -15,10 +15,9 @@ const rootReducer = combineReducers({
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-export const makeStore = (preloadedState?: Partial<RootState>) =>
+export const makeStore = () =>
   configureStore({
     reducer: rootReducer,
-    preloadedState,
   });
 
 export type AppStore = ReturnType<typeof makeStore>;
