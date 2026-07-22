@@ -7,6 +7,13 @@ const EQUIPMENT_NAMES: Record<Equipment, string> = {
   oven: "oven",
   pan: "pan",
   pot: "pot",
+  airfryer: "air fryer",
+  microwave: "microwave",
+  pressureCooker: "pressure cooker",
+  toasterOven: "toaster oven",
+  grill: "grill/BBQ",
+  slowCooker: "slow cooker",
+  wok: "wok",
 };
 
 const MODE_INSTRUCTIONS: Record<RecipeMode, string> = {

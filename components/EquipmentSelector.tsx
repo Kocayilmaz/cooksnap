@@ -7,6 +7,13 @@ const EQUIPMENT_LABELS: Record<Equipment, string> = {
   oven: "Fırın",
   pan: "Tava",
   pot: "Tencere",
+  airfryer: "Airfryer",
+  microwave: "Mikrodalga",
+  pressureCooker: "Düdüklü Tencere",
+  toasterOven: "Tost Makinesi",
+  grill: "Izgara",
+  slowCooker: "Yavaş Pişirici",
+  wok: "Wok",
 };
 
 export default function EquipmentSelector() {
