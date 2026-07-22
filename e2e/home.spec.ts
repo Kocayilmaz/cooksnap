@@ -36,6 +36,23 @@ test("tarif butonu fotoğraf seçilene kadar devre dışı kalır", async ({ pag
   await expect(page.getByRole("button", { name: "Tarifi getir" })).toBeDisabled();
 });
 
+test("genişletilmiş ekipman seçenekleri gösterilir ve toggle edilebilir", async ({ page }) => {
+  await page.goto("/");
+
+  const airfryer = page.getByRole("button", { name: "Airfryer" });
+  await expect(airfryer).toBeVisible();
+  await expect(airfryer).toHaveAttribute("aria-pressed", "false");
+  await airfryer.click();
+  await expect(airfryer).toHaveAttribute("aria-pressed", "true");
+
+  await expect(page.getByRole("button", { name: "Mikrodalga" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Düdüklü Tencere" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tost Makinesi" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Izgara" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Yavaş Pişirici" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Wok" })).toBeVisible();
+});
+
 test("sadece malzeme metni girilse bile tarif butonu etkinleşir", async ({ page }) => {
   await page.goto("/");
 
