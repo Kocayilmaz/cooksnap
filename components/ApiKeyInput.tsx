@@ -1,0 +1,76 @@
+"use client";
+
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { clearApiKey, setKey, setProvider, type PremiumProvider } from "@/lib/redux/apiKeySlice";
+
+const PROVIDER_LABELS: Record<PremiumProvider, string> = {
+  claude: "Claude",
+  openai: "OpenAI",
+};
+
+export default function ApiKeyInput() {
+  const [open, setOpen] = useState(false);
+  const { provider, key } = useAppSelector((state) => state.apiKey);
+  const dispatch = useAppDispatch();
+
+  return (
+    <div className="flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        className="text-left text-sm font-medium text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-50"
+      >
+        Premium mod (kendi API anahtarın) {open ? "▲" : "▼"}
+      </button>
+
+      {open && (
+        <div className="flex flex-col gap-3">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Kendi Claude veya OpenAI anahtarını girersen ücretsiz mod limiti kalkar. Anahtar
+            yalnızca bu tarayıcıda saklanır, sunucuya kalıcı olarak kaydedilmez.
+          </p>
+
+          <div className="flex gap-2">
+            {(Object.keys(PROVIDER_LABELS) as PremiumProvider[]).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => dispatch(setProvider(option))}
+                aria-pressed={provider === option}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                  provider === option
+                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-50 dark:bg-zinc-50 dark:text-black"
+                    : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                }`}
+              >
+                {PROVIDER_LABELS[option]}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="password"
+              value={key}
+              onChange={(event) => dispatch(setKey(event.target.value))}
+              placeholder={`${PROVIDER_LABELS[provider]} API anahtarı`}
+              autoComplete="off"
+              className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700"
+            />
+            {key && (
+              <button
+                type="button"
+                onClick={() => dispatch(clearApiKey())}
+                className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              >
+                Temizle
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
