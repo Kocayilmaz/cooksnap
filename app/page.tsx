@@ -7,6 +7,7 @@ import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
 import ApiKeyInput from "@/components/ApiKeyInput";
+import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
 import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
@@ -115,6 +116,9 @@ export default function Home() {
                     <li key={stepIndex}>{step}</li>
                   ))}
                 </ol>
+                {recipe.videoId && (
+                  <RecipeVideoEmbed videoId={recipe.videoId} title={recipe.title} />
+                )}
               </li>
             ))}
           </ul>

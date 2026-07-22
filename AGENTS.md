@@ -47,17 +47,20 @@ Renk paleti Liferando, Trendyol Yemek ve Nefis Yemek Tarifleri gibi sitelerdeki 
 renklerden ilham alacak (şu anki nötr zinc paleti yerine). Uygulamaya geçmeden önce `DESIGN.md`
 tarzı bir palet kararı çıkar.
 
-## Backlog (henüz planlanmadı, ileride ele alınacak)
+## Backlog (2026-07-22 itibarıyla kod tarafı tamamlandı, bkz. not)
 
-1. **Tarif videosu:** Tarif sonucunda ilgili YouTube tarif videosunu uygulama içinde (embed) göster.
-2. **3 tarif modu:** Kullanıcı tarif isterken mod seçebilsin:
-   - **Öğrenci modu:** en az bulaşık çıkaran, en kolay tarifler.
-   - **Ev yemeği modu:** bulaşık kısıtı yok, en lezzetli/bilindik ev yemeği tarifleri.
-   - **Aşçı modu:** en lezzetli, elit/profesyonel şef tarifleri.
-3. **Fotoğrafsız kullanım:** Fotoğraf yüklemek zorunlu olmasın; kullanıcı elindeki malzemeleri
-   yazıyla da girebilsin.
-4. **Fotoğraf + yazı birlikte:** İkisi aynı anda da kullanılabilsin (hem fotoğraf hem metin girişi
-   aynı istekte birleştirilebilsin).
+1. ✅ **Tarif videosu:** `lib/ai/youtube.ts` + `RecipeVideoEmbed` — `YOUTUBE_API_KEY` yapılandırılmışsa
+   tarif başlığına göre en alakalı videoyu bulup uygulama içinde embed eder (best-effort, anahtar
+   yoksa video sessizce atlanır, asıl tarif yanıtını etkilemez).
+2. ✅ **3 tarif modu:** `recipeModeSlice` + `RecipeModeSelector` — Öğrenci/Ev yemeği/Aşçı modu
+   seçilebiliyor ve AI prompt'una yansıyor.
+3. ✅ **Fotoğrafsız kullanım:** `IngredientTextInput` — fotoğraf yerine malzemeler yazıyla girilebiliyor.
+4. ✅ **Fotoğraf + yazı birlikte:** İkisi birlikte gönderilirse Gemini'nin tanıdığı ürün + kullanıcının
+   yazdığı ek metin tek açıklamada birleştiriliyor.
+
+Not: Bu 4 madde de kod tarafında uygulandı ve e2e testlerle (fotoğraf-only, metin-only, mod seçimi)
+doğrulandı; ancak gerçek Gemini/Groq/YouTube API anahtarları hâlâ tanımlı değil, bu yüzden uçtan uca
+gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
 
 ## Günlük commit rutini için notlar
 
