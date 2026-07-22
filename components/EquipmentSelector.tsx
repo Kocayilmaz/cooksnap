@@ -29,7 +29,7 @@ export default function EquipmentSelector() {
               aria-pressed={active}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-50 dark:bg-zinc-50 dark:text-black"
+                  ? "border-brand-orange bg-brand-orange text-white"
                   : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >

@@ -17,16 +17,16 @@ export default function PersonCountSelector() {
           type="button"
           onClick={() => dispatch(decrementPersonCount())}
           aria-label="Kişi sayısını azalt"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 text-xl leading-none hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 text-xl leading-none hover:border-brand-orange hover:text-brand-orange dark:border-zinc-700"
         >
           −
         </button>
-        <span className="w-8 text-center text-lg font-semibold">{count}</span>
+        <span className="w-8 text-center text-lg font-semibold text-brand-orange">{count}</span>
         <button
           type="button"
           onClick={() => dispatch(incrementPersonCount())}
           aria-label="Kişi sayısını artır"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 text-xl leading-none hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 text-xl leading-none hover:border-brand-orange hover:text-brand-orange dark:border-zinc-700"
         >
           +
         </button>
