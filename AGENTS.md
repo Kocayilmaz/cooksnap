@@ -27,19 +27,31 @@ görevi) bir parçası olarak küçük, gerçek adımlarla geliştiriliyor — t
 - **Test:** Playwright e2e (fotoğraf yükle → tarif al akışı)
 - **CI/CD:** GitHub Actions → Vercel
 
-## Ekran yapısı ve gezinme (2026-07-22 kullanıcı notu — henüz uygulanmadı)
+## Ekran yapısı ve gezinme (2026-07-22 kullanıcı notu)
 
-Uygulama 3 ana ekrandan oluşacak (şu anki tek sayfalık form akışı bu yapıya evrilecek):
+Uygulama 3 ana ekrandan oluşacak:
 
-1. **Login ekranı:** Login formu ortada (mevcut basit merkez kart yerleşimi zaten buna uygun).
-2. **Profil ekranı:** Ad soyad, premium API anahtarları (Claude/OpenAI) burada girilir, dil
-   seçeneği burada ayarlanır, "Need help?" bölümü, logout ve delete account seçenekleri, ayrıca
-   bir "ülke" alanı — seçilen ülkenin mutfağından tarifler öncelikli önerilir ama bu kesin bir
-   kısıtlama/filtre değil, genel bir eğilim.
-3. **Chat ekranı:** Tasarım Claude'un kendi chat arayüzüne benzeyecek — solda üstte "New" butonu,
-   altında "Favoriler" ve kullanıcının kendi gruplandırabildiği favori chat'ler, altında geçmiş
-   chat listesi. Yeni bir tarif chat'i başlatıldığında ana alan bugünkü ana sayfadaki form
-   (fotoğraf yükleme + kişi sayısı + ekipman seçimi) ile açılır.
+1. **Login ekranı:** Henüz uygulanmadı — gerçek auth backend'i (Firebase) yok. Login/logout/delete
+   account, gerçek bir kimlik doğrulama sistemi olmadan sahte/anlamsız buton eklemek istemediğimiz
+   için bilinçli olarak bekletiliyor.
+2. ✅ **Profil ekranı:** `/profile` route'u eklendi — ad soyad, dil (Türkçe/English, AI yanıt diline
+   yansıyor), ülke (tarif önerisine soft-preference olarak yansıyor), premium API anahtarı
+   (`ApiKeyInput` buraya taşındı) ve "Need help?" SSS bölümü hepsi burada. Tüm alanlar
+   `localStorage`'da kalıcı. Logout/delete account login sistemiyle birlikte eklenecek.
+3. **Chat ekranı:** Henüz uygulanmadı. Tasarım Claude'un kendi chat arayüzüne benzeyecek — solda
+   üstte "New" butonu, altında "Favoriler" ve kullanıcının kendi gruplandırabildiği favori chat'ler,
+   altında geçmiş chat listesi. Yeni bir tarif chat'i başlatıldığında ana alan bugünkü ana sayfadaki
+   form (fotoğraf yükleme + kişi sayısı + ekipman seçimi) ile açılır.
+
+Ana sayfa ile profil arasında geçiş için üstte `NavBar` eklendi.
+
+**Önemli teknik not:** `localStorage`'dan hydrate edilen Redux state'i (`apiKey`, `userProfile`)
+`useState` lazy initializer içinde okuyup `configureStore`'a `preloadedState` olarak vermek,
+server/client hydration mismatch'ine yol açıyordu — React form-dışı özniteliklerde (örn.
+`aria-pressed`) bu mismatch'i "yamıyor" (input `value` gibi form kontrollerinde yamıyor, bu yüzden
+bug'ı `ApiKeyInput`'ta değil `RecipeModeSelector`/dil butonlarında fark ettik). Çözüm:
+`StoreProvider` her zaman varsayılan state ile başlar, saklanan değerler mount sonrası bir
+`useEffect` içinde dispatch edilir (bkz. `lib/redux/StoreProvider.tsx`).
 
 ## Görsel kimlik notu (2026-07-22)
 
