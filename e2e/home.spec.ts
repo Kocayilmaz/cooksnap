@@ -36,6 +36,27 @@ test("tarif butonu fotoğraf seçilene kadar devre dışı kalır", async ({ pag
   await expect(page.getByRole("button", { name: "Tarifi getir" })).toBeDisabled();
 });
 
+test("sadece malzeme metni girilse bile tarif butonu etkinleşir", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("button", { name: "Tarifi getir" })).toBeDisabled();
+
+  await page.getByPlaceholder("Örn: 2 yumurta, bir avuç ıspanak, biraz peynir").fill("2 yumurta, peynir");
+
+  await expect(page.getByRole("button", { name: "Tarifi getir" })).toBeEnabled();
+});
+
+test("sadece metinle gönderildiğinde fotoğraf tanıma atlanıp doğrudan Groq yapılandırma hatası gösterilir", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await page.getByPlaceholder("Örn: 2 yumurta, bir avuç ıspanak, biraz peynir").fill("2 yumurta, peynir");
+  await page.getByRole("button", { name: "Tarifi getir" }).click();
+
+  await expect(page.getByText("GROQ_API_KEY tanımlı değil.")).toBeVisible();
+});
+
 test("fotoğraf seçilip gönderildiğinde AI yapılandırma hatası kullanıcıya gösterilir", async ({ page }) => {
   await page.goto("/");
 
