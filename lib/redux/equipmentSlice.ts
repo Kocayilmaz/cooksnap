@@ -47,8 +47,11 @@ const equipmentSlice = createSlice({
     toggleEquipment(state, action: PayloadAction<Equipment>) {
       state[action.payload] = !state[action.payload];
     },
+    setEquipment(_state, action: PayloadAction<EquipmentState>) {
+      return action.payload;
+    },
   },
 });
 
-export const { toggleEquipment } = equipmentSlice.actions;
+export const { toggleEquipment, setEquipment } = equipmentSlice.actions;
 export default equipmentSlice.reducer;
