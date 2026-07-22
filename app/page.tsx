@@ -58,7 +58,7 @@ export default function Home() {
     <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-black">
       <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-950">
         <div className="flex flex-col gap-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+          <h1 className="text-2xl font-semibold tracking-tight text-brand-red">
             CookSnap
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -75,7 +75,7 @@ export default function Home() {
           type="button"
           onClick={handleSubmit}
           disabled={!photo || status === "loading"}
-          className="w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-zinc-50 dark:text-black dark:hover:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+          className="w-full rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
         >
           {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
         </button>
