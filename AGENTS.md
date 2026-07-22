@@ -27,6 +27,26 @@ görevi) bir parçası olarak küçük, gerçek adımlarla geliştiriliyor — t
 - **Test:** Playwright e2e (fotoğraf yükle → tarif al akışı)
 - **CI/CD:** GitHub Actions → Vercel
 
+## Ekran yapısı ve gezinme (2026-07-22 kullanıcı notu — henüz uygulanmadı)
+
+Uygulama 3 ana ekrandan oluşacak (şu anki tek sayfalık form akışı bu yapıya evrilecek):
+
+1. **Login ekranı:** Login formu ortada (mevcut basit merkez kart yerleşimi zaten buna uygun).
+2. **Profil ekranı:** Ad soyad, premium API anahtarları (Claude/OpenAI) burada girilir, dil
+   seçeneği burada ayarlanır, "Need help?" bölümü, logout ve delete account seçenekleri, ayrıca
+   bir "ülke" alanı — seçilen ülkenin mutfağından tarifler öncelikli önerilir ama bu kesin bir
+   kısıtlama/filtre değil, genel bir eğilim.
+3. **Chat ekranı:** Tasarım Claude'un kendi chat arayüzüne benzeyecek — solda üstte "New" butonu,
+   altında "Favoriler" ve kullanıcının kendi gruplandırabildiği favori chat'ler, altında geçmiş
+   chat listesi. Yeni bir tarif chat'i başlatıldığında ana alan bugünkü ana sayfadaki form
+   (fotoğraf yükleme + kişi sayısı + ekipman seçimi) ile açılır.
+
+## Görsel kimlik notu (2026-07-22)
+
+Renk paleti Liferando, Trendyol Yemek ve Nefis Yemek Tarifleri gibi sitelerdeki canlı/vibrant
+renklerden ilham alacak (şu anki nötr zinc paleti yerine). Uygulamaya geçmeden önce `DESIGN.md`
+tarzı bir palet kararı çıkar.
+
 ## Backlog (henüz planlanmadı, ileride ele alınacak)
 
 1. **Tarif videosu:** Tarif sonucunda ilgili YouTube tarif videosunu uygulama içinde (embed) göster.
