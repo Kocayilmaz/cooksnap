@@ -45,8 +45,8 @@ Uygulama 3 ana ekrandan oluşacak:
 
 Ana sayfa ile profil arasında geçiş için üstte `NavBar` eklendi.
 
-**Önemli teknik not:** `localStorage`'dan hydrate edilen Redux state'i (`apiKey`, `userProfile`)
-`useState` lazy initializer içinde okuyup `configureStore`'a `preloadedState` olarak vermek,
+**Önemli teknik not:** `localStorage`'dan hydrate edilen Redux state'i (`apiKey`, `userProfile`,
+`equipment`) `useState` lazy initializer içinde okuyup `configureStore`'a `preloadedState` olarak vermek,
 server/client hydration mismatch'ine yol açıyordu — React form-dışı özniteliklerde (örn.
 `aria-pressed`) bu mismatch'i "yamıyor" (input `value` gibi form kontrollerinde yamıyor, bu yüzden
 bug'ı `ApiKeyInput`'ta değil `RecipeModeSelector`/dil butonlarında fark ettik). Çözüm:
@@ -79,7 +79,10 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
    union tipi, `EQUIPMENT_KEYS`, `EquipmentSelector` etiketleri ve `buildRecipePrompt`'taki
    `EQUIPMENT_NAMES` birlikte güncellendi (route validasyonu `EQUIPMENT_KEYS`'i generic kullandığı
    için değişiklik gerekmedi). `EquipmentSelector`'ın layout'u 10 seçeneğe sığması için
-   `flex-wrap`'e geçirildi. e2e testle (bkz. `e2e/home.spec.ts`) doğrulandı.
+   `flex-wrap`'e geçirildi. e2e testle (bkz. `e2e/home.spec.ts`) doğrulandı. Ayrıca ekipman seçimi
+   artık `apiKey`/`userProfile` ile aynı desende `localStorage`'da kalıcı tutuluyor
+   (`lib/redux/localEquipmentStorage.ts` + `equipmentSlice`'taki `setEquipment` + `StoreProvider`),
+   önceden sayfa yenilenince sıfırlanıyordu.
 
 ## Günlük commit rutini için notlar
 

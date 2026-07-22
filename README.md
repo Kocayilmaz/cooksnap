@@ -38,7 +38,8 @@ generation), accepts a photo, free-text ingredients, or both, and supports 3 rec
 (student / home / chef). It also does a best-effort YouTube lookup per recipe (`YOUTUBE_API_KEY`)
 and returns a clear 503 when `GEMINI_API_KEY`/`GROQ_API_KEY` aren't set — real keys haven't been
 provisioned yet. The premium-mode API key UI exists and persists to the browser's `localStorage`,
-but the route doesn't yet call Claude/OpenAI with a user-supplied key.
+but the route doesn't yet call Claude/OpenAI with a user-supplied key. Equipment selection also
+persists to `localStorage` now, so it survives a page reload like the profile and API key do.
 
 ## Development
 
