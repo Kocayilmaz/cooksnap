@@ -2,6 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { setName, setLanguage, setCountry, type RecipeLanguage } from "@/lib/redux/userProfileSlice";
+import ApiKeyInput from "@/components/ApiKeyInput";
 
 const LANGUAGE_LABELS: Record<RecipeLanguage, string> = {
   tr: "Türkçe",
@@ -67,6 +68,8 @@ export default function ProfilePage() {
             Tarifler bu ülkenin mutfağına öncelik verir, ama kesin bir kısıtlama değildir.
           </span>
         </label>
+
+        <ApiKeyInput />
       </main>
     </div>
   );

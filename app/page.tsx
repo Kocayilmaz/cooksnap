@@ -6,7 +6,6 @@ import IngredientTextInput from "@/components/IngredientTextInput";
 import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
-import ApiKeyInput from "@/components/ApiKeyInput";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
@@ -84,7 +83,6 @@ export default function Home() {
         <PersonCountSelector />
         <EquipmentSelector />
         <RecipeModeSelector />
-        <ApiKeyInput />
 
         <button
           type="button"
