@@ -3,6 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { setName, setLanguage, setCountry, type RecipeLanguage } from "@/lib/redux/userProfileSlice";
 import ApiKeyInput from "@/components/ApiKeyInput";
+import HelpSection from "@/components/HelpSection";
 
 const LANGUAGE_LABELS: Record<RecipeLanguage, string> = {
   tr: "Türkçe",
@@ -70,6 +71,7 @@ export default function ProfilePage() {
         </label>
 
         <ApiKeyInput />
+        <HelpSection />
       </main>
     </div>
   );
