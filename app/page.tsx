@@ -5,9 +5,54 @@ import PhotoUpload from "@/components/PhotoUpload";
 import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
 import ApiKeyInput from "@/components/ApiKeyInput";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
+import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
+
+type Status = "idle" | "loading" | "error" | "success";
 
 export default function Home() {
   const [photo, setPhoto] = useState<string | null>(null);
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [recipes, setRecipes] = useState<RecipeSuggestion[]>([]);
+
+  const equipmentState = useAppSelector((state) => state.equipment);
+  const personCount = useAppSelector((state) => state.personCount.value);
+
+  async function handleSubmit() {
+    if (!photo) return;
+
+    const equipment = EQUIPMENT_KEYS.filter((key) => equipmentState[key]);
+    if (equipment.length === 0) {
+      setStatus("error");
+      setError("En az bir ekipman seçmelisin.");
+      return;
+    }
+
+    setStatus("loading");
+    setError(null);
+
+    try {
+      const response = await fetch("/api/recipe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photoDataUrl: photo, personCount, equipment }),
+      });
+
+      const data = (await response.json()) as RecipeResponse | ApiErrorResponse;
+
+      if (!response.ok || !("recipes" in data)) {
+        throw new Error("error" in data ? data.error : "Tarif alınamadı.");
+      }
+
+      setRecipes(data.recipes);
+      setStatus("success");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Beklenmeyen bir hata oluştu.");
+    }
+  }
 
   return (
     <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-black">
@@ -28,11 +73,38 @@ export default function Home() {
 
         <button
           type="button"
-          disabled={!photo}
+          onClick={handleSubmit}
+          disabled={!photo || status === "loading"}
           className="w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-zinc-50 dark:text-black dark:hover:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
         >
-          Tarifi getir
+          {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
         </button>
+
+        {status === "error" && error && (
+          <p role="alert" className="text-center text-sm text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        )}
+
+        {status === "success" && (
+          <ul className="flex flex-col gap-4">
+            {recipes.map((recipe, index) => (
+              <li
+                key={`${recipe.equipment}-${index}`}
+                className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
+              >
+                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                  {recipe.title}
+                </p>
+                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-zinc-600 dark:text-zinc-400">
+                  {recipe.steps.map((step, stepIndex) => (
+                    <li key={stepIndex}>{step}</li>
+                  ))}
+                </ol>
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
     </div>
   );
