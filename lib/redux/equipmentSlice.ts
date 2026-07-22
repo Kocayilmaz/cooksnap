@@ -2,6 +2,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type Equipment = "oven" | "pan" | "pot";
 
+export const EQUIPMENT_KEYS: Equipment[] = ["oven", "pan", "pot"];
+
 type EquipmentState = Record<Equipment, boolean>;
 
 const initialState: EquipmentState = {
