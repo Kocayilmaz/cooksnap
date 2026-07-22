@@ -74,20 +74,12 @@ Not: Bu 4 madde de kod tarafında uygulandı ve e2e testlerle (fotoğraf-only, m
 doğrulandı; ancak gerçek Gemini/Groq/YouTube API anahtarları hâlâ tanımlı değil, bu yüzden uçtan uca
 gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
 
-5. **Ekipman seçenekleri genişletilsin (2026-07-23 kullanıcı notu, henüz uygulanmadı):** Şu anda
-   `lib/redux/equipmentSlice.ts`'te sadece fırın/tava/tencere var. Ekleneck ek seçenekler:
-   - **Airfryer**
-   - **Mikrodalga**
-   - **Düdüklü tencere** (basınçlı pişirme — Türk mutfağında çok yaygın, ayrı bir seçenek olarak
-     tencere'den ayrılmalı çünkü pişirme süresi/yöntemi tamamen farklı)
-   - **Tost makinesi**
-   - **Izgara / BBQ**
-   - **Yavaş pişirici (slow cooker)**
-   - **Wok**
-   Uygulanırken `Equipment` union tipi, `EQUIPMENT_KEYS`, `EquipmentSelector` etiketleri,
-   `buildRecipePrompt`'taki `EQUIPMENT_NAMES` ve route validasyonu birlikte güncellenmeli; ayrıca
-   çok fazla seçenek küçük ekranda sığmayabilir, `EquipmentSelector`'ın layout'unu (grid/wrap)
-   gözden geçirmek gerekebilir.
+5. ✅ **Ekipman seçenekleri genişletildi (2026-07-23):** `lib/redux/equipmentSlice.ts`'e airfryer,
+   mikrodalga, düdüklü tencere, tost makinesi, ızgara/BBQ, yavaş pişirici ve wok eklendi. `Equipment`
+   union tipi, `EQUIPMENT_KEYS`, `EquipmentSelector` etiketleri ve `buildRecipePrompt`'taki
+   `EQUIPMENT_NAMES` birlikte güncellendi (route validasyonu `EQUIPMENT_KEYS`'i generic kullandığı
+   için değişiklik gerekmedi). `EquipmentSelector`'ın layout'u 10 seçeneğe sığması için
+   `flex-wrap`'e geçirildi. e2e testle (bkz. `e2e/home.spec.ts`) doğrulandı.
 
 ## Günlük commit rutini için notlar
 
