@@ -17,18 +17,18 @@ const MODE_INSTRUCTIONS: Record<RecipeMode, string> = {
 
 /**
  * Kullanıcının kişi sayısı, seçtiği ekipman ve tarif moduna göre AI
- * modeline gönderilecek metin istemini (prompt) oluşturur. Fotoğrafın
- * kendisi ayrı bir görsel-tanıma adımında değerlendirilir; bu fonksiyon
- * sadece metin tarafını üretir.
+ * modeline gönderilecek metin istemini (prompt) oluşturur. `ingredientsDescription`
+ * ya fotoğrafın görsel-tanıma adımından (Gemini) ya da kullanıcının yazdığı
+ * malzeme metninden gelir; bu fonksiyon sadece metin tarafını üretir.
  */
 export function buildRecipePrompt(
   request: Pick<RecipeRequest, "personCount" | "equipment" | "mode">,
-  recognizedItem: string,
+  ingredientsDescription: string,
 ): string {
   const equipmentList = request.equipment.map((item) => EQUIPMENT_NAMES[item]);
 
   return [
-    `The photographed item is: ${recognizedItem}.`,
+    `The available ingredients/item are: ${ingredientsDescription}.`,
     `Suggest a recipe for ${request.personCount} ${request.personCount === 1 ? "person" : "people"}.`,
     `Available cooking equipment: ${equipmentList.join(", ")}.`,
     MODE_INSTRUCTIONS[request.mode],

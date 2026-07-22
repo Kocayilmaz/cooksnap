@@ -14,9 +14,14 @@ const MAX_PEOPLE = 12;
 
 function validateRequest(body: unknown): body is RecipeRequest {
   if (typeof body !== "object" || body === null) return false;
-  const { photoDataUrl, personCount, equipment, mode } = body as Partial<RecipeRequest>;
+  const { photoDataUrl, ingredientsText, personCount, equipment, mode } =
+    body as Partial<RecipeRequest>;
 
-  if (typeof photoDataUrl !== "string" || !photoDataUrl.startsWith("data:")) return false;
+  const hasPhoto = typeof photoDataUrl === "string" && photoDataUrl.startsWith("data:");
+  const hasText = typeof ingredientsText === "string" && ingredientsText.trim().length > 0;
+  if (!hasPhoto && !hasText) return false;
+  if (photoDataUrl !== undefined && !hasPhoto) return false;
+
   if (typeof personCount !== "number" || personCount < MIN_PEOPLE || personCount > MAX_PEOPLE) {
     return false;
   }
@@ -37,13 +42,18 @@ export async function POST(request: Request) {
 
   if (!validateRequest(body)) {
     return NextResponse.json<ApiErrorResponse>(
-      { error: "photoDataUrl, personCount (1-12) ve en az bir equipment gerekli." },
+      {
+        error:
+          "photoDataUrl veya ingredientsText'ten en az biri, personCount (1-12) ve en az bir equipment gerekli.",
+      },
       { status: 400 },
     );
   }
 
   try {
-    const recognizedItem = await recognizeFoodItem(body.photoDataUrl);
+    const recognizedItem = body.photoDataUrl
+      ? await recognizeFoodItem(body.photoDataUrl)
+      : (body.ingredientsText as string);
     const recipes = await generateRecipes(recognizedItem, body.personCount, body.equipment, body.mode);
     return NextResponse.json<RecipeResponse>({ recipes });
   } catch (error) {
