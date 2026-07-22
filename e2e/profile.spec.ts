@@ -24,6 +24,17 @@ test("profil bilgileri girilip sayfa yenilenince kalici kalir", async ({ page })
   await expect(page.getByRole("button", { name: "English" })).toHaveAttribute("aria-pressed", "true");
 });
 
+test("Need help bolumu acilip SSS icerigini gosterir", async ({ page }) => {
+  await page.goto("/profile");
+
+  await expect(page.getByText("Fotoğraf çekmek zorunda mıyım?")).toBeHidden();
+
+  await page.getByRole("button", { name: /Need help\?/ }).click();
+
+  await expect(page.getByText("Fotoğraf çekmek zorunda mıyım?")).toBeVisible();
+  await expect(page.getByText("Verilerim nerede saklanıyor?")).toBeVisible();
+});
+
 test("NavBar ile ana sayfa ve profil arasinda gecis yapilabilir", async ({ page }) => {
   await page.goto("/");
 
