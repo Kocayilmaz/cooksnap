@@ -5,8 +5,10 @@ import { Provider } from "react-redux";
 import { makeStore } from "./store";
 import { readStoredApiKey, writeStoredApiKey } from "./localApiKeyStorage";
 import { readStoredUserProfile, writeStoredUserProfile } from "./localUserProfileStorage";
+import { readStoredEquipment, writeStoredEquipment } from "./localEquipmentStorage";
 import { setKey, setProvider } from "./apiKeySlice";
 import { setName, setLanguage, setCountry } from "./userProfileSlice";
+import { setEquipment } from "./equipmentSlice";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -29,6 +31,11 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       store.dispatch(setLanguage(storedUserProfile.language));
       store.dispatch(setCountry(storedUserProfile.country));
     }
+
+    const storedEquipment = readStoredEquipment();
+    if (storedEquipment) {
+      store.dispatch(setEquipment(storedEquipment));
+    }
   }, [store]);
 
   useEffect(() => {
@@ -48,6 +55,17 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const current = store.getState().userProfile;
       if (current !== previous) {
         writeStoredUserProfile(current);
+        previous = current;
+      }
+    });
+  }, [store]);
+
+  useEffect(() => {
+    let previous = store.getState().equipment;
+    return store.subscribe(() => {
+      const current = store.getState().equipment;
+      if (current !== previous) {
+        writeStoredEquipment(current);
         previous = current;
       }
     });
