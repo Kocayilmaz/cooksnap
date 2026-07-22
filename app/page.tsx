@@ -4,6 +4,7 @@ import { useState } from "react";
 import PhotoUpload from "@/components/PhotoUpload";
 import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
+import ApiKeyInput from "@/components/ApiKeyInput";
 
 export default function Home() {
   const [photo, setPhoto] = useState<string | null>(null);
@@ -23,6 +24,7 @@ export default function Home() {
         <PhotoUpload onPhotoSelected={setPhoto} />
         <PersonCountSelector />
         <EquipmentSelector />
+        <ApiKeyInput />
 
         <button
           type="button"
