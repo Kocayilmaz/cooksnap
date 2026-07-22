@@ -51,10 +51,20 @@ export async function POST(request: Request) {
   }
 
   try {
-    const recognizedItem = body.photoDataUrl
-      ? await recognizeFoodItem(body.photoDataUrl)
-      : (body.ingredientsText as string);
-    const recipes = await generateRecipes(recognizedItem, body.personCount, body.equipment, body.mode);
+    let ingredientsDescription = body.ingredientsText ?? "";
+    if (body.photoDataUrl) {
+      const recognizedItem = await recognizeFoodItem(body.photoDataUrl);
+      ingredientsDescription = ingredientsDescription
+        ? `${recognizedItem}; additionally: ${ingredientsDescription}`
+        : recognizedItem;
+    }
+
+    const recipes = await generateRecipes(
+      ingredientsDescription,
+      body.personCount,
+      body.equipment,
+      body.mode,
+    );
     return NextResponse.json<RecipeResponse>({ recipes });
   } catch (error) {
     if (error instanceof ProviderNotConfiguredError) {

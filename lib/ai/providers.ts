@@ -59,9 +59,9 @@ export async function recognizeFoodItem(photoDataUrl: string): Promise<string> {
   return text.trim();
 }
 
-/** Groq ile tanınan ürün + kişi sayısı + ekipmana göre tarif(ler) üretir. */
+/** Groq ile malzeme/ürün tanımı + kişi sayısı + ekipmana göre tarif(ler) üretir. */
 export async function generateRecipes(
-  recognizedItem: string,
+  ingredientsDescription: string,
   personCount: number,
   equipment: Equipment[],
   mode: RecipeMode,
@@ -71,7 +71,7 @@ export async function generateRecipes(
     throw new ProviderNotConfiguredError("GROQ_API_KEY tanımlı değil.");
   }
 
-  const prompt = buildRecipePrompt({ personCount, equipment, mode }, recognizedItem);
+  const prompt = buildRecipePrompt({ personCount, equipment, mode }, ingredientsDescription);
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
