@@ -20,7 +20,7 @@ const MAX_PEOPLE = 12;
 
 function validateRequest(body: unknown): body is RecipeRequest {
   if (typeof body !== "object" || body === null) return false;
-  const { photoDataUrl, ingredientsText, personCount, equipment, mode } =
+  const { photoDataUrl, ingredientsText, personCount, equipment, mode, language, country } =
     body as Partial<RecipeRequest>;
 
   const hasPhoto = typeof photoDataUrl === "string" && photoDataUrl.startsWith("data:");
@@ -34,6 +34,8 @@ function validateRequest(body: unknown): body is RecipeRequest {
   if (!Array.isArray(equipment) || equipment.length === 0) return false;
   if (!equipment.every((item) => EQUIPMENT_KEYS.includes(item))) return false;
   if (!RECIPE_MODE_KEYS.includes(mode as RecipeMode)) return false;
+  if (language !== undefined && language !== "tr" && language !== "en") return false;
+  if (country !== undefined && typeof country !== "string") return false;
 
   return true;
 }
@@ -84,12 +86,13 @@ export async function POST(request: Request) {
         : recognizedItem;
     }
 
-    const recipes = await generateRecipes(
-      ingredientsDescription,
-      body.personCount,
-      body.equipment,
-      body.mode,
-    );
+    const recipes = await generateRecipes(ingredientsDescription, {
+      personCount: body.personCount,
+      equipment: body.equipment,
+      mode: body.mode,
+      language: body.language,
+      country: body.country,
+    });
     const recipesWithVideos = await attachVideos(recipes);
     return NextResponse.json<RecipeResponse>({ recipes: recipesWithVideos });
   } catch (error) {

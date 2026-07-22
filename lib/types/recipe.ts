@@ -1,5 +1,6 @@
 import type { Equipment } from "@/lib/redux/equipmentSlice";
 import type { RecipeMode } from "@/lib/redux/recipeModeSlice";
+import type { RecipeLanguage } from "@/lib/redux/userProfileSlice";
 
 export interface RecipeRequest {
   /** Yüklenen fotoğrafın data URL'i (base64). Fotoğraf zorunlu değil — bkz. ingredientsText. */
@@ -10,6 +11,10 @@ export interface RecipeRequest {
   /** Kullanıcının işaretlediği ekipmanlar arasından seçili (true) olanlar. */
   equipment: Equipment[];
   mode: RecipeMode;
+  /** Profil sayfasındaki dil tercihi — belirtilmezse İngilizce üretilir. */
+  language?: RecipeLanguage;
+  /** Profil sayfasındaki ülke tercihi — o ülkenin mutfağına öncelik verilir, kesin kısıtlama değildir. */
+  country?: string;
 }
 
 export interface RecipeSuggestion {

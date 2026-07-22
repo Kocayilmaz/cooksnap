@@ -1,6 +1,4 @@
-import type { Equipment } from "@/lib/redux/equipmentSlice";
-import type { RecipeMode } from "@/lib/redux/recipeModeSlice";
-import type { RecipeSuggestion } from "@/lib/types/recipe";
+import type { RecipeRequest, RecipeSuggestion } from "@/lib/types/recipe";
 import { buildRecipePrompt } from "@/lib/ai/buildRecipePrompt";
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
@@ -59,19 +57,17 @@ export async function recognizeFoodItem(photoDataUrl: string): Promise<string> {
   return text.trim();
 }
 
-/** Groq ile malzeme/ürün tanımı + kişi sayısı + ekipmana göre tarif(ler) üretir. */
+/** Groq ile malzeme/ürün tanımı + kişi sayısı + ekipman + mod + profil tercihlerine göre tarif(ler) üretir. */
 export async function generateRecipes(
   ingredientsDescription: string,
-  personCount: number,
-  equipment: Equipment[],
-  mode: RecipeMode,
+  request: Pick<RecipeRequest, "personCount" | "equipment" | "mode" | "language" | "country">,
 ): Promise<RecipeSuggestion[]> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new ProviderNotConfiguredError("GROQ_API_KEY tanımlı değil.");
   }
 
-  const prompt = buildRecipePrompt({ personCount, equipment, mode }, ingredientsDescription);
+  const prompt = buildRecipePrompt(request, ingredientsDescription);
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",

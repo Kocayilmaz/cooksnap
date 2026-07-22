@@ -23,6 +23,7 @@ export default function Home() {
   const equipmentState = useAppSelector((state) => state.equipment);
   const personCount = useAppSelector((state) => state.personCount.value);
   const recipeMode = useAppSelector((state) => state.recipeMode.value);
+  const userProfile = useAppSelector((state) => state.userProfile);
 
   const hasIngredientsText = ingredientsText.trim().length > 0;
 
@@ -49,6 +50,8 @@ export default function Home() {
           personCount,
           equipment,
           mode: recipeMode,
+          language: userProfile.language,
+          country: userProfile.country.trim() || undefined,
         }),
       });
 
