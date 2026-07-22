@@ -3,12 +3,14 @@ import personCountReducer from "./personCountSlice";
 import equipmentReducer from "./equipmentSlice";
 import apiKeyReducer from "./apiKeySlice";
 import recipeModeReducer from "./recipeModeSlice";
+import userProfileReducer from "./userProfileSlice";
 
 const rootReducer = combineReducers({
   personCount: personCountReducer,
   equipment: equipmentReducer,
   apiKey: apiKeyReducer,
   recipeMode: recipeModeReducer,
+  userProfile: userProfileReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
