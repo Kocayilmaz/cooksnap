@@ -23,3 +23,21 @@ test("tarif butonu fotoğraf seçilene kadar devre dışı kalır", async ({ pag
 
   await expect(page.getByRole("button", { name: "Tarifi getir" })).toBeDisabled();
 });
+
+test("fotoğraf seçilip gönderildiğinde AI yapılandırma hatası kullanıcıya gösterilir", async ({ page }) => {
+  await page.goto("/");
+
+  const tinyPngBase64 =
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({
+      name: "test.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(tinyPngBase64, "base64"),
+    });
+
+  await page.getByRole("button", { name: "Tarifi getir" }).click();
+
+  await expect(page.getByText("GEMINI_API_KEY tanımlı değil.")).toBeVisible();
+});

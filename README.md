@@ -31,7 +31,10 @@ AI-generated recipe based on how many people you're cooking for and which equipm
 ## Status
 
 Still at the scaffolding stage; features are being built incrementally through small daily
-commits.
+commits. `POST /api/recipe` is wired end-to-end (Gemini image recognition → Groq recipe
+generation) and returns a clear 503 when `GEMINI_API_KEY`/`GROQ_API_KEY` aren't set — real keys
+haven't been provisioned yet. The premium-mode API key UI exists and persists to the browser's
+`localStorage`, but the route doesn't yet call Claude/OpenAI with a user-supplied key.
 
 ## Development
 
