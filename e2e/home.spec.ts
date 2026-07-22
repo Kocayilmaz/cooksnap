@@ -18,6 +18,18 @@ test("kişi sayısı artı/eksi butonlarıyla değişir", async ({ page }) => {
   await expect(page.getByText("4", { exact: true })).toBeVisible();
 });
 
+test("tarif modu seçimi değiştirilebilir ve açıklama metni güncellenir", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByText("Bulaşık kısıtı yok")).toBeVisible();
+
+  await page.getByRole("button", { name: "Öğrenci" }).click();
+  await expect(page.getByText("En az bulaşık çıkaran")).toBeVisible();
+
+  await page.getByRole("button", { name: "Aşçı" }).click();
+  await expect(page.getByText("elit/profesyonel şef")).toBeVisible();
+});
+
 test("tarif butonu fotoğraf seçilene kadar devre dışı kalır", async ({ page }) => {
   await page.goto("/");
 

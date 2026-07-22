@@ -22,6 +22,19 @@ test("POST /api/recipe gecersiz equipment degerinde 400 doner", async ({ request
   expect(response.status()).toBe(400);
 });
 
+test("POST /api/recipe gecersiz mode degerinde 400 doner", async ({ request }) => {
+  const response = await request.post("/api/recipe", {
+    data: {
+      photoDataUrl: "data:image/png;base64,AAAA",
+      personCount: 2,
+      equipment: ["oven"],
+      mode: "gourmet",
+    },
+  });
+
+  expect(response.status()).toBe(400);
+});
+
 test("POST /api/recipe gecerli govdede AI saglayici yapilandirilmamissa 503 doner", async ({ request }) => {
   const response = await request.post("/api/recipe", {
     data: {
