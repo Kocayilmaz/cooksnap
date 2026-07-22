@@ -4,6 +4,7 @@ import { useState } from "react";
 import PhotoUpload from "@/components/PhotoUpload";
 import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
+import RecipeModeSelector from "@/components/RecipeModeSelector";
 import ApiKeyInput from "@/components/ApiKeyInput";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
@@ -69,6 +70,7 @@ export default function Home() {
         <PhotoUpload onPhotoSelected={setPhoto} />
         <PersonCountSelector />
         <EquipmentSelector />
+        <RecipeModeSelector />
         <ApiKeyInput />
 
         <button
