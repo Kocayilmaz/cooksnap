@@ -2,14 +2,16 @@
 
 Snap a photo of a food item — a raw ingredient or a ready-made/frozen product — and get an
 AI-generated recipe based on how many people you're cooking for and which equipment you have
-(oven / pan / pot).
+(oven, pan, pot, air fryer, microwave, pressure cooker, toaster oven, grill/BBQ, slow cooker, or
+wok).
 
 ## Idea
 
 1. Upload a photo — a raw ingredient (e.g. meatball mix) or a packaged/ready product (e.g. frozen
    lasagna).
 2. Choose how many people you're cooking for.
-3. Select the cooking equipment you have (oven / pan / pot).
+3. Select the cooking equipment you have (oven, pan, pot, air fryer, microwave, pressure cooker,
+   toaster oven, grill/BBQ, slow cooker, or wok).
 4. The AI recognizes the item and returns recipe(s) scaled to your serving size, for each
    equipment option you selected.
 
