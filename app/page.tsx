@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import PhotoUpload from "@/components/PhotoUpload";
+import IngredientTextInput from "@/components/IngredientTextInput";
 import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
@@ -14,6 +15,7 @@ type Status = "idle" | "loading" | "error" | "success";
 
 export default function Home() {
   const [photo, setPhoto] = useState<string | null>(null);
+  const [ingredientsText, setIngredientsText] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<RecipeSuggestion[]>([]);
@@ -22,8 +24,10 @@ export default function Home() {
   const personCount = useAppSelector((state) => state.personCount.value);
   const recipeMode = useAppSelector((state) => state.recipeMode.value);
 
+  const hasIngredientsText = ingredientsText.trim().length > 0;
+
   async function handleSubmit() {
-    if (!photo) return;
+    if (!photo && !hasIngredientsText) return;
 
     const equipment = EQUIPMENT_KEYS.filter((key) => equipmentState[key]);
     if (equipment.length === 0) {
@@ -39,7 +43,13 @@ export default function Home() {
       const response = await fetch("/api/recipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoDataUrl: photo, personCount, equipment, mode: recipeMode }),
+        body: JSON.stringify({
+          photoDataUrl: photo ?? undefined,
+          ingredientsText: hasIngredientsText ? ingredientsText.trim() : undefined,
+          personCount,
+          equipment,
+          mode: recipeMode,
+        }),
       });
 
       const data = (await response.json()) as RecipeResponse | ApiErrorResponse;
@@ -64,11 +74,12 @@ export default function Home() {
             CookSnap
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Fotoğrafını çek, elindekilere göre tarifini al.
+            Fotoğraf çek ya da malzemeleri yaz, elindekilere göre tarifini al.
           </p>
         </div>
 
         <PhotoUpload onPhotoSelected={setPhoto} />
+        <IngredientTextInput value={ingredientsText} onChange={setIngredientsText} />
         <PersonCountSelector />
         <EquipmentSelector />
         <RecipeModeSelector />
@@ -77,7 +88,7 @@ export default function Home() {
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={!photo || status === "loading"}
+          disabled={(!photo && !hasIngredientsText) || status === "loading"}
           className="w-full rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
         >
           {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
