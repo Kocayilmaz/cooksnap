@@ -28,6 +28,7 @@ test("POST /api/recipe gecerli govdede AI saglayici yapilandirilmamissa 503 done
       photoDataUrl: "data:image/png;base64,AAAA",
       personCount: 2,
       equipment: ["oven"],
+      mode: "home",
     },
   });
 

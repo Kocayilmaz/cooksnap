@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { ApiErrorResponse, RecipeRequest, RecipeResponse } from "@/lib/types/recipe";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
+import { RECIPE_MODE_KEYS, type RecipeMode } from "@/lib/redux/recipeModeSlice";
 import {
   generateRecipes,
   ProviderNotConfiguredError,
@@ -13,7 +14,7 @@ const MAX_PEOPLE = 12;
 
 function validateRequest(body: unknown): body is RecipeRequest {
   if (typeof body !== "object" || body === null) return false;
-  const { photoDataUrl, personCount, equipment } = body as Partial<RecipeRequest>;
+  const { photoDataUrl, personCount, equipment, mode } = body as Partial<RecipeRequest>;
 
   if (typeof photoDataUrl !== "string" || !photoDataUrl.startsWith("data:")) return false;
   if (typeof personCount !== "number" || personCount < MIN_PEOPLE || personCount > MAX_PEOPLE) {
@@ -21,6 +22,7 @@ function validateRequest(body: unknown): body is RecipeRequest {
   }
   if (!Array.isArray(equipment) || equipment.length === 0) return false;
   if (!equipment.every((item) => EQUIPMENT_KEYS.includes(item))) return false;
+  if (!RECIPE_MODE_KEYS.includes(mode as RecipeMode)) return false;
 
   return true;
 }
@@ -42,7 +44,7 @@ export async function POST(request: Request) {
 
   try {
     const recognizedItem = await recognizeFoodItem(body.photoDataUrl);
-    const recipes = await generateRecipes(recognizedItem, body.personCount, body.equipment);
+    const recipes = await generateRecipes(recognizedItem, body.personCount, body.equipment, body.mode);
     return NextResponse.json<RecipeResponse>({ recipes });
   } catch (error) {
     if (error instanceof ProviderNotConfiguredError) {

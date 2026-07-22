@@ -20,6 +20,7 @@ export default function Home() {
 
   const equipmentState = useAppSelector((state) => state.equipment);
   const personCount = useAppSelector((state) => state.personCount.value);
+  const recipeMode = useAppSelector((state) => state.recipeMode.value);
 
   async function handleSubmit() {
     if (!photo) return;
@@ -38,7 +39,7 @@ export default function Home() {
       const response = await fetch("/api/recipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoDataUrl: photo, personCount, equipment }),
+        body: JSON.stringify({ photoDataUrl: photo, personCount, equipment, mode: recipeMode }),
       });
 
       const data = (await response.json()) as RecipeResponse | ApiErrorResponse;

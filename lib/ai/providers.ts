@@ -1,4 +1,5 @@
 import type { Equipment } from "@/lib/redux/equipmentSlice";
+import type { RecipeMode } from "@/lib/redux/recipeModeSlice";
 import type { RecipeSuggestion } from "@/lib/types/recipe";
 import { buildRecipePrompt } from "@/lib/ai/buildRecipePrompt";
 
@@ -63,13 +64,14 @@ export async function generateRecipes(
   recognizedItem: string,
   personCount: number,
   equipment: Equipment[],
+  mode: RecipeMode,
 ): Promise<RecipeSuggestion[]> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new ProviderNotConfiguredError("GROQ_API_KEY tanımlı değil.");
   }
 
-  const prompt = buildRecipePrompt({ personCount, equipment }, recognizedItem);
+  const prompt = buildRecipePrompt({ personCount, equipment, mode }, recognizedItem);
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",

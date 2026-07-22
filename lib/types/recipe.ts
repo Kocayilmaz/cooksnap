@@ -1,4 +1,5 @@
 import type { Equipment } from "@/lib/redux/equipmentSlice";
+import type { RecipeMode } from "@/lib/redux/recipeModeSlice";
 
 export interface RecipeRequest {
   /** Yüklenen fotoğrafın data URL'i (base64). */
@@ -6,6 +7,7 @@ export interface RecipeRequest {
   personCount: number;
   /** Kullanıcının işaretlediği ekipmanlar arasından seçili (true) olanlar. */
   equipment: Equipment[];
+  mode: RecipeMode;
 }
 
 export interface RecipeSuggestion {
