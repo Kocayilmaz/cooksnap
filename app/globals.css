@@ -3,11 +3,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Liferando/Trendyol Yemek/Nefis Yemek Tarifleri tarzı canlı marka renkleri
+     — bkz. AGENTS.md "Görsel kimlik notu". */
+  --brand-orange: #f2600c;
+  --brand-orange-dark: #c94e09;
+  --brand-red: #e8272b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-dark: var(--brand-orange-dark);
+  --color-brand-red: var(--brand-red);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
