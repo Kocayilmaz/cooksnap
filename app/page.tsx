@@ -7,6 +7,7 @@ import PersonCountSelector from "@/components/PersonCountSelector";
 import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
+import FavoriteButton from "@/components/FavoriteButton";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
 import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
@@ -109,9 +110,17 @@ export default function Home() {
                 key={`${recipe.equipment}-${index}`}
                 className="rounded-xl border border-surface-border p-4 dark:border-zinc-800"
               >
-                <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
-                  {recipe.title}
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
+                    {recipe.title}
+                  </p>
+                  <FavoriteButton
+                    equipment={recipe.equipment}
+                    title={recipe.title}
+                    steps={recipe.steps}
+                    videoId={recipe.videoId}
+                  />
+                </div>
                 <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
                   {recipe.steps.map((step, stepIndex) => (
                     <li key={stepIndex}>{step}</li>
