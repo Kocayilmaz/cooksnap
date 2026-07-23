@@ -5,10 +5,18 @@
   --foreground: #171717;
 
   /* Liferando/Trendyol Yemek/Nefis Yemek Tarifleri tarzı canlı marka renkleri
-     — bkz. AGENTS.md "Görsel kimlik notu". */
+     — bkz. AGENTS.md "Görsel kimlik notu" ve DESIGN.md. */
   --brand-orange: #f2600c;
   --brand-orange-dark: #c94e09;
   --brand-red: #e8272b;
+
+  /* Sıcak nötr yüzeyler — zinc-* yerine, bkz. DESIGN.md renk tablosu. */
+  --surface-warm: #fffaf5;
+  --surface-card: #ffffff;
+  --surface-border: #f0dfd0;
+  --surface-text-muted: #8a7a6d;
+  --state-success: #1a8f4f;
+  --state-error: #e8272b;
 }
 
 @theme inline {
@@ -17,6 +25,12 @@
   --color-brand-orange: var(--brand-orange);
   --color-brand-orange-dark: var(--brand-orange-dark);
   --color-brand-red: var(--brand-red);
+  --color-surface-warm: var(--surface-warm);
+  --color-surface-card: var(--surface-card);
+  --color-surface-border: var(--surface-border);
+  --color-surface-text-muted: var(--surface-text-muted);
+  --color-state-success: var(--state-success);
+  --color-state-error: var(--state-error);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
