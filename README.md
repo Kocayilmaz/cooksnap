@@ -40,6 +40,9 @@ and returns a clear 503 when `GEMINI_API_KEY`/`GROQ_API_KEY` aren't set — real
 provisioned yet. The premium-mode API key UI exists and persists to the browser's `localStorage`,
 but the route doesn't yet call Claude/OpenAI with a user-supplied key. Equipment selection also
 persists to `localStorage` now, so it survives a page reload like the profile and API key do.
+Recipes can be starred as favorites (`FavoriteButton`), stored locally the same way until Firebase
+is wired up. The home page now follows the warm color palette decided in `DESIGN.md` instead of
+neutral zinc tones (dark mode still uses the previous zinc classes for now).
 
 ## Development
 

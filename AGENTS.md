@@ -83,6 +83,16 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
    artık `apiKey`/`userProfile` ile aynı desende `localStorage`'da kalıcı tutuluyor
    (`lib/redux/localEquipmentStorage.ts` + `equipmentSlice`'taki `setEquipment` + `StoreProvider`),
    önceden sayfa yenilenince sıfırlanıyordu.
+6. ✅ **Görsel kimlik kararı (2026-07-23):** `DESIGN.md` eklendi (sıcak nötr yüzey/kenarlık/metin
+   token'ları + durum renkleri). Token'lar `app/globals.css`'e eklendi ve ana sayfa (`app/page.tsx`)
+   zinc-* yerine bunları kullanacak şekilde güncellendi; koyu mod şimdilik `dark:zinc-*` sınıflarıyla
+   korunuyor, geri kalan bileşenler kademeli olarak taşınacak.
+7. ✅ **Favori tarifler — yerel sürüm (2026-07-23):** Firebase entegrasyonu henüz yok, bu yüzden
+   favoriler önce `apiKey`/`equipment` ile aynı desende `localStorage`'a yazıldı:
+   `lib/redux/favoritesSlice.ts` + `localFavoritesStorage.ts` (id = ekipman+başlık ikilisi),
+   `components/FavoriteButton.tsx` her tarif kartında yıldız butonu olarak gösteriyor. e2e testle
+   (`e2e/favorites.spec.ts`, `/api/recipe` mock'lanarak) toggle ve kalıcılık doğrulandı. Firebase
+   eklendiğinde bu local-only katman senkronize edilecek/taşınacak.
 
 ## Günlük commit rutini için notlar
 
