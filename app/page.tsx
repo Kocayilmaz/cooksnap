@@ -8,8 +8,9 @@ import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import FavoriteButton from "@/components/FavoriteButton";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
+import { incrementUsage } from "@/lib/redux/usageCounterSlice";
 import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
 
 type Status = "idle" | "loading" | "error" | "success";
@@ -25,6 +26,10 @@ export default function Home() {
   const personCount = useAppSelector((state) => state.personCount.value);
   const recipeMode = useAppSelector((state) => state.recipeMode.value);
   const userProfile = useAppSelector((state) => state.userProfile);
+  const apiKey = useAppSelector((state) => state.apiKey);
+  const usageCount = useAppSelector((state) => state.usageCounter.count);
+  const isFreeMode = apiKey.key.trim().length === 0;
+  const dispatch = useAppDispatch();
 
   const hasIngredientsText = ingredientsText.trim().length > 0;
 
@@ -64,6 +69,9 @@ export default function Home() {
 
       setRecipes(data.recipes);
       setStatus("success");
+      if (isFreeMode) {
+        dispatch(incrementUsage());
+      }
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Beklenmeyen bir hata oluştu.");
@@ -96,6 +104,12 @@ export default function Home() {
         >
           {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
         </button>
+
+        {isFreeMode && (
+          <p className="text-center text-xs text-surface-text-muted dark:text-zinc-500">
+            Ücretsiz modda kullanılan istek: {usageCount}
+          </p>
+        )}
 
         {status === "error" && error && (
           <p role="alert" className="text-center text-sm text-state-error dark:text-red-400">
