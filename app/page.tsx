@@ -70,13 +70,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-black">
-      <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-950">
+    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12 dark:bg-black">
+      <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-surface-card p-8 shadow-sm dark:bg-zinc-950">
         <div className="flex flex-col gap-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brand-red">
             CookSnap
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-surface-text-muted dark:text-zinc-400">
             Fotoğraf çek ya da malzemeleri yaz, elindekilere göre tarifini al.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function Home() {
         </button>
 
         {status === "error" && error && (
-          <p role="alert" className="text-center text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-center text-sm text-state-error dark:text-red-400">
             {error}
           </p>
         )}
@@ -107,12 +107,12 @@ export default function Home() {
             {recipes.map((recipe, index) => (
               <li
                 key={`${recipe.equipment}-${index}`}
-                className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
+                className="rounded-xl border border-surface-border p-4 dark:border-zinc-800"
               >
-                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
                   {recipe.title}
                 </p>
-                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-zinc-600 dark:text-zinc-400">
+                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
                   {recipe.steps.map((step, stepIndex) => (
                     <li key={stepIndex}>{step}</li>
                   ))}
