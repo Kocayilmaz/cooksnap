@@ -4,6 +4,7 @@ import equipmentReducer from "./equipmentSlice";
 import apiKeyReducer from "./apiKeySlice";
 import recipeModeReducer from "./recipeModeSlice";
 import userProfileReducer from "./userProfileSlice";
+import favoritesReducer from "./favoritesSlice";
 
 const rootReducer = combineReducers({
   personCount: personCountReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   apiKey: apiKeyReducer,
   recipeMode: recipeModeReducer,
   userProfile: userProfileReducer,
+  favorites: favoritesReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
