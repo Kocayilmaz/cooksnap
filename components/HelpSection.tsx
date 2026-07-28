@@ -29,12 +29,12 @@ export default function HelpSection() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+    <div className="flex flex-col gap-2 border-t border-surface-border pt-4 dark:border-zinc-800">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="text-left text-sm font-medium text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-50"
+        className="text-left text-sm font-medium text-foreground hover:text-brand-orange dark:text-zinc-300 dark:hover:text-zinc-50"
       >
         Need help? {open ? "▲" : "▼"}
       </button>
@@ -43,10 +43,10 @@ export default function HelpSection() {
         <dl className="flex flex-col gap-3">
           {FAQ_ITEMS.map((item) => (
             <div key={item.question}>
-              <dt className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+              <dt className="text-sm font-medium text-foreground dark:text-zinc-200">
                 {item.question}
               </dt>
-              <dd className="text-xs text-zinc-500 dark:text-zinc-400">{item.answer}</dd>
+              <dd className="text-xs text-surface-text-muted dark:text-zinc-400">{item.answer}</dd>
             </div>
           ))}
         </dl>
