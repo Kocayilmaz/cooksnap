@@ -21,7 +21,7 @@ export default function RecipeModeSelector() {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Tarif modu</span>
+      <span className="text-sm font-medium text-foreground dark:text-zinc-300">Tarif modu</span>
       <div className="flex gap-2">
         {RECIPE_MODE_KEYS.map((key) => {
           const active = mode === key;
@@ -34,7 +34,7 @@ export default function RecipeModeSelector() {
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 active
                   ? "border-brand-orange bg-brand-orange text-white"
-                  : "border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  : "border-surface-border text-foreground hover:bg-surface-warm dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >
               {MODE_LABELS[key]}
@@ -42,7 +42,7 @@ export default function RecipeModeSelector() {
           );
         })}
       </div>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{MODE_DESCRIPTIONS[mode]}</p>
+      <p className="text-xs text-surface-text-muted dark:text-zinc-400">{MODE_DESCRIPTIONS[mode]}</p>
     </div>
   );
 }
