@@ -10,7 +10,7 @@ import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import FavoriteButton from "@/components/FavoriteButton";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
-import { incrementUsage } from "@/lib/redux/usageCounterSlice";
+import { FREE_USAGE_LIMIT, incrementUsage } from "@/lib/redux/usageCounterSlice";
 import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
 
 type Status = "idle" | "loading" | "error" | "success";
@@ -29,12 +29,14 @@ export default function Home() {
   const apiKey = useAppSelector((state) => state.apiKey);
   const usageCount = useAppSelector((state) => state.usageCounter.count);
   const isFreeMode = apiKey.key.trim().length === 0;
+  const limitReached = isFreeMode && usageCount >= FREE_USAGE_LIMIT;
   const dispatch = useAppDispatch();
 
   const hasIngredientsText = ingredientsText.trim().length > 0;
 
   async function handleSubmit() {
     if (!photo && !hasIngredientsText) return;
+    if (limitReached) return;
 
     const equipment = EQUIPMENT_KEYS.filter((key) => equipmentState[key]);
     if (equipment.length === 0) {
@@ -99,15 +101,22 @@ export default function Home() {
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={(!photo && !hasIngredientsText) || status === "loading"}
+          disabled={(!photo && !hasIngredientsText) || status === "loading" || limitReached}
           className="w-full rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
         >
           {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
         </button>
 
-        {isFreeMode && (
+        {isFreeMode && limitReached && (
+          <p className="text-center text-xs text-state-error dark:text-red-400">
+            Ücretsiz mod limitine ulaştın ({usageCount}/{FREE_USAGE_LIMIT}). Devam etmek için
+            Profil sayfasından kendi Claude/OpenAI anahtarını girebilirsin.
+          </p>
+        )}
+
+        {isFreeMode && !limitReached && (
           <p className="text-center text-xs text-surface-text-muted dark:text-zinc-500">
-            Ücretsiz modda kullanılan istek: {usageCount}
+            Ücretsiz modda kullanılan istek: {usageCount}/{FREE_USAGE_LIMIT}
           </p>
         )}
 

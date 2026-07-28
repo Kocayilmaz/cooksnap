@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+/** Ücretsiz moddaki günlük istek limiti; aşılınca kullanıcı premium anahtar girmeye yönlendirilir. */
+export const FREE_USAGE_LIMIT = 5;
+
 interface UsageCounterState {
   count: number;
 }
