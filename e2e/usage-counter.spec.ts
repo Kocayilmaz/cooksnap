@@ -52,3 +52,19 @@ test("kullanım sayacı sayfa yenilenince kalıcı kalır", async ({ page }) => 
 
   await expect(page.getByText("Ücretsiz modda kullanılan istek: 1")).toBeVisible();
 });
+
+test("ücretsiz mod limitine ulaşılınca tarif butonu devre dışı kalır", async ({ page }) => {
+  await mockRecipeResponse(page);
+  await page.addInitScript(() => {
+    window.localStorage.setItem("cooksnap:usageCount", "5");
+  });
+  await page.goto("/");
+
+  await expect(page.getByText("Ücretsiz mod limitine ulaştın (5/5)")).toBeVisible();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "test.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(tinyPngBase64, "base64"),
+  });
+  await expect(page.getByRole("button", { name: "Tarifi getir" })).toBeDisabled();
+});

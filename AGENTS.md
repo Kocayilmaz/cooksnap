@@ -93,6 +93,16 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
    `components/FavoriteButton.tsx` her tarif kartında yıldız butonu olarak gösteriyor. e2e testle
    (`e2e/favorites.spec.ts`, `/api/recipe` mock'lanarak) toggle ve kalıcılık doğrulandı. Firebase
    eklendiğinde bu local-only katman senkronize edilecek/taşınacak.
+8. ✅ **Görsel kimlik migrasyonu tamamlandı (2026-07-28):** `DESIGN.md` paleti ana sayfadan sonra
+   geri kalan tüm bileşenlere de (`PersonCountSelector`, `IngredientTextInput`, `PhotoUpload`,
+   `RecipeModeSelector`, `EquipmentSelector`, `NavBar`, `HelpSection`, `ApiKeyInput`) uygulandı;
+   `ApiKeyInput`'taki seçili sağlayıcı stili de diğer seçicilerle tutarlı olsun diye siyah/beyazdan
+   `brand-orange`'a çevrildi. Karanlık mod kasıtlı olarak `dark:zinc-*` sınıflarıyla kalmaya devam
+   ediyor (bkz. `DESIGN.md`).
+9. ✅ **Ücretsiz mod istek limiti (2026-07-28):** `lib/redux/usageCounterSlice.ts`'e
+   `FREE_USAGE_LIMIT` (5) eklendi; limit aşılınca ana sayfadaki "Tarifi getir" butonu devre dışı
+   kalıyor ve kullanıcıya profil sayfasından kendi API anahtarını girmesi öneriliyor. e2e testle
+   (`e2e/usage-counter.spec.ts`) doğrulandı.
 
 ## Günlük commit rutini için notlar
 

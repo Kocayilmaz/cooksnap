@@ -41,8 +41,11 @@ provisioned yet. The premium-mode API key UI exists and persists to the browser'
 but the route doesn't yet call Claude/OpenAI with a user-supplied key. Equipment selection also
 persists to `localStorage` now, so it survives a page reload like the profile and API key do.
 Recipes can be starred as favorites (`FavoriteButton`), stored locally the same way until Firebase
-is wired up. The home page now follows the warm color palette decided in `DESIGN.md` instead of
-neutral zinc tones (dark mode still uses the previous zinc classes for now).
+is wired up. Free-mode usage is now capped at `FREE_USAGE_LIMIT` (5) requests — once reached, the
+submit button disables and the user is pointed to the profile page to add a premium key. The warm
+color palette decided in `DESIGN.md` is now applied across the home page and all shared components
+(NavBar, selectors, ApiKeyInput, HelpSection) instead of neutral zinc tones (dark mode still uses
+the previous zinc classes for now).
 
 ## Development
 
