@@ -12,7 +12,7 @@ export default function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex justify-center gap-6 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
+    <nav className="flex justify-center gap-6 border-b border-surface-border bg-surface-card px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
       {LINKS.map((link) => {
         const active = pathname === link.href;
         return (
@@ -22,7 +22,7 @@ export default function NavBar() {
             className={`text-sm font-medium transition-colors ${
               active
                 ? "text-brand-orange"
-                : "text-zinc-600 hover:text-brand-orange dark:text-zinc-400"
+                : "text-surface-text-muted hover:text-brand-orange dark:text-zinc-400"
             }`}
           >
             {link.label}
