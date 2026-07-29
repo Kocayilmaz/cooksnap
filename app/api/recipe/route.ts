@@ -7,12 +7,15 @@ import type {
 } from "@/lib/types/recipe";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
 import { RECIPE_MODE_KEYS, type RecipeMode } from "@/lib/redux/recipeModeSlice";
+import { PREMIUM_PROVIDER_KEYS, type PremiumProvider } from "@/lib/redux/apiKeySlice";
 import {
   generateRecipes,
   ProviderNotConfiguredError,
   ProviderRequestError,
   recognizeFoodItem,
 } from "@/lib/ai/providers";
+import { generateRecipesWithClaude, recognizeFoodItemWithClaude } from "@/lib/ai/claudeProvider";
+import { generateRecipesWithOpenAI, recognizeFoodItemWithOpenAI } from "@/lib/ai/openaiProvider";
 import { findRecipeVideoId } from "@/lib/ai/youtube";
 
 const MIN_PEOPLE = 1;
@@ -20,8 +23,17 @@ const MAX_PEOPLE = 12;
 
 function validateRequest(body: unknown): body is RecipeRequest {
   if (typeof body !== "object" || body === null) return false;
-  const { photoDataUrl, ingredientsText, personCount, equipment, mode, language, country } =
-    body as Partial<RecipeRequest>;
+  const {
+    photoDataUrl,
+    ingredientsText,
+    personCount,
+    equipment,
+    mode,
+    language,
+    country,
+    premiumProvider,
+    premiumApiKey,
+  } = body as Partial<RecipeRequest>;
 
   const hasPhoto = typeof photoDataUrl === "string" && photoDataUrl.startsWith("data:");
   const hasText = typeof ingredientsText === "string" && ingredientsText.trim().length > 0;
@@ -36,6 +48,13 @@ function validateRequest(body: unknown): body is RecipeRequest {
   if (!RECIPE_MODE_KEYS.includes(mode as RecipeMode)) return false;
   if (language !== undefined && language !== "tr" && language !== "en") return false;
   if (country !== undefined && typeof country !== "string") return false;
+
+  const hasPremiumProvider = premiumProvider !== undefined;
+  const hasPremiumApiKey = typeof premiumApiKey === "string" && premiumApiKey.trim().length > 0;
+  if (hasPremiumProvider !== hasPremiumApiKey) return false;
+  if (hasPremiumProvider && !PREMIUM_PROVIDER_KEYS.includes(premiumProvider as PremiumProvider)) {
+    return false;
+  }
 
   return true;
 }
@@ -78,21 +97,41 @@ export async function POST(request: Request) {
   }
 
   try {
-    let ingredientsDescription = body.ingredientsText ?? "";
-    if (body.photoDataUrl) {
-      const recognizedItem = await recognizeFoodItem(body.photoDataUrl);
-      ingredientsDescription = ingredientsDescription
-        ? `${recognizedItem}; additionally: ${ingredientsDescription}`
-        : recognizedItem;
-    }
-
-    const recipes = await generateRecipes(ingredientsDescription, {
+    const { premiumProvider, premiumApiKey } = body;
+    const recipeContext = {
       personCount: body.personCount,
       equipment: body.equipment,
       mode: body.mode,
       language: body.language,
       country: body.country,
-    });
+    };
+
+    let ingredientsDescription = body.ingredientsText ?? "";
+    let recipes: RecipeSuggestion[];
+
+    if (premiumProvider && premiumApiKey) {
+      const recognize =
+        premiumProvider === "claude" ? recognizeFoodItemWithClaude : recognizeFoodItemWithOpenAI;
+      const generate =
+        premiumProvider === "claude" ? generateRecipesWithClaude : generateRecipesWithOpenAI;
+
+      if (body.photoDataUrl) {
+        const recognizedItem = await recognize(body.photoDataUrl, premiumApiKey);
+        ingredientsDescription = ingredientsDescription
+          ? `${recognizedItem}; additionally: ${ingredientsDescription}`
+          : recognizedItem;
+      }
+      recipes = await generate(ingredientsDescription, recipeContext, premiumApiKey);
+    } else {
+      if (body.photoDataUrl) {
+        const recognizedItem = await recognizeFoodItem(body.photoDataUrl);
+        ingredientsDescription = ingredientsDescription
+          ? `${recognizedItem}; additionally: ${ingredientsDescription}`
+          : recognizedItem;
+      }
+      recipes = await generateRecipes(ingredientsDescription, recipeContext);
+    }
+
     const recipesWithVideos = await attachVideos(recipes);
     return NextResponse.json<RecipeResponse>({ recipes: recipesWithVideos });
   } catch (error) {

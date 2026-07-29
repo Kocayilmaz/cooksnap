@@ -2,6 +2,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type PremiumProvider = "claude" | "openai";
 
+export const PREMIUM_PROVIDER_KEYS: PremiumProvider[] = ["claude", "openai"];
+
 interface ApiKeyState {
   provider: PremiumProvider;
   key: string;
