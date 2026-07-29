@@ -103,6 +103,14 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
    `FREE_USAGE_LIMIT` (5) eklendi; limit aşılınca ana sayfadaki "Tarifi getir" butonu devre dışı
    kalıyor ve kullanıcıya profil sayfasından kendi API anahtarını girmesi öneriliyor. e2e testle
    (`e2e/usage-counter.spec.ts`) doğrulandı.
+10. ✅ **Premium mod uçtan uca bağlandı (2026-07-29):** `lib/ai/claudeProvider.ts` ve
+    `lib/ai/openaiProvider.ts` eklendi (kullanıcının kendi anahtarıyla görsel tanıma + tarif
+    üretimi). `POST /api/recipe`, gövdede `premiumProvider`/`premiumApiKey` birlikte gelirse
+    Gemini/Groq yerine bunları kullanacak şekilde güncellendi (biri gelip diğeri gelmezse 400).
+    Ana sayfa (`app/page.tsx`) premium moddayken bu alanları isteğe otomatik ekliyor. Ortak
+    `parseDataUrl` yardımcısı `lib/ai/parseDataUrl.ts`'e çıkarıldı. e2e testlerle (alan doğrulama,
+    `e2e/api-recipe.spec.ts`) ve tarayıcıda sahte bir OpenAI anahtarıyla manuel olarak (401→502
+    doğru yansıdı, Gemini/Groq'a düşmedi) doğrulandı; gerçek anahtarlarla henüz denenmedi.
 
 ## Günlük commit rutini için notlar
 

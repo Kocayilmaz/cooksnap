@@ -20,7 +20,8 @@ wok).
 - **Free mode (default):** Gemini (image recognition) + Groq (recipe text), rate-limited per user.
 - **Premium mode:** If the user provides their own Claude or OpenAI API key, the rate limit is
   lifted and output quality improves. The key is never stored on the server — only in the
-  browser.
+  browser, and it's forwarded per-request to power both image recognition and recipe
+  generation.
 
 ## Stack
 
@@ -37,9 +38,12 @@ commits. `POST /api/recipe` is wired end-to-end (Gemini image recognition → Gr
 generation), accepts a photo, free-text ingredients, or both, and supports 3 recipe modes
 (student / home / chef). It also does a best-effort YouTube lookup per recipe (`YOUTUBE_API_KEY`)
 and returns a clear 503 when `GEMINI_API_KEY`/`GROQ_API_KEY` aren't set — real keys haven't been
-provisioned yet. The premium-mode API key UI exists and persists to the browser's `localStorage`,
-but the route doesn't yet call Claude/OpenAI with a user-supplied key. Equipment selection also
-persists to `localStorage` now, so it survives a page reload like the profile and API key do.
+provisioned yet. Premium mode is now wired end-to-end: the API key UI persists to the browser's
+`localStorage`, and when a key is set the app sends it with the request so the route calls
+Claude or OpenAI directly instead of Gemini/Groq (verified in the browser with a placeholder key —
+the request reaches the right provider and a rejected key surfaces as a 502, not a real key yet).
+Equipment selection also persists to `localStorage` now, so it survives a page reload like the
+profile and API key do.
 Recipes can be starred as favorites (`FavoriteButton`), stored locally the same way until Firebase
 is wired up. Free-mode usage is now capped at `FREE_USAGE_LIMIT` (5) requests — once reached, the
 submit button disables and the user is pointed to the profile page to add a premium key. The warm
