@@ -1,4 +1,5 @@
 import type { Equipment } from "@/lib/redux/equipmentSlice";
+import type { PremiumProvider } from "@/lib/redux/apiKeySlice";
 import type { RecipeMode } from "@/lib/redux/recipeModeSlice";
 import type { RecipeLanguage } from "@/lib/redux/userProfileSlice";
 
@@ -15,6 +16,10 @@ export interface RecipeRequest {
   language?: RecipeLanguage;
   /** Profil sayfasındaki ülke tercihi — o ülkenin mutfağına öncelik verilir, kesin kısıtlama değildir. */
   country?: string;
+  /** Premium mod: kullanıcının kendi API anahtarını girdiği saglayici. Belirtilmezse ücretsiz mod (Gemini+Groq) kullanılır. */
+  premiumProvider?: PremiumProvider;
+  /** Premium mod: kullanıcının kendi Claude/OpenAI anahtarı. Sunucuda kalıcı saklanmaz, sadece bu istek için kullanılır. */
+  premiumApiKey?: string;
 }
 
 export interface RecipeSuggestion {
