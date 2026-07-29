@@ -49,3 +49,46 @@ test("POST /api/recipe gecerli govdede AI saglayici yapilandirilmamissa 503 done
   const body = await response.json();
   expect(body.error).toContain("GEMINI_API_KEY");
 });
+
+test("POST /api/recipe gecersiz premiumProvider degerinde 400 doner", async ({ request }) => {
+  const response = await request.post("/api/recipe", {
+    data: {
+      ingredientsText: "2 yumurta",
+      personCount: 2,
+      equipment: ["oven"],
+      mode: "home",
+      premiumProvider: "gemini",
+      premiumApiKey: "test-key",
+    },
+  });
+
+  expect(response.status()).toBe(400);
+});
+
+test("POST /api/recipe premiumProvider olup premiumApiKey olmayinca 400 doner", async ({ request }) => {
+  const response = await request.post("/api/recipe", {
+    data: {
+      ingredientsText: "2 yumurta",
+      personCount: 2,
+      equipment: ["oven"],
+      mode: "home",
+      premiumProvider: "claude",
+    },
+  });
+
+  expect(response.status()).toBe(400);
+});
+
+test("POST /api/recipe premiumApiKey olup premiumProvider olmayinca 400 doner", async ({ request }) => {
+  const response = await request.post("/api/recipe", {
+    data: {
+      ingredientsText: "2 yumurta",
+      personCount: 2,
+      equipment: ["oven"],
+      mode: "home",
+      premiumApiKey: "test-key",
+    },
+  });
+
+  expect(response.status()).toBe(400);
+});
