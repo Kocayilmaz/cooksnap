@@ -60,6 +60,9 @@ export default function Home() {
           mode: recipeMode,
           language: userProfile.language,
           country: userProfile.country.trim() || undefined,
+          ...(isFreeMode
+            ? {}
+            : { premiumProvider: apiKey.provider, premiumApiKey: apiKey.key.trim() }),
         }),
       });
 
