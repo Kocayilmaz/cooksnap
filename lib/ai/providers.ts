@@ -1,19 +1,12 @@
 import type { RecipeRequest, RecipeSuggestion } from "@/lib/types/recipe";
 import { buildRecipePrompt } from "@/lib/ai/buildRecipePrompt";
+import { InvalidDataUrlError, parseDataUrl } from "@/lib/ai/parseDataUrl";
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
 const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
 
 export class ProviderNotConfiguredError extends Error {}
 export class ProviderRequestError extends Error {}
-
-function parseDataUrl(dataUrl: string): { mimeType: string; base64: string } {
-  const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
-  if (!match) {
-    throw new ProviderRequestError("Fotoğraf verisi geçersiz bir data URL formatında.");
-  }
-  return { mimeType: match[1], base64: match[2] };
-}
 
 /** Gemini ile fotoğraftaki yemek/ürünü kısa bir metin olarak tanır. */
 export async function recognizeFoodItem(photoDataUrl: string): Promise<string> {
@@ -22,7 +15,16 @@ export async function recognizeFoodItem(photoDataUrl: string): Promise<string> {
     throw new ProviderNotConfiguredError("GEMINI_API_KEY tanımlı değil.");
   }
 
-  const { mimeType, base64 } = parseDataUrl(photoDataUrl);
+  let mimeType: string;
+  let base64: string;
+  try {
+    ({ mimeType, base64 } = parseDataUrl(photoDataUrl));
+  } catch (error) {
+    if (error instanceof InvalidDataUrlError) {
+      throw new ProviderRequestError(error.message);
+    }
+    throw error;
+  }
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
