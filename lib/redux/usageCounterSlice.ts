@@ -4,12 +4,18 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 /** Ücretsiz moddaki günlük istek limiti; aşılınca kullanıcı premium anahtar girmeye yönlendirilir. */
 export const FREE_USAGE_LIMIT = 5;
 
-interface UsageCounterState {
+/** Bu süre sonunda ücretsiz mod sayacı otomatik olarak sıfırlanır (bkz. StoreProvider). */
+export const USAGE_RESET_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+export interface UsageCounterState {
   count: number;
+  /** Sayacın en son sıfırlandığı an (epoch ms); 24 saat dolduğunda tekrar sıfırlanır. */
+  lastResetAt: number;
 }
 
 const initialState: UsageCounterState = {
   count: 0,
+  lastResetAt: Date.now(),
 };
 
 const usageCounterSlice = createSlice({
@@ -19,8 +25,8 @@ const usageCounterSlice = createSlice({
     incrementUsage(state) {
       state.count += 1;
     },
-    setUsage(state, action: PayloadAction<number>) {
-      state.count = action.payload;
+    setUsage(_state, action: PayloadAction<UsageCounterState>) {
+      return action.payload;
     },
   },
 });

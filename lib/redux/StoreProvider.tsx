@@ -12,7 +12,7 @@ import { setKey, setProvider } from "./apiKeySlice";
 import { setName, setLanguage, setCountry } from "./userProfileSlice";
 import { setEquipment } from "./equipmentSlice";
 import { setFavorites } from "./favoritesSlice";
-import { setUsage } from "./usageCounterSlice";
+import { setUsage, USAGE_RESET_INTERVAL_MS } from "./usageCounterSlice";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -48,7 +48,11 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
 
     const storedUsage = readStoredUsage();
     if (storedUsage !== null) {
-      store.dispatch(setUsage(storedUsage));
+      // 24 saatlik pencere dolduysa ücretsiz mod sayacını sıfırla (bkz. usageCounterSlice).
+      const expired = Date.now() - storedUsage.lastResetAt >= USAGE_RESET_INTERVAL_MS;
+      store.dispatch(
+        setUsage(expired ? { count: 0, lastResetAt: Date.now() } : storedUsage),
+      );
     }
   }, [store]);
 
@@ -97,9 +101,9 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
   }, [store]);
 
   useEffect(() => {
-    let previous = store.getState().usageCounter.count;
+    let previous = store.getState().usageCounter;
     return store.subscribe(() => {
-      const current = store.getState().usageCounter.count;
+      const current = store.getState().usageCounter;
       if (current !== previous) {
         writeStoredUsage(current);
         previous = current;
