@@ -8,11 +8,13 @@ import { readStoredUserProfile, writeStoredUserProfile } from "./localUserProfil
 import { readStoredEquipment, writeStoredEquipment } from "./localEquipmentStorage";
 import { readStoredFavorites, writeStoredFavorites } from "./localFavoritesStorage";
 import { readStoredUsage, writeStoredUsage } from "./localUsageStorage";
+import { readStoredHistory, writeStoredHistory } from "./localHistoryStorage";
 import { setKey, setProvider } from "./apiKeySlice";
 import { setName, setLanguage, setCountry } from "./userProfileSlice";
 import { setEquipment } from "./equipmentSlice";
 import { setFavorites } from "./favoritesSlice";
 import { setUsage, USAGE_RESET_INTERVAL_MS } from "./usageCounterSlice";
+import { setHistory } from "./historySlice";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -53,6 +55,11 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       store.dispatch(
         setUsage(expired ? { count: 0, lastResetAt: Date.now() } : storedUsage),
       );
+    }
+
+    const storedHistory = readStoredHistory();
+    if (storedHistory) {
+      store.dispatch(setHistory(storedHistory));
     }
   }, [store]);
 
@@ -106,6 +113,17 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const current = store.getState().usageCounter;
       if (current !== previous) {
         writeStoredUsage(current);
+        previous = current;
+      }
+    });
+  }, [store]);
+
+  useEffect(() => {
+    let previous = store.getState().history;
+    return store.subscribe(() => {
+      const current = store.getState().history;
+      if (current !== previous) {
+        writeStoredHistory(current);
         previous = current;
       }
     });
