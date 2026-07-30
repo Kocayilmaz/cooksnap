@@ -12,7 +12,7 @@ export default function EquipmentSelector() {
       <span className="text-sm font-medium text-foreground dark:text-zinc-300">
         Elinde ne var?
       </span>
-      <div className="flex flex-wrap gap-2">
+      <div role="group" aria-label="Elinde ne var?" className="flex flex-wrap gap-2">
         {(Object.keys(EQUIPMENT_LABELS) as Equipment[]).map((key) => {
           const active = equipment[key];
           return (
