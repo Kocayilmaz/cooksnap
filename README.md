@@ -44,12 +44,17 @@ Claude or OpenAI directly instead of Gemini/Groq (verified in the browser with a
 the request reaches the right provider and a rejected key surfaces as a 502, not a real key yet).
 Equipment selection also persists to `localStorage` now, so it survives a page reload like the
 profile and API key do.
-Recipes can be starred as favorites (`FavoriteButton`), stored locally the same way until Firebase
-is wired up. Free-mode usage is now capped at `FREE_USAGE_LIMIT` (5) requests — once reached, the
-submit button disables and the user is pointed to the profile page to add a premium key. The warm
-color palette decided in `DESIGN.md` is now applied across the home page and all shared components
-(NavBar, selectors, ApiKeyInput, HelpSection) instead of neutral zinc tones (dark mode still uses
-the previous zinc classes for now).
+Recipes can be starred as favorites (`FavoriteButton`) and browsed on a dedicated `/favorites`
+page; they're stored locally and, best-effort, synced to Firestore if `NEXT_PUBLIC_FIREBASE_*`
+env vars are configured (falls back to local-only otherwise, same "skip silently" pattern as the
+Gemini/Groq/YouTube integrations — no real Firebase project wired up yet). Free-mode usage is
+capped at `FREE_USAGE_LIMIT` (5) requests and now resets automatically every 24 hours; once the
+limit is reached, the submit button disables and the user is pointed to the profile page to add a
+premium key. Every successful request is also saved to a local search history, summarized on the
+home page and clearable. The warm color palette decided in `DESIGN.md` is now applied across the
+entire app, including the profile page (dark mode still uses the previous zinc classes for now).
+Recipe cards have a copy-to-clipboard button, and `PhotoUpload` validates file type/size before
+accepting an upload.
 
 ## Development
 
