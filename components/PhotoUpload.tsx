@@ -7,18 +7,39 @@ interface PhotoUploadProps {
   onPhotoSelected?: (dataUrl: string) => void;
 }
 
+/** Base64 data URL'e çevrilip isteğe eklendiği için makul bir üst sınır konuldu. */
+const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024;
+
 export default function PhotoUpload({ onPhotoSelected }: PhotoUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Sadece resim dosyaları yüklenebilir (jpg, png, webp vb.).");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setError("Dosya çok büyük. En fazla 8 MB yükleyebilirsin.");
+      event.target.value = "";
+      return;
+    }
+
+    setError(null);
 
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
       setPreview(dataUrl);
       onPhotoSelected?.(dataUrl);
+    };
+    reader.onerror = () => {
+      setError("Fotoğraf okunamadı, tekrar dener misin?");
     };
     reader.readAsDataURL(file);
   }
@@ -48,6 +69,11 @@ export default function PhotoUpload({ onPhotoSelected }: PhotoUploadProps) {
           className="hidden"
         />
       </label>
+      {error && (
+        <p role="alert" className="text-xs text-state-error dark:text-red-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
