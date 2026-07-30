@@ -32,7 +32,7 @@ export default function ApiKeyInput() {
             yalnızca bu tarayıcıda saklanır, sunucuya kalıcı olarak kaydedilmez.
           </p>
 
-          <div className="flex gap-2">
+          <div role="group" aria-label="API sağlayıcısı" className="flex gap-2">
             {(Object.keys(PROVIDER_LABELS) as PremiumProvider[]).map((option) => (
               <button
                 key={option}
