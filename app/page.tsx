@@ -8,6 +8,7 @@ import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import FavoriteButton from "@/components/FavoriteButton";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
 import { FREE_USAGE_LIMIT, incrementUsage } from "@/lib/redux/usageCounterSlice";
@@ -105,8 +106,9 @@ export default function Home() {
           type="button"
           onClick={handleSubmit}
           disabled={(!photo && !hasIngredientsText) || status === "loading" || limitReached}
-          className="w-full rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
         >
+          {status === "loading" && <LoadingSpinner size={16} />}
           {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
         </button>
 
