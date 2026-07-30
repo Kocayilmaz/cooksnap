@@ -10,9 +10,11 @@ import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import FavoriteButton from "@/components/FavoriteButton";
 import CopyRecipeButton from "@/components/CopyRecipeButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import RecipeHistoryList from "@/components/RecipeHistoryList";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
 import { FREE_USAGE_LIMIT, incrementUsage } from "@/lib/redux/usageCounterSlice";
+import { addHistoryEntry } from "@/lib/redux/historySlice";
 import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
 
 type Status = "idle" | "loading" | "error" | "success";
@@ -79,6 +81,16 @@ export default function Home() {
       if (isFreeMode) {
         dispatch(incrementUsage());
       }
+      dispatch(
+        addHistoryEntry({
+          ingredientsText: hasIngredientsText ? ingredientsText.trim() : undefined,
+          hadPhoto: Boolean(photo),
+          personCount,
+          equipment,
+          mode: recipeMode,
+          recipeTitles: data.recipes.map((recipe) => recipe.title),
+        }),
+      );
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Beklenmeyen bir hata oluştu.");
@@ -165,6 +177,8 @@ export default function Home() {
             ))}
           </ul>
         )}
+
+        <RecipeHistoryList />
       </main>
     </div>
   );
