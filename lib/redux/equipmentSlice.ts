@@ -25,6 +25,24 @@ export const EQUIPMENT_KEYS: Equipment[] = [
   "wok",
 ];
 
+/**
+ * Türkçe ekipman etiketleri; hem seçim ekranında (EquipmentSelector) hem de
+ * favori tarifleri listeleyen sayfada (app/favorites) kullanılır, bu yüzden
+ * burada merkezi tutuluyor.
+ */
+export const EQUIPMENT_LABELS: Record<Equipment, string> = {
+  oven: "Fırın",
+  pan: "Tava",
+  pot: "Tencere",
+  airfryer: "Airfryer",
+  microwave: "Mikrodalga",
+  pressureCooker: "Düdüklü Tencere",
+  toasterOven: "Tost Makinesi",
+  grill: "Izgara",
+  slowCooker: "Yavaş Pişirici",
+  wok: "Wok",
+};
+
 type EquipmentState = Record<Equipment, boolean>;
 
 const initialState: EquipmentState = {

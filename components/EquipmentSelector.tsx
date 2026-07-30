@@ -1,20 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { toggleEquipment, type Equipment } from "@/lib/redux/equipmentSlice";
-
-const EQUIPMENT_LABELS: Record<Equipment, string> = {
-  oven: "Fırın",
-  pan: "Tava",
-  pot: "Tencere",
-  airfryer: "Airfryer",
-  microwave: "Mikrodalga",
-  pressureCooker: "Düdüklü Tencere",
-  toasterOven: "Tost Makinesi",
-  grill: "Izgara",
-  slowCooker: "Yavaş Pişirici",
-  wok: "Wok",
-};
+import { toggleEquipment, EQUIPMENT_LABELS, type Equipment } from "@/lib/redux/equipmentSlice";
 
 export default function EquipmentSelector() {
   const equipment = useAppSelector((state) => state.equipment);
