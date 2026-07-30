@@ -15,6 +15,7 @@ import { setEquipment } from "./equipmentSlice";
 import { setFavorites } from "./favoritesSlice";
 import { setUsage, USAGE_RESET_INTERVAL_MS } from "./usageCounterSlice";
 import { setHistory } from "./historySlice";
+import { pullFavoritesFromFirestore, pushFavoritesToFirestore } from "@/lib/firebase/favoritesSync";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -47,6 +48,18 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     if (storedFavorites) {
       store.dispatch(setFavorites(storedFavorites));
     }
+
+    // Firebase best-effort senkron: yapılandırılmamışsa (env değişkeni yok)
+    // hiçbir şey yapmaz. Bu cihazda hiç favori yoksa Firestore'daki son
+    // durumu çeker; varsa (Firestore henüz bu cihazın verisini görmemiş
+    // olabilir) yerel favorileri Firestore'a yazar.
+    pullFavoritesFromFirestore().then((remoteFavorites) => {
+      if (remoteFavorites && !storedFavorites) {
+        store.dispatch(setFavorites(remoteFavorites));
+      } else if (storedFavorites) {
+        void pushFavoritesToFirestore(storedFavorites);
+      }
+    });
 
     const storedUsage = readStoredUsage();
     if (storedUsage !== null) {
@@ -102,6 +115,7 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const current = store.getState().favorites;
       if (current !== previous) {
         writeStoredFavorites(current);
+        void pushFavoritesToFirestore(current);
         previous = current;
       }
     });
