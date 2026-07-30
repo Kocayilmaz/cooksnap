@@ -22,7 +22,7 @@ export default function RecipeModeSelector() {
   return (
     <div className="flex flex-col gap-2">
       <span className="text-sm font-medium text-foreground dark:text-zinc-300">Tarif modu</span>
-      <div className="flex gap-2">
+      <div role="group" aria-label="Tarif modu" className="flex gap-2">
         {RECIPE_MODE_KEYS.map((key) => {
           const active = mode === key;
           return (
