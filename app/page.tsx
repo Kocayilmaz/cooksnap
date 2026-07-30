@@ -8,6 +8,7 @@ import EquipmentSelector from "@/components/EquipmentSelector";
 import RecipeModeSelector from "@/components/RecipeModeSelector";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import FavoriteButton from "@/components/FavoriteButton";
+import CopyRecipeButton from "@/components/CopyRecipeButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
@@ -142,12 +143,15 @@ export default function Home() {
                   <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
                     {recipe.title}
                   </p>
-                  <FavoriteButton
-                    equipment={recipe.equipment}
-                    title={recipe.title}
-                    steps={recipe.steps}
-                    videoId={recipe.videoId}
-                  />
+                  <div className="flex shrink-0 items-center gap-3">
+                    <CopyRecipeButton title={recipe.title} steps={recipe.steps} />
+                    <FavoriteButton
+                      equipment={recipe.equipment}
+                      title={recipe.title}
+                      steps={recipe.steps}
+                      videoId={recipe.videoId}
+                    />
+                  </div>
                 </div>
                 <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
                   {recipe.steps.map((step, stepIndex) => (
