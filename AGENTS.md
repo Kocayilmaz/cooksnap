@@ -111,6 +111,43 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
     `parseDataUrl` yardımcısı `lib/ai/parseDataUrl.ts`'e çıkarıldı. e2e testlerle (alan doğrulama,
     `e2e/api-recipe.spec.ts`) ve tarayıcıda sahte bir OpenAI anahtarıyla manuel olarak (401→502
     doğru yansıdı, Gemini/Groq'a düşmedi) doğrulandı; gerçek anahtarlarla henüz denenmedi.
+11. ✅ **Küçük UX/altyapı adımları (2026-07-30):**
+    - `components/LoadingSpinner.tsx` eklendi, ana sayfadaki "Tarif hazırlanıyor…" durumunda
+      kullanılıyor.
+    - `PhotoUpload` artık dosya tipini (`image/*`) ve boyutunu (en fazla 8 MB) doğruluyor,
+      uygun değilse `role="alert"` ile hata mesajı gösteriyor.
+    - `components/CopyRecipeButton.tsx` eklendi: tarif başlığı + adımlarını panoya kopyalar,
+      ana sayfadaki her tarif kartına bağlandı.
+    - **Favoriler sayfası:** `/favorites` route'u eklendi, tüm yıldızlanmış tarifleri listeler
+      (kopyalama ve favoriden çıkarma dahil), boş durumda yönlendirici bir mesaj gösterir.
+      `EQUIPMENT_LABELS` bu sayfada da kullanılabilsin diye `EquipmentSelector.tsx`'ten
+      `lib/redux/equipmentSlice.ts`'e taşındı. `NavBar`'a link eklendi.
+    - **Ücretsiz mod sayacı artık 24 saatte bir otomatik sıfırlanıyor:**
+      `usageCounterSlice`'a `lastResetAt` alanı eklendi (`USAGE_RESET_INTERVAL_MS` = 24 saat);
+      `StoreProvider` mount olduğunda süre dolmuşsa sayacı sıfırlıyor. `localUsageStorage.ts`
+      eski (düz sayı) formatı geriye dönük olarak da okuyabiliyor.
+    - **Tarif arama geçmişi:** `lib/redux/historySlice.ts` + `localHistoryStorage.ts` eklendi
+      (apiKey/equipment ile aynı desende localStorage'da kalıcı, en fazla `MAX_HISTORY_ENTRIES`
+      = 20 kayıt). Her başarılı istek geçmişe ekleniyor, ana sayfada `RecipeHistoryList` ile
+      özetleniyor (tarih, ekipman, kişi sayısı, tarif başlıkları) ve temizlenebiliyor.
+    - **Erişilebilirlik:** `EquipmentSelector`, `RecipeModeSelector`, `ApiKeyInput` sağlayıcı
+      seçimi ve profil sayfasındaki dil seçimi artık `role="group"` + `aria-label` ile
+      gruplandırılmış durumda.
+    - **Görsel kimlik migrasyonu tamamlandı:** `app/profile/page.tsx` daha önce atlanmıştı
+      (bkz. madde 8) — artık o da `zinc-*` yerine `DESIGN.md` token'larını kullanıyor.
+    - **Firebase/Firestore — best-effort katman:** `firebase` paketi eklendi.
+      `lib/firebase/config.ts`, `NEXT_PUBLIC_FIREBASE_*` env değişkenleri tanımlı değilse
+      (henüz provizyon edilmedi) `null` döner — Gemini/Groq/YouTube'daki "anahtar yoksa sessizce
+      atla" deseniyle aynı. Henüz gerçek bir auth sistemi olmadığı için (`lib/firebase/anonymousId.ts`)
+      tarayıcı başına kalıcı bir anonim id kullanılıyor. `lib/firebase/favoritesSync.ts` favorileri
+      best-effort push/pull ediyor; `StoreProvider` mount olduğunda bu cihazda favori yoksa
+      Firestore'dan çekiyor, varsa Firestore'a yazıyor, sonraki her değişiklikte de senkronize
+      ediyor. localStorage asıl kaynak olmaya devam ediyor, Firebase yapılandırılmadığında
+      davranış değişmiyor (e2e testlerle doğrulandı). Gerçek bir Firebase projesiyle henüz
+      denenmedi.
+    - Tüm yeni parçalar için e2e testler eklendi: `e2e/photo-upload.spec.ts`,
+      `e2e/copy-recipe.spec.ts`, `e2e/favorites-page.spec.ts`,
+      `e2e/usage-counter-reset.spec.ts`, `e2e/recipe-history.spec.ts`.
 
 ## Günlük commit rutini için notlar
 
