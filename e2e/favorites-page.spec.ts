@@ -48,3 +48,38 @@ test("favorilenen tarif /favorites sayfasinda listelenir ve kaldirilabilir", asy
   await page.getByRole("button", { name: "Favorilerden çıkar" }).click();
   await expect(page.getByText("Henüz favori tarifin yok.")).toBeVisible();
 });
+
+test("favorilerde baslige gore arama yapilabilir", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "cooksnap:favorites",
+      JSON.stringify({
+        "oven::Firinda Tavuk": {
+          id: "oven::Firinda Tavuk",
+          title: "Firinda Tavuk",
+          equipment: "oven",
+          steps: ["Firini isit", "Pisir"],
+          savedAt: Date.now(),
+        },
+        "pan::Tavada Somon": {
+          id: "pan::Tavada Somon",
+          title: "Tavada Somon",
+          equipment: "pan",
+          steps: ["Tavayi isit", "Pisir"],
+          savedAt: Date.now() - 1000,
+        },
+      }),
+    );
+  });
+  await page.goto("/favorites");
+
+  await expect(page.getByText("Firinda Tavuk")).toBeVisible();
+  await expect(page.getByText("Tavada Somon")).toBeVisible();
+
+  await page.getByPlaceholder("Tarif ara...").fill("somon");
+  await expect(page.getByText("Tavada Somon")).toBeVisible();
+  await expect(page.getByText("Firinda Tavuk")).not.toBeVisible();
+
+  await page.getByPlaceholder("Tarif ara...").fill("makarna");
+  await expect(page.getByText('"makarna" ile eşleşen favori tarif bulunamadı.')).toBeVisible();
+});

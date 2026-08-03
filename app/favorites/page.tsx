@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { toggleFavorite } from "@/lib/redux/favoritesSlice";
 import { EQUIPMENT_LABELS } from "@/lib/redux/equipmentSlice";
@@ -9,8 +10,15 @@ import CopyRecipeButton from "@/components/CopyRecipeButton";
 export default function FavoritesPage() {
   const favorites = useAppSelector((state) => state.favorites);
   const dispatch = useAppDispatch();
+  const [query, setQuery] = useState("");
 
-  const recipes = Object.values(favorites).sort((a, b) => b.savedAt - a.savedAt);
+  const allRecipes = Object.values(favorites).sort((a, b) => b.savedAt - a.savedAt);
+  const normalizedQuery = query.trim().toLocaleLowerCase("tr-TR");
+  const recipes = normalizedQuery
+    ? allRecipes.filter((recipe) =>
+        recipe.title.toLocaleLowerCase("tr-TR").includes(normalizedQuery),
+      )
+    : allRecipes;
 
   return (
     <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12 dark:bg-black">
@@ -22,10 +30,27 @@ export default function FavoritesPage() {
           </p>
         </div>
 
-        {recipes.length === 0 ? (
+        {allRecipes.length > 0 && (
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="sr-only">Favorilerde ara</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Tarif ara..."
+              className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-foreground outline-none focus:border-brand-orange dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
+            />
+          </label>
+        )}
+
+        {allRecipes.length === 0 ? (
           <p className="text-center text-sm text-surface-text-muted dark:text-zinc-400">
             Henüz favori tarifin yok. Ana sayfada bir tarif alıp yıldız butonuna basarak
             ekleyebilirsin.
+          </p>
+        ) : recipes.length === 0 ? (
+          <p className="text-center text-sm text-surface-text-muted dark:text-zinc-400">
+            &quot;{query}&quot; ile eşleşen favori tarif bulunamadı.
           </p>
         ) : (
           <ul className="flex flex-col gap-4">
