@@ -26,7 +26,11 @@ export default function RecipeHistoryList() {
         </span>
         <button
           type="button"
-          onClick={() => dispatch(clearHistory())}
+          onClick={() => {
+            if (window.confirm("Tüm arama geçmişini silmek istediğine emin misin?")) {
+              dispatch(clearHistory());
+            }
+          }}
           className="text-xs text-surface-text-muted hover:text-brand-orange dark:text-zinc-500"
         >
           Geçmişi temizle

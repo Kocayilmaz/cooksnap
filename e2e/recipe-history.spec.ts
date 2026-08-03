@@ -53,6 +53,23 @@ test("gecmis sayfa yenilenince kalicidir ve temizlenebilir", async ({ page }) =>
   await page.reload();
   await expect(page.getByText("Son aramalar")).toBeVisible();
 
+  page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Geçmişi temizle" }).click();
   await expect(page.getByText("Son aramalar")).toBeHidden();
+});
+
+test("gecmisi temizle onay istemi reddedilirse gecmis silinmez", async ({ page }) => {
+  await mockRecipeResponse(page);
+  await page.goto("/");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "test.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(tinyPngBase64, "base64"),
+  });
+  await page.getByRole("button", { name: "Tarifi getir" }).click();
+  await expect(page.getByText("Son aramalar")).toBeVisible();
+
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await page.getByRole("button", { name: "Geçmişi temizle" }).click();
+  await expect(page.getByText("Son aramalar")).toBeVisible();
 });
