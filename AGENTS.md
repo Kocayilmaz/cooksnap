@@ -148,6 +148,31 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
     - Tüm yeni parçalar için e2e testler eklendi: `e2e/photo-upload.spec.ts`,
       `e2e/copy-recipe.spec.ts`, `e2e/favorites-page.spec.ts`,
       `e2e/usage-counter-reset.spec.ts`, `e2e/recipe-history.spec.ts`.
+12. ✅ **Birim test altyapısı + küçük UX iyileştirmeleri (2026-08-03):**
+    - **Vitest eklendi:** Şimdiye kadar sadece Playwright e2e testleri vardı; artık saf
+      fonksiyon/reducer'lar için hızlı birim testler de var (`vitest.config.mts`,
+      `npm run test:unit`, CI'ye eklendi — bkz. `.github/workflows/ci.yml`).
+      `lib/ai/buildRecipePrompt.ts`, `lib/ai/parseDataUrl.ts` ve `favoritesSlice`,
+      `historySlice`, `usageCounterSlice`, `equipmentSlice` reducer'ları için testler yazıldı.
+    - `npm audit fix` ile `brace-expansion` güvenlik uyarısı giderildi (Next.js'in kendi
+      bağımlılık aralığı dışına çıkan majör sürüm yükseltmesi gerektiren uyarılar — Next.js
+      middleware/Server Actions ile ilgili birkaç CVE — bilinçli olarak bu oturuma dahil
+      edilmedi, ayrı ve dikkatli bir adım gerektiriyor).
+    - **404 sayfası:** `app/not-found.tsx` eklendi, `DESIGN.md` paletiyle.
+    - **Genel hata sınırı:** `app/error.tsx` eklendi, `DESIGN.md` paletiyle (`reset` ile
+      "Tekrar dene").
+    - **Favoriler sayfasında arama:** `/favorites`'e başlığa göre filtreleyen bir arama
+      kutusu eklendi (Türkçe locale-aware, büyük/küçük harf duyarsız), eşleşme yoksa
+      yönlendirici bir boş durum mesajı gösteriyor. e2e testle doğrulandı.
+    - **Geçmişi temizle onayı:** `RecipeHistoryList`'teki "Geçmişi temizle" butonu artık
+      `window.confirm` ile onay istiyor (öncesinde tek tıkla tüm arama geçmişi geri
+      dönüşsüz siliniyordu). Onay/red iki durumu da e2e testle kapsandı.
+    - Not: Bu oturumda geliştirme sunucusu Turbopack ile yeni bir route (page.tsx) derlerken
+      `OneDrive\Masaüstü` yolundaki "ü" karakteri yüzünden `TurbopackInternalError` fırlattığı
+      gözlemlendi (mevcut route'lar — `/`, `/favorites`, `/profile`, `/_not-found` — etkilenmedi,
+      sorun sadece dev oturumu sırasında yeni eklenen bir test route'unda ortaya çıktı).
+      Kod tarafında bir şey yapılmadı; ileride tekrar görülürse projeyi ASCII karakterli bir yola
+      taşımak (ör. `C:\dev\ne-pisirsem`) kalıcı çözüm olabilir.
 
 ## Günlük commit rutini için notlar
 

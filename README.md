@@ -54,7 +54,10 @@ premium key. Every successful request is also saved to a local search history, s
 home page and clearable. The warm color palette decided in `DESIGN.md` is now applied across the
 entire app, including the profile page (dark mode still uses the previous zinc classes for now).
 Recipe cards have a copy-to-clipboard button, and `PhotoUpload` validates file type/size before
-accepting an upload.
+accepting an upload. Pure functions and Redux reducers now have unit tests (Vitest, run via
+`npm run test:unit`) alongside the existing Playwright e2e suite. There's a custom 404 page and a
+top-level error boundary, favorites can be filtered by title, and clearing recipe history now asks
+for confirmation first.
 
 ## Development
 
