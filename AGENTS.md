@@ -174,6 +174,18 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
       Kod tarafında bir şey yapılmadı; ileride tekrar görülürse projeyi ASCII karakterli bir yola
       taşımak (ör. `C:\dev\ne-pisirsem`) kalıcı çözüm olabilir.
 
+13. ✅ **Birim test kapsami genisletildi (2026-08-04):** Vitest altyapisi zaten vardi (bkz. madde 12);
+    bugun eksik kalan tum reducer'lar ve localStorage yardimci modulleri icin testler eklendi:
+    - `apiKeySlice`, `personCountSlice` (kisi sayisi kirpma sinirlarindaki edge case'ler dahil),
+      `recipeModeSlice`, `userProfileSlice` icin reducer testleri.
+    - `localApiKeyStorage`, `localUserProfileStorage`, `localEquipmentStorage`,
+      `localFavoritesStorage`, `localUsageStorage` (eski duz-sayi formatinin geriye donuk okunmasi
+      dahil) ve `localHistoryStorage` icin roundtrip + bozuk/gecersiz veri korumasi testleri
+      (`vi.stubGlobal("window", ...)` ile localStorage mock'lanarak, `vitest.config.mts`'teki
+      `environment: "node"` ayari degistirilmeden).
+    - Artik `lib/redux/` altindaki her slice ve her localStorage yardimcisinin kendi test dosyasi
+      var (toplam 77 birim test, 16 dosya). `npm run test:unit` ve lint/tsc temiz.
+
 ## Günlük commit rutini için notlar
 
 - Her gün küçük, tek konuya odaklı, gerçek bir adım ekle (bir API route, bir bileşen, bir test —
