@@ -10,6 +10,7 @@ export default function RecipeVideoEmbed({ videoId, title }: RecipeVideoEmbedPro
         src={`https://www.youtube.com/embed/${videoId}`}
         title={`${title} tarif videosu`}
         allowFullScreen
+        loading="lazy"
         className="aspect-video w-full"
       />
     </div>
