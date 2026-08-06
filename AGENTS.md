@@ -186,6 +186,27 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
     - Artik `lib/redux/` altindaki her slice ve her localStorage yardimcisinin kendi test dosyasi
       var (toplam 77 birim test, 16 dosya). `npm run test:unit` ve lint/tsc temiz.
 
+14. ✅ **Birim test kapsami AI/Firebase katmanina genisletildi + kucuk erisilebilirlik/perf
+    duzeltmeleri (2026-08-06):**
+    - `lib/firebase/anonymousId.ts`, `lib/ai/youtube.ts` (`findRecipeVideoId`),
+      `lib/ai/providers.ts` (`recognizeFoodItem`, `generateRecipes`) ve
+      `lib/firebase/favoritesSync.ts` icin birim testler eklendi — `fetch`/`firebase/firestore`
+      `vi.stubGlobal`/`vi.mock` ile taklit edilerek yapilandirma eksikligi, istek hatasi, gecersiz
+      yanit ve best-effort hata yutma yollari kapsandi (`favoritesSync.test.ts` ag/izin hatasinin
+      `pushFavoritesToFirestore`/`pullFavoritesFromFirestore`'dan disari sizmadigini dogruluyor).
+      Artik `lib/` altinda test yazilmamis pure/best-effort modul kalmadi (toplam birim test
+      sayisi 106, 20 dosya).
+    - **Erisilebilirlik:** `IngredientTextInput`'taki gorsel `<span>` etiketi gercek bir
+      `<label htmlFor>` + textarea `id` ikilisine baglandi (once ekran okuyucuya baglanmiyordu).
+      `ApiKeyInput`'taki sifre alanina `aria-label` eklendi (sadece placeholder'a dayaniyordu).
+      `NavBar`'daki aktif linke `aria-current="page"` eklendi. Ana sayfadaki tarif sonucu/hata
+      bolgesi `aria-live="polite"` ile sarmalandi, boylece istek tamamlaninca ekran okuyucu yeni
+      icerigi otomatik duyuruyor.
+    - **Kucuk performans duzeltmesi:** `RecipeVideoEmbed`'teki YouTube iframe'ine `loading="lazy"`
+      eklendi.
+    - Tum degisiklikler sonrasi `npm run lint`, `npx tsc --noEmit`, `npm run test:unit` (106/106)
+      ve `npx playwright test` (36/36) calistirildi, hepsi temiz.
+
 ## Günlük commit rutini için notlar
 
 - Her gün küçük, tek konuya odaklı, gerçek bir adım ekle (bir API route, bir bileşen, bir test —

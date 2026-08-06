@@ -55,10 +55,15 @@ home page and clearable. The warm color palette decided in `DESIGN.md` is now ap
 entire app, including the profile page (dark mode still uses the previous zinc classes for now).
 Recipe cards have a copy-to-clipboard button, and `PhotoUpload` validates file type/size before
 accepting an upload. Pure functions and Redux reducers now have unit tests (Vitest, run via
-`npm run test:unit`) alongside the existing Playwright e2e suite — every reducer under `lib/redux/`
-and every `localStorage` helper now has its own test file (77 unit tests across 16 files). There's a
-custom 404 page and a top-level error boundary, favorites can be filtered by title, and clearing
-recipe history now asks for confirmation first.
+`npm run test:unit`) alongside the existing Playwright e2e suite — every reducer under `lib/redux/`,
+every `localStorage` helper, the AI provider calls (`recognizeFoodItem`, `generateRecipes`,
+`findRecipeVideoId`), and the Firestore best-effort sync layer now have their own test file
+(106 unit tests across 20 files, `fetch`/`firebase/firestore` mocked). There's a custom 404 page
+and a top-level error boundary, favorites can be filtered by title, and clearing recipe history now
+asks for confirmation first. A few accessibility gaps were closed: the ingredient textarea and the
+API key field are properly labeled for screen readers, the active nav link exposes
+`aria-current="page"`, and the recipe result/error area is wrapped in an `aria-live` region so a
+finished request gets announced automatically.
 
 ## Development
 
