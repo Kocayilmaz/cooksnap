@@ -20,6 +20,7 @@ export default function NavBar() {
           <Link
             key={link.href}
             href={link.href}
+            aria-current={active ? "page" : undefined}
             className={`text-sm font-medium transition-colors ${
               active
                 ? "text-brand-orange"
