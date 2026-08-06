@@ -138,45 +138,47 @@ export default function Home() {
           </p>
         )}
 
-        {status === "error" && error && (
-          <p role="alert" className="text-center text-sm text-state-error dark:text-red-400">
-            {error}
-          </p>
-        )}
+        <div aria-live="polite" className="flex flex-col gap-4">
+          {status === "error" && error && (
+            <p role="alert" className="text-center text-sm text-state-error dark:text-red-400">
+              {error}
+            </p>
+          )}
 
-        {status === "success" && (
-          <ul className="flex flex-col gap-4">
-            {recipes.map((recipe, index) => (
-              <li
-                key={`${recipe.equipment}-${index}`}
-                className="rounded-xl border border-surface-border p-4 dark:border-zinc-800"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
-                    {recipe.title}
-                  </p>
-                  <div className="flex shrink-0 items-center gap-3">
-                    <CopyRecipeButton title={recipe.title} steps={recipe.steps} />
-                    <FavoriteButton
-                      equipment={recipe.equipment}
-                      title={recipe.title}
-                      steps={recipe.steps}
-                      videoId={recipe.videoId}
-                    />
+          {status === "success" && (
+            <ul className="flex flex-col gap-4">
+              {recipes.map((recipe, index) => (
+                <li
+                  key={`${recipe.equipment}-${index}`}
+                  className="rounded-xl border border-surface-border p-4 dark:border-zinc-800"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
+                      {recipe.title}
+                    </p>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <CopyRecipeButton title={recipe.title} steps={recipe.steps} />
+                      <FavoriteButton
+                        equipment={recipe.equipment}
+                        title={recipe.title}
+                        steps={recipe.steps}
+                        videoId={recipe.videoId}
+                      />
+                    </div>
                   </div>
-                </div>
-                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
-                  {recipe.steps.map((step, stepIndex) => (
-                    <li key={stepIndex}>{step}</li>
-                  ))}
-                </ol>
-                {recipe.videoId && (
-                  <RecipeVideoEmbed videoId={recipe.videoId} title={recipe.title} />
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+                  <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
+                    {recipe.steps.map((step, stepIndex) => (
+                      <li key={stepIndex}>{step}</li>
+                    ))}
+                  </ol>
+                  {recipe.videoId && (
+                    <RecipeVideoEmbed videoId={recipe.videoId} title={recipe.title} />
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <RecipeHistoryList />
       </main>
