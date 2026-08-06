@@ -8,10 +8,14 @@ interface IngredientTextInputProps {
 export default function IngredientTextInput({ value, onChange }: IngredientTextInputProps) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-foreground dark:text-zinc-300">
+      <label
+        htmlFor="ingredients-text"
+        className="text-sm font-medium text-foreground dark:text-zinc-300"
+      >
         Elindeki malzemeler (fotoğraf yerine veya fotoğrafla birlikte)
-      </span>
+      </label>
       <textarea
+        id="ingredients-text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder="Örn: 2 yumurta, bir avuç ıspanak, biraz peynir"
