@@ -56,6 +56,7 @@ export default function ApiKeyInput() {
               value={key}
               onChange={(event) => dispatch(setKey(event.target.value))}
               placeholder={`${PROVIDER_LABELS[provider]} API anahtarı`}
+              aria-label={`${PROVIDER_LABELS[provider]} API anahtarı`}
               autoComplete="off"
               className="w-full rounded-lg border border-surface-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand-orange dark:border-zinc-700"
             />
