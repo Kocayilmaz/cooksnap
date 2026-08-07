@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import StoreProvider from "@/lib/redux/StoreProvider";
 import NavBar from "@/components/NavBar";
+import { SITE_URL } from "@/lib/siteUrl";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const title = "CookSnap";
+const description =
+  "Snap a photo of a food item and get an AI-generated recipe based on your servings and equipment.";
+
 export const metadata: Metadata = {
-  title: "CookSnap",
-  description: "Snap a photo, get a recipe based on your servings and equipment.",
+  metadataBase: new URL(SITE_URL),
+  title,
+  description,
+  keywords: ["recipe", "ai", "cooking", "food recognition", "recipe generator"],
+  openGraph: {
+    title,
+    description,
+    url: SITE_URL,
+    siteName: title,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({
