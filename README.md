@@ -63,11 +63,16 @@ and a top-level error boundary, favorites can be filtered by title, and clearing
 asks for confirmation first. A few accessibility gaps were closed: the ingredient textarea and the
 API key field are properly labeled for screen readers, the active nav link exposes
 `aria-current="page"`, and the recipe result/error area is wrapped in an `aria-live` region so a
-finished request gets announced automatically.
+finished request gets announced automatically. Unit test coverage now also includes the AI
+provider calls, the YouTube lookup, and the Firestore best-effort sync layer (109 tests, 21 files).
+The app now ships `robots.txt`, `sitemap.xml`, a web app manifest, a code-generated favicon, and
+richer Open Graph/Twitter metadata, so a shared link renders a proper title/description/card. A
+photo you've uploaded can be removed with an on-preview button instead of only being replaceable.
 
 ## Development
 
 ```bash
+cp .env.example .env.local  # fill in the keys you have
 npm run dev
 ```
 

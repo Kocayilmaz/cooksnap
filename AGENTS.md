@@ -207,6 +207,39 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
     - Tum degisiklikler sonrasi `npm run lint`, `npx tsc --noEmit`, `npm run test:unit` (106/106)
       ve `npx playwright test` (36/36) calistirildi, hepsi temiz.
 
+15. ✅ **Metadata/SEO altyapisi + kucuk UX/altyapi adimlari (2026-08-07):**
+    - **`.env.example` eklendi:** Kodda kullanilan tum ortam degiskenleri (GEMINI/GROQ/CLAUDE/OPENAI
+      key/model, YOUTUBE_API_KEY, NEXT_PUBLIC_FIREBASE_*) belgelendi; `.gitignore`'daki `.env*`
+      kurali bunu da kapsadigi icin `!.env.example` istisnasi eklendi.
+    - **`.nvmrc` eklendi:** CI'daki (`node-version: 20`) ile ayni surumu lokal gelistirmeye de sabitler.
+    - **Next.js metadata route'lari:** `app/robots.ts`, `app/sitemap.ts` (`/`, `/profile`, `/favorites`)
+      ve `app/manifest.ts` (DESIGN.md'deki brand-orange/surface-warm renkleriyle) eklendi. Hepsi
+      icin ortak site origin'i `lib/siteUrl.ts`'ten geliyor (`NEXT_PUBLIC_SITE_URL` ile override
+      edilebilir, varsayilan Vercel proje URL'i).
+    - **`app/layout.tsx` metadata'si zenginlestirildi:** `metadataBase`, `openGraph`, `twitter`,
+      `keywords` eklendi — README'deki "may be shared publicly" notuna uygun olarak paylasilinca
+      dogru baslik/aciklama/kart gostersin diye.
+    - **`app/icon.tsx` eklendi:** `next/og` `ImageResponse` ile kod-uretimli, brand-orange renkli
+      32x32 favicon; scaffold'dan kalan varsayilan `favicon.ico` yerine.
+    - **`PhotoUpload`'a fotograf kaldirma butonu eklendi:** Onceden secilen fotografi degistirmenin
+      tek yolu baska bir dosya secmekti; artik onizleme uzerinde bir X butonuyla secim temizlenip
+      `onPhotoSelected(null)` tetikleniyor (`ApiKeyInput`'taki "Temizle" desenine benzer). e2e testle
+      dogrulandi (`e2e/photo-upload.spec.ts`).
+    - **`buildRecipeText` disariya acildi:** Once `CopyRecipeButton.tsx` icinde export edilmeyen bir
+      saf fonksiyondu; `lib/formatRecipeText.ts`'e tasinip diger `lib/` saf fonksiyonlariyla
+      (`buildRecipePrompt`, `parseDataUrl`) ayni desende test edildi (`lib/formatRecipeText.test.ts`).
+    - **Denenip geri alinan adim — `app/loading.tsx`:** `error.tsx`/`not-found.tsx` ile ayni desende
+      global bir yukleme iskeleti eklendi, ancak route seviyesindeki Suspense boundary'si
+      `StoreProvider`'in mount-sonrasi localStorage rehydration effect'iyle (bkz. yukaridaki
+      "Ekran yapisi ve gezinme" notundaki hydration aciklamasi) celisti: sayfa reload edildiginde
+      equipment/dil gibi kalici state'ler geri gelmiyordu. `e2e/home.spec.ts` ve `e2e/profile.spec.ts`
+      icindeki "sayfa yenilenince kalici kalir" testleri bunu yakaladi (dosya varken kirmizi,
+      kaldirilinca yesil), bu yuzden commit geri alindi. Global loading skeleton fikri gecerli ama
+      bu StoreProvider deseniyle uyumlu calisan ayri bir cozum gerektiriyor.
+    - Tum degisiklikler sonrasi `npm run lint`, `npm run build`, `npm run test:unit` (109/109) ve
+      `npm run test:e2e` (37/37) calistirildi, hepsi temiz. Kullanicinin acik onayiyla `origin/master`'a
+      pushlandi.
+
 ## Günlük commit rutini için notlar
 
 - Her gün küçük, tek konuya odaklı, gerçek bir adım ekle (bir API route, bir bileşen, bir test —
