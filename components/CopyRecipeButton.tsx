@@ -1,15 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { buildRecipeText } from "@/lib/formatRecipeText";
 
 interface CopyRecipeButtonProps {
   title: string;
   steps: string[];
-}
-
-function buildRecipeText(title: string, steps: string[]): string {
-  const numberedSteps = steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
-  return `${title}\n\n${numberedSteps}`;
 }
 
 /** Tarif başlığı + adımlarını panoya kopyalar, kısa süreliğine "Kopyalandı" geri bildirimi gösterir. */
