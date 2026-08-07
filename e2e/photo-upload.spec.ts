@@ -1,5 +1,8 @@
 import { test, expect } from "@playwright/test";
 
+const tinyPngBase64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+
 test("resim olmayan dosya yüklenince hata mesajı gösterilir", async ({ page }) => {
   await page.goto("/");
 
@@ -24,4 +27,22 @@ test("8MB'den büyük dosya yüklenince hata mesajı gösterilir", async ({ page
   });
 
   await expect(page.getByText("Dosya çok büyük. En fazla 8 MB yükleyebilirsin.")).toBeVisible();
+});
+
+test("yüklenen fotoğraf 'Fotoğrafı kaldır' butonuyla kaldırılabilir", async ({ page }) => {
+  await page.goto("/");
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "yemek.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(tinyPngBase64, "base64"),
+  });
+
+  const removeButton = page.getByRole("button", { name: "Fotoğrafı kaldır" });
+  await expect(removeButton).toBeVisible();
+
+  await removeButton.click();
+
+  await expect(removeButton).toHaveCount(0);
+  await expect(page.getByText("Fotoğraf yüklemek için tıkla")).toBeVisible();
 });
