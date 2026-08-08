@@ -23,6 +23,12 @@ const FAQ_ITEMS = [
     answer:
       "Hayır, video önerisi en iyi çaba (best-effort) ile eklenir; bulunamazsa tarif yine de gösterilir, sadece video bölümü olmaz.",
   },
+  {
+    question: "API anahtarımı nereden alabilirim?",
+    answer:
+      "Groq (tarif metni) ve Google Gemini (fotoğraf tanıma) tamamen ücretsizdir ve kredi kartı istemez — console.groq.com/keys ve aistudio.google.com/apikey adreslerinden birkaç dakikada alınabilir. Premium moda (sınırsız kullanım) girmek istersen kendi Claude ya da OpenAI anahtarını da profil sayfasındaki \"Premium mod\" kutusuna girebilirsin, bu ikisi genelde ücretlidir.",
+    guideUrl: "/api-key-rehberi.pdf",
+  },
 ];
 
 export default function HelpSection() {
@@ -46,7 +52,22 @@ export default function HelpSection() {
               <dt className="text-sm font-medium text-foreground dark:text-zinc-200">
                 {item.question}
               </dt>
-              <dd className="text-xs text-surface-text-muted dark:text-zinc-400">{item.answer}</dd>
+              <dd className="text-xs text-surface-text-muted dark:text-zinc-400">
+                {item.answer}
+                {item.guideUrl && (
+                  <>
+                    {" "}
+                    <a
+                      href={item.guideUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-brand-orange underline hover:no-underline"
+                    >
+                      Detaylı anlatım için rehberi oku (PDF)
+                    </a>
+                  </>
+                )}
+              </dd>
             </div>
           ))}
         </dl>
