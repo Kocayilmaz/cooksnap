@@ -240,6 +240,32 @@ gerçek bir AI çağrısı henüz canlıda denenmedi (bkz. README "Status").
       `npm run test:e2e` (37/37) calistirildi, hepsi temiz. Kullanicinin acik onayiyla `origin/master`'a
       pushlandi.
 
+16. ✅ **API anahtari rehberi + Premium mod'a Gemini/Groq eklendi (2026-08-09):** `components/HelpSection.tsx`'e
+    API anahtari alma SSS'i ve `public/api-key-rehberi.pdf` (dort saglayici icin gercek ekran
+    goruntuleriyle adim adim rehber) eklendi. Ayrica Premium mod artik sadece Claude/OpenAI degil,
+    Gemini ve Groq'u da destekliyor (`lib/ai/geminiProvider.ts`, `lib/ai/groqProvider.ts`,
+    `apiKeySlice.ts`, `route.ts` dispatch) — kullanici kendi Gemini/Groq anahtarini da profil
+    sayfasindan girebiliyor, sunucu tarafindaki `.env.local` (ucretsiz mod) hala ayrica duruyor.
+    Groq metin tabanli oldugu icin fotografla birlikte seciliyorsa 400 donuyor. 109 unit + 38 e2e
+    test temiz, `origin/master`'a pushlandi.
+
+## Planlanan (henuz uygulanmadi) — Firebase Auth + cihazlar arasi API key senkronu
+
+Kullanicinin 2026-08-09'da onayladigi yon: gercek bir login sistemi (Firebase Auth) kurulacak,
+boylece kullanicilar farkli cihaz/tarayicidan giris yapinca Premium mod anahtarlarini tekrar
+girmek zorunda kalmayacak (su an anahtar sadece `localStorage`'da — ayni tarayicida kalici ama
+cihaz degisince kaybolur).
+
+**Kritik tasarim karari:** Anahtarlar Firestore'a **sunucunun cozebilecegi** bir sekilde (orn.
+sunucudaki bir env degiskeniyle sifrelenerek) DEGIL, **sadece tarayicida** sifrelenip oyle
+yazilacak (orn. Web Crypto API ile, sifreleme anahtari kullanicinin kendi parolasindan turetilir,
+sunucuya hic gonderilmez). Boylece sunucu/Firestore ele gecirilse bile hicbir kullanicinin API
+anahtari cozulemez — bugunku "anahtar hic sunucuya gitmiyor" guvenlik ilkesi ozde korunmus olur,
+sadece cihazlar arasi senkron eklenmis olur. Sunucu tarafinda cozulebilir sifreleme (tek noktadan
+sizinca herkesin anahtari acik olur) kullanilmayacak.
+
+Bir sonraki oturumda buradan devam edilecek; henuz kod tarafinda hicbir sey baslanmadi.
+
 ## Günlük commit rutini için notlar
 
 - Her gün küçük, tek konuya odaklı, gerçek bir adım ekle (bir API route, bir bileşen, bir test —
