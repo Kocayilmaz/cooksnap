@@ -57,12 +57,31 @@ test("POST /api/recipe gecersiz premiumProvider degerinde 400 doner", async ({ r
       personCount: 2,
       equipment: ["oven"],
       mode: "home",
-      premiumProvider: "gemini",
+      premiumProvider: "mistral",
       premiumApiKey: "test-key",
     },
   });
 
   expect(response.status()).toBe(400);
+});
+
+test("POST /api/recipe Groq premium ile fotograf gonderilirse 400 doner (vision destegi yok)", async ({
+  request,
+}) => {
+  const response = await request.post("/api/recipe", {
+    data: {
+      photoDataUrl: "data:image/png;base64,AAAA",
+      personCount: 2,
+      equipment: ["oven"],
+      mode: "home",
+      premiumProvider: "groq",
+      premiumApiKey: "test-key",
+    },
+  });
+
+  expect(response.status()).toBe(400);
+  const body = await response.json();
+  expect(body.error).toContain("Groq");
 });
 
 test("POST /api/recipe premiumProvider olup premiumApiKey olmayinca 400 doner", async ({ request }) => {

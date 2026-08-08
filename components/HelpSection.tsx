@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
   {
     question: "Premium mod ne işe yarar?",
     answer:
-      "Kendi Claude veya OpenAI anahtarını girersen ücretsiz moddaki kullanım limiti kalkar. Bu anahtar da yalnızca tarayıcında tutulur.",
+      "Kendi Claude, OpenAI, Gemini ya da Groq anahtarını girersen ücretsiz moddaki kullanım limiti kalkar. Bu anahtar da yalnızca tarayıcında tutulur.",
   },
   {
     question: "Tarif videosu her zaman geliyor mu?",
@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
   {
     question: "API anahtarımı nereden alabilirim?",
     answer:
-      "Groq (tarif metni) ve Google Gemini (fotoğraf tanıma) tamamen ücretsizdir ve kredi kartı istemez — console.groq.com/keys ve aistudio.google.com/apikey adreslerinden birkaç dakikada alınabilir. Premium moda (sınırsız kullanım) girmek istersen kendi Claude ya da OpenAI anahtarını da profil sayfasındaki \"Premium mod\" kutusuna girebilirsin, bu ikisi genelde ücretlidir.",
+      "Dört sağlayıcıdan (Groq, Gemini, Claude, OpenAI) birini seçip profil sayfasındaki \"Premium mod\" kutusuna anahtarını girebilirsin. Groq ve Gemini ücretsiz katmanla başlar ve kredi kartı istemez (console.groq.com/keys, aistudio.google.com/apikey); Claude ve OpenAI genelde ücretlidir. Not: Groq fotoğraf tanıma desteklemiyor, sadece yazılı malzeme girişiyle çalışır.",
     guideUrl: "/api-key-rehberi.pdf",
   },
 ];

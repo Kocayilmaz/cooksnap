@@ -16,7 +16,30 @@ import {
 } from "@/lib/ai/providers";
 import { generateRecipesWithClaude, recognizeFoodItemWithClaude } from "@/lib/ai/claudeProvider";
 import { generateRecipesWithOpenAI, recognizeFoodItemWithOpenAI } from "@/lib/ai/openaiProvider";
+import { generateRecipesWithGemini, recognizeFoodItemWithGemini } from "@/lib/ai/geminiProvider";
+import { generateRecipesWithGroq } from "@/lib/ai/groqProvider";
 import { findRecipeVideoId } from "@/lib/ai/youtube";
+
+type RecognizeFn = (photoDataUrl: string, apiKey: string) => Promise<string>;
+type GenerateFn = (
+  ingredientsDescription: string,
+  request: Pick<RecipeRequest, "personCount" | "equipment" | "mode" | "language" | "country">,
+  apiKey: string,
+) => Promise<RecipeSuggestion[]>;
+
+/** Groq metin tabanlı bir model - fotoğraf tanıma (vision) desteklemiyor. */
+const RECOGNIZE_BY_PROVIDER: Partial<Record<PremiumProvider, RecognizeFn>> = {
+  claude: recognizeFoodItemWithClaude,
+  openai: recognizeFoodItemWithOpenAI,
+  gemini: recognizeFoodItemWithGemini,
+};
+
+const GENERATE_BY_PROVIDER: Record<PremiumProvider, GenerateFn> = {
+  claude: generateRecipesWithClaude,
+  openai: generateRecipesWithOpenAI,
+  gemini: generateRecipesWithGemini,
+  groq: generateRecipesWithGroq,
+};
 
 const MIN_PEOPLE = 1;
 const MAX_PEOPLE = 12;
@@ -110,18 +133,27 @@ export async function POST(request: Request) {
     let recipes: RecipeSuggestion[];
 
     if (premiumProvider && premiumApiKey) {
-      const recognize =
-        premiumProvider === "claude" ? recognizeFoodItemWithClaude : recognizeFoodItemWithOpenAI;
-      const generate =
-        premiumProvider === "claude" ? generateRecipesWithClaude : generateRecipesWithOpenAI;
-
+      const recognize = RECOGNIZE_BY_PROVIDER[premiumProvider];
       if (body.photoDataUrl) {
+        if (!recognize) {
+          return NextResponse.json<ApiErrorResponse>(
+            {
+              error:
+                "Groq fotoğraf tanımayı desteklemiyor. Groq seçiliyken lütfen malzemelerini yazarak devam et.",
+            },
+            { status: 400 },
+          );
+        }
         const recognizedItem = await recognize(body.photoDataUrl, premiumApiKey);
         ingredientsDescription = ingredientsDescription
           ? `${recognizedItem}; additionally: ${ingredientsDescription}`
           : recognizedItem;
       }
-      recipes = await generate(ingredientsDescription, recipeContext, premiumApiKey);
+      recipes = await GENERATE_BY_PROVIDER[premiumProvider](
+        ingredientsDescription,
+        recipeContext,
+        premiumApiKey,
+      );
     } else {
       if (body.photoDataUrl) {
         const recognizedItem = await recognizeFoodItem(body.photoDataUrl);

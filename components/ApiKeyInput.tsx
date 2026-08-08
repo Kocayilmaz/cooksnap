@@ -7,6 +7,8 @@ import { clearApiKey, setKey, setProvider, type PremiumProvider } from "@/lib/re
 const PROVIDER_LABELS: Record<PremiumProvider, string> = {
   claude: "Claude",
   openai: "OpenAI",
+  gemini: "Gemini",
+  groq: "Groq",
 };
 
 export default function ApiKeyInput() {
@@ -28,8 +30,10 @@ export default function ApiKeyInput() {
       {open && (
         <div className="flex flex-col gap-3">
           <p className="text-xs text-surface-text-muted dark:text-zinc-400">
-            Kendi Claude veya OpenAI anahtarını girersen ücretsiz mod limiti kalkar. Anahtar
-            yalnızca bu tarayıcıda saklanır, sunucuya kalıcı olarak kaydedilmez.
+            Kendi Claude, OpenAI, Gemini ya da Groq anahtarını girersen ücretsiz mod limiti kalkar.
+            Anahtar yalnızca bu tarayıcıda saklanır, sunucuya kalıcı olarak kaydedilmez. Not: Groq
+            fotoğraf tanıma desteklemiyor — Groq seçiliyken malzemelerini yazarak devam etmen
+            gerekir.
           </p>
 
           <div role="group" aria-label="API sağlayıcısı" className="flex gap-2">
