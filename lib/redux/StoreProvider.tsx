@@ -16,6 +16,8 @@ import { setFavorites } from "./favoritesSlice";
 import { setUsage, USAGE_RESET_INTERVAL_MS } from "./usageCounterSlice";
 import { setHistory } from "./historySlice";
 import { pullFavoritesFromFirestore, pushFavoritesToFirestore } from "@/lib/firebase/favoritesSync";
+import { setAuthenticatedUser, setUnauthenticated } from "./authSlice";
+import { subscribeToAuthState } from "@/lib/firebase/auth";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -74,6 +76,19 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     if (storedHistory) {
       store.dispatch(setHistory(storedHistory));
     }
+
+    // Firebase yapılandırılmamışsa subscribeToAuthState hiç dinlemeye başlamadan
+    // hemen no-op unsubscribe döner; bu durumda status "loading"de takılı
+    // kalmaması için burada elle "unauthenticated"e çekiyoruz.
+    const unsubscribeAuth = subscribeToAuthState((user) => {
+      if (user) {
+        store.dispatch(setAuthenticatedUser({ uid: user.uid, email: user.email }));
+      } else {
+        store.dispatch(setUnauthenticated());
+      }
+    });
+
+    return () => unsubscribeAuth();
   }, [store]);
 
   useEffect(() => {

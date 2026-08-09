@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { signOutUser } from "@/lib/firebase/auth";
 
 const LINKS = [
   { href: "/", label: "Ana Sayfa" },
@@ -11,9 +13,10 @@ const LINKS = [
 
 export default function NavBar() {
   const pathname = usePathname();
+  const { status, email } = useAppSelector((state) => state.auth);
 
   return (
-    <nav className="flex justify-center gap-6 border-b border-surface-border bg-surface-card px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
+    <nav className="flex items-center justify-center gap-6 border-b border-surface-border bg-surface-card px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
       {LINKS.map((link) => {
         const active = pathname === link.href;
         return (
@@ -31,6 +34,31 @@ export default function NavBar() {
           </Link>
         );
       })}
+
+      {status === "authenticated" ? (
+        <div className="flex items-center gap-3">
+          <span className="hidden text-xs text-surface-text-muted sm:inline dark:text-zinc-500">{email}</span>
+          <button
+            type="button"
+            onClick={() => signOutUser()}
+            className="text-sm font-medium text-surface-text-muted transition-colors hover:text-brand-orange dark:text-zinc-400"
+          >
+            Çıkış yap
+          </button>
+        </div>
+      ) : (
+        <Link
+          href="/login"
+          aria-current={pathname === "/login" ? "page" : undefined}
+          className={`text-sm font-medium transition-colors ${
+            pathname === "/login"
+              ? "text-brand-orange"
+              : "text-surface-text-muted hover:text-brand-orange dark:text-zinc-400"
+          }`}
+        >
+          Giriş yap
+        </Link>
+      )}
     </nav>
   );
 }

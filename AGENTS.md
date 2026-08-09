@@ -264,7 +264,25 @@ anahtari cozulemez — bugunku "anahtar hic sunucuya gitmiyor" guvenlik ilkesi o
 sadece cihazlar arasi senkron eklenmis olur. Sunucu tarafinda cozulebilir sifreleme (tek noktadan
 sizinca herkesin anahtari acik olur) kullanilmayacak.
 
-Bir sonraki oturumda buradan devam edilecek; henuz kod tarafinda hicbir sey baslanmadi.
+17. ✅ **Login ekrani (2026-08-09):** `app/login/page.tsx` eklendi — e-posta/sifre ile giris/kayit
+    formu, DESIGN.md paletiyle, mod (giris/kayit) toggle'i. `lib/firebase/auth.ts`
+    (`signUpWithEmail`, `signInWithEmail`, `signOutUser`, `subscribeToAuthState`) `lib/firebase/config.ts`'teki
+    "env degiskeni yoksa null don" desenini izliyor; Firebase yapilandirilmamisken form gorunur
+    ama gonder butonu devre disi kalip kullaniciya bir uyari gosteriliyor. `lib/redux/authSlice.ts`
+    (`uid`/`email`/`status`) eklendi, `StoreProvider` mount olunca `subscribeToAuthState` ile
+    baglaniyor (yapilandirilmamissa hemen "unauthenticated"e duser, "loading"de takili kalmaz).
+    `NavBar` giris durumuna gore "Giris yap" linki ya da e-posta + "Cikis yap" gosteriyor. e2e
+    (`e2e/login.spec.ts`) ve unit testlerle (`authSlice.test.ts`) dogrulandi; `npm run lint`,
+    `npx tsc --noEmit`, `npm run build`, `npm run test:unit` (112/112) ve `npx playwright test`
+    (41/41) hepsi temiz. Tarayicida manuel de dogrulandi (giris/kayit toggle, NavBar linki).
+    **Not:** gercek bir Firebase projesi henuz provizyon edilmedi (`.env.local` yok) — bu yuzden
+    formun kendisi calisir ama gercek bir giris/kayit henuz denenmedi. Sirada: kullanici gercek
+    bir Firebase projesi olusturup Email/Password auth'u etkinlestirip `.env.local`'e
+    `NEXT_PUBLIC_FIREBASE_*` degerlerini girdikten sonra uctan uca test, ardindan yukaridaki
+    kritik tasarim kararina gore API key'in sifrelenip Firestore'a senkronize edilmesi
+    (`lib/crypto/` + login sirasinda girilen parolayla turetilen anahtar).
+
+Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar
 

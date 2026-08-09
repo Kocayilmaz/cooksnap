@@ -7,6 +7,7 @@ import userProfileReducer from "./userProfileSlice";
 import favoritesReducer from "./favoritesSlice";
 import usageCounterReducer from "./usageCounterSlice";
 import historyReducer from "./historySlice";
+import authReducer from "./authSlice";
 
 const rootReducer = combineReducers({
   personCount: personCountReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   favorites: favoritesReducer,
   usageCounter: usageCounterReducer,
   history: historyReducer,
+  auth: authReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
