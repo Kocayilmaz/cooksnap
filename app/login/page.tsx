@@ -86,8 +86,7 @@ export default function LoginPage() {
 
   return (
     <div className={`${styles.page} bg-surface-warm`}>
-      <div className={styles.pageInner}>
-        <div className={`${styles.container} ${mode === "signUp" ? styles.signUpMode : ""}`}>
+      <div className={`${styles.container} ${mode === "signUp" ? styles.signUpMode : ""}`}>
           <div className={styles.formsContainer}>
             <div className={styles.signinSignup}>
               <form
@@ -168,6 +167,10 @@ export default function LoginPage() {
                     <FacebookIcon /> Facebook ile devam et
                   </button>
                 </div>
+
+                <button type="button" onClick={handleSkip} className={styles.skipLink}>
+                  Şimdilik atla
+                </button>
               </form>
 
               <form
@@ -248,6 +251,10 @@ export default function LoginPage() {
                     <FacebookIcon /> Facebook ile devam et
                   </button>
                 </div>
+
+                <button type="button" onClick={handleSkip} className={styles.skipLink}>
+                  Şimdilik atla
+                </button>
               </form>
             </div>
           </div>
@@ -274,11 +281,7 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-
-        <button type="button" onClick={handleSkip} className={styles.skipLink}>
-          Şimdilik atla
-        </button>
       </div>
-    </div>
   );
 }
+

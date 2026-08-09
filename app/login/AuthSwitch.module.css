@@ -6,18 +6,10 @@
   padding: 2rem 1rem;
 }
 
-.pageInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  max-width: 900px;
-}
-
 .container {
   position: relative;
   width: 100%;
+  max-width: 900px;
   height: 640px;
   background: var(--surface-card);
   border-radius: 20px;
@@ -33,6 +25,7 @@
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 2px;
+  margin-top: 10px;
 }
 
 .skipLink:hover {
