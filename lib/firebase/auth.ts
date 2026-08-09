@@ -79,6 +79,9 @@ function toTurkishErrorMessage(error: unknown): string {
     case "auth/popup-blocked":
       return "Tarayıcı açılır pencereyi engelledi, tekrar dene.";
     default:
+      // Eşleşmeyen/beklenmedik auth hatalarını konsola yaz — kullanıcıya genel
+      // bir mesaj gösterilirken gerçek Firebase hata kodu debug için kaybolmasın.
+      console.error("Firebase auth hatasi:", error);
       return "Bir şeyler ters gitti, tekrar dene.";
   }
 }
