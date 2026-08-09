@@ -361,6 +361,25 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
     guncellendi. Google/Apple ile giris hala gercek kimlik bilgileriyle denenmedi (Firebase projesi
     kurulum asamasinda — `.env.local` henuz doldurulmadi).
 
+22. ✅ **Gercek Firebase projesi baglandi + favoriler senkronu gercek uid'ye gecirildi (2026-08-10):**
+    Kullanici kendi Firebase projesini (`cooksnap-dbb54`) kurdu — Email/Password + Google + Apple
+    auth, Standard-edition Firestore (Production mode, Avrupa bolgesi). Web app config'i verdi,
+    `.env.local` dolduruldu (`NEXT_PUBLIC_FIREBASE_*`, 5 deger). **Onemli guvenlik duzeltmesi:**
+    `lib/firebase/favoritesSync.ts` onceden `lib/firebase/anonymousId.ts`'teki sahte/dogrulanamayan
+    bir "anonim id" ile Firestore'a yaziyordu (gercek auth eklenmeden onceki tasarimdan kalma) —
+    artik gercek Firebase Auth `uid`'sini parametre olarak aliyor, boylece Firestore guvenlik
+    kurallari (`firestore.rules`, `request.auth.uid == uid`) bunu dogrulayabiliyor. `anonymousId.ts`
+    ve testi kullanilmadigi icin tamamen silindi. `StoreProvider.tsx`: Firestore pull/push artik
+    sadece `subscribeToAuthState` gercek bir kullanici dondurdugunde (giris yapilmisken) calisiyor,
+    misafir modunda hic tetiklenmiyor (zaten `firestore.rules` da `request.auth != null` istiyor,
+    misafirin yazma denemesi izin hatasiyla sessizce yutulurdu, ama artik hic denenmiyor bile).
+    `firestore.rules` projeye eklendi — kullanicinin Firebase konsolunda **Firestore → Rules**
+    sekmesine yapistirmasi gerekiyor (henuz yapilmadi, varsayilan "tumunu reddet" kurali gecerli
+    kaldigi surece favoriler senkronu izin hatasiyla best-effort sessizce basarisiz olur, uygulama
+    kirilmaz). `npm run lint`, `npx tsc --noEmit`, `npm run test:unit` (114/114) temiz.
+    **Sirada:** kullanici Firestore Rules'u yapistiracak, ardindan tarayicida gercek bir hesapla
+    (e-posta/sifre ya da Google/Apple) uctan uca giris + favori senkronu denenecek.
+
 Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar

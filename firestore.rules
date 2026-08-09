@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// CookSnap Firestore guvenlik kurallari.
+// favorites/{uid}: sadece o uid'ye sahip, giris yapmis kullanici kendi
+// dokumanini okuyup yazabilir (bkz. lib/firebase/favoritesSync.ts —
+// dokuman id'si her zaman Firebase Auth'un kendi uid'si).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /favorites/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

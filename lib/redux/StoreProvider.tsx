@@ -53,18 +53,6 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       store.dispatch(setFavorites(storedFavorites));
     }
 
-    // Firebase best-effort senkron: yapılandırılmamışsa (env değişkeni yok)
-    // hiçbir şey yapmaz. Bu cihazda hiç favori yoksa Firestore'daki son
-    // durumu çeker; varsa (Firestore henüz bu cihazın verisini görmemiş
-    // olabilir) yerel favorileri Firestore'a yazar.
-    pullFavoritesFromFirestore().then((remoteFavorites) => {
-      if (remoteFavorites && !storedFavorites) {
-        store.dispatch(setFavorites(remoteFavorites));
-      } else if (storedFavorites) {
-        void pushFavoritesToFirestore(storedFavorites);
-      }
-    });
-
     const storedUsage = readStoredUsage();
     if (storedUsage !== null) {
       // 24 saatlik pencere dolduysa ücretsiz mod sayacını sıfırla (bkz. usageCounterSlice).
@@ -89,6 +77,21 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     const unsubscribeAuth = subscribeToAuthState((user) => {
       if (user) {
         store.dispatch(setAuthenticatedUser({ uid: user.uid, email: user.email }));
+
+        // Firestore senkronu sadece gercek girisle, kullanicinin kendi uid'si
+        // altinda calisir (bkz. lib/firebase/favoritesSync.ts + firestore.rules).
+        // Bu cihazda hic favori yoksa Firestore'daki son durumu ceker; varsa
+        // (Firestore henuz bu cihazin verisini gormemis olabilir) yerel
+        // favorileri Firestore'a yazar.
+        pullFavoritesFromFirestore(user.uid).then((remoteFavorites) => {
+          const localFavorites = store.getState().favorites;
+          const hasLocalFavorites = Object.keys(localFavorites).length > 0;
+          if (remoteFavorites && !hasLocalFavorites) {
+            store.dispatch(setFavorites(remoteFavorites));
+          } else if (hasLocalFavorites) {
+            void pushFavoritesToFirestore(user.uid, localFavorites);
+          }
+        });
       } else {
         store.dispatch(setUnauthenticated());
       }
@@ -136,7 +139,10 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const current = store.getState().favorites;
       if (current !== previous) {
         writeStoredFavorites(current);
-        void pushFavoritesToFirestore(current);
+        const authState = store.getState().auth;
+        if (authState.status === "authenticated" && authState.uid) {
+          void pushFavoritesToFirestore(authState.uid, current);
+        }
         previous = current;
       }
     });
