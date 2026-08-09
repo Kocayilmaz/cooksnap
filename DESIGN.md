@@ -21,8 +21,9 @@ Marka renkleri zaten `app/globals.css`'te tanımlı (`--brand-orange`, `--brand-
 | Başarı | `--state-success` | `#1a8f4f` | Onay/başarı mesajı |
 | Hata | `--state-error` | `#e8272b` | Hata mesajı — `--brand-red` ile aynı, ayrı tutulmuyor |
 
-Karanlık modda yüzeyler nötr siyaha yakın kalır (`#0a0a0a`/`#171717`), marka renkleri değişmez —
-turuncu/kırmızı koyu arka planda zaten yeterli kontrast veriyor.
+**Karanlık mod desteklenmiyor (2026-08-09, kullanıcı kararı):** Uygulama sadece açık temada
+çalışır — `prefers-color-scheme: dark` kasıtlı olarak dinlenmiyor. Yeni bir bileşen eklerken
+`dark:*` Tailwind sınıfı veya karanlık moda özel bir CSS kuralı eklenmemeli.
 
 ## Tipografi
 
@@ -41,4 +42,4 @@ token'ları kullanacak şekilde güncellenir. Tek seferde tüm UI'ı değiştirm
 - ✅ Hata rengi için her zaman `--state-error` (kırmızı ailesi), asla turuncu kullanma —
   kullanıcı marka rengiyle hatayı karıştırmasın.
 - ❌ Yeni bir marka rengi/ton eklemeden önce bu tabloyu güncelle, dağınık renk seti oluşturma.
-- ❌ Karanlık modda marka renklerini soluklaştırma; kontrast testinden geçtiği için aynı kalıyorlar.
+- ❌ Karanlık mod için `dark:*` sınıfı ekleme — uygulama kasıtlı olarak sadece açık temayı destekliyor.

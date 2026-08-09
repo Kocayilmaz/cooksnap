@@ -9,7 +9,7 @@ export default function PersonCountSelector() {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-foreground dark:text-zinc-300">
+      <span className="text-sm font-medium text-foreground">
         Kaç kişilik?
       </span>
       <div className="flex items-center gap-4">
@@ -17,7 +17,7 @@ export default function PersonCountSelector() {
           type="button"
           onClick={() => dispatch(decrementPersonCount())}
           aria-label="Kişi sayısını azalt"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border text-xl leading-none hover:border-brand-orange hover:text-brand-orange dark:border-zinc-700"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border text-xl leading-none hover:border-brand-orange hover:text-brand-orange"
         >
           −
         </button>
@@ -26,7 +26,7 @@ export default function PersonCountSelector() {
           type="button"
           onClick={() => dispatch(incrementPersonCount())}
           aria-label="Kişi sayısını artır"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border text-xl leading-none hover:border-brand-orange hover:text-brand-orange dark:border-zinc-700"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border text-xl leading-none hover:border-brand-orange hover:text-brand-orange"
         >
           +
         </button>

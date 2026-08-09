@@ -29,7 +29,7 @@ export default function CopyRecipeButton({ title, steps }: CopyRecipeButtonProps
       type="button"
       onClick={handleCopy}
       aria-label="Tarifi kopyala"
-      className="shrink-0 text-xs font-medium text-surface-text-muted transition-colors hover:text-brand-orange dark:text-zinc-500"
+      className="shrink-0 text-xs font-medium text-surface-text-muted transition-colors hover:text-brand-orange"
     >
       {copied ? "Kopyalandı ✓" : "Kopyala"}
     </button>

@@ -9,7 +9,7 @@ export default function EquipmentSelector() {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-foreground dark:text-zinc-300">
+      <span className="text-sm font-medium text-foreground">
         Elinde ne var?
       </span>
       <div role="group" aria-label="Elinde ne var?" className="flex flex-wrap gap-2">
@@ -24,7 +24,7 @@ export default function EquipmentSelector() {
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 active
                   ? "border-brand-orange bg-brand-orange text-white"
-                  : "border-surface-border text-foreground hover:bg-surface-warm dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  : "border-surface-border text-foreground hover:bg-surface-warm"
               }`}
             >
               {EQUIPMENT_LABELS[key]}

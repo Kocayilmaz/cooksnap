@@ -17,19 +17,19 @@ export default function ApiKeyInput() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="flex flex-col gap-2 border-t border-surface-border pt-4 dark:border-zinc-800">
+    <div className="flex flex-col gap-2 border-t border-surface-border pt-4">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="text-left text-sm font-medium text-foreground hover:text-brand-orange dark:text-zinc-300 dark:hover:text-zinc-50"
+        className="text-left text-sm font-medium text-foreground hover:text-brand-orange"
       >
         Premium mod (kendi API anahtarın) {open ? "▲" : "▼"}
       </button>
 
       {open && (
         <div className="flex flex-col gap-3">
-          <p className="text-xs text-surface-text-muted dark:text-zinc-400">
+          <p className="text-xs text-surface-text-muted">
             Kendi Claude, OpenAI, Gemini ya da Groq anahtarını girersen ücretsiz mod limiti kalkar.
             Anahtar yalnızca bu tarayıcıda saklanır, sunucuya kalıcı olarak kaydedilmez. Not: Groq
             fotoğraf tanıma desteklemiyor — Groq seçiliyken malzemelerini yazarak devam etmen
@@ -46,7 +46,7 @@ export default function ApiKeyInput() {
                 className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
                   provider === option
                     ? "border-brand-orange bg-brand-orange text-white"
-                    : "border-surface-border text-foreground hover:bg-surface-warm dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    : "border-surface-border text-foreground hover:bg-surface-warm"
                 }`}
               >
                 {PROVIDER_LABELS[option]}
@@ -62,13 +62,13 @@ export default function ApiKeyInput() {
               placeholder={`${PROVIDER_LABELS[provider]} API anahtarı`}
               aria-label={`${PROVIDER_LABELS[provider]} API anahtarı`}
               autoComplete="off"
-              className="w-full rounded-lg border border-surface-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand-orange dark:border-zinc-700"
+              className="w-full rounded-lg border border-surface-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand-orange"
             />
             {key && (
               <button
                 type="button"
                 onClick={() => dispatch(clearApiKey())}
-                className="shrink-0 rounded-lg border border-surface-border px-3 py-2 text-sm text-surface-text-muted hover:bg-surface-warm dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                className="shrink-0 rounded-lg border border-surface-border px-3 py-2 text-sm text-surface-text-muted hover:bg-surface-warm"
               >
                 Temizle
               </button>

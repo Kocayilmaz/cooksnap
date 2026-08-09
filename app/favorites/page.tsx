@@ -21,11 +21,11 @@ export default function FavoritesPage() {
     : allRecipes;
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12 dark:bg-black">
-      <main className="flex w-full max-w-md flex-col gap-6 rounded-2xl bg-surface-card p-8 shadow-sm dark:bg-zinc-950">
+    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12">
+      <main className="flex w-full max-w-md flex-col gap-6 rounded-2xl bg-surface-card p-8 shadow-sm">
         <div className="flex flex-col gap-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brand-red">Favoriler</h1>
-          <p className="text-sm text-surface-text-muted dark:text-zinc-400">
+          <p className="text-sm text-surface-text-muted">
             Yıldızladığın tüm tarifler burada listelenir.
           </p>
         </div>
@@ -38,18 +38,18 @@ export default function FavoritesPage() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Tarif ara..."
-              className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-foreground outline-none focus:border-brand-orange dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
+              className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-foreground outline-none focus:border-brand-orange"
             />
           </label>
         )}
 
         {allRecipes.length === 0 ? (
-          <p className="text-center text-sm text-surface-text-muted dark:text-zinc-400">
+          <p className="text-center text-sm text-surface-text-muted">
             Henüz favori tarifin yok. Ana sayfada bir tarif alıp yıldız butonuna basarak
             ekleyebilirsin.
           </p>
         ) : recipes.length === 0 ? (
-          <p className="text-center text-sm text-surface-text-muted dark:text-zinc-400">
+          <p className="text-center text-sm text-surface-text-muted">
             &quot;{query}&quot; ile eşleşen favori tarif bulunamadı.
           </p>
         ) : (
@@ -57,14 +57,14 @@ export default function FavoritesPage() {
             {recipes.map((recipe) => (
               <li
                 key={recipe.id}
-                className="rounded-xl border border-surface-border p-4 dark:border-zinc-800"
+                className="rounded-xl border border-surface-border p-4"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
+                    <p className="text-sm font-semibold text-foreground">
                       {recipe.title}
                     </p>
-                    <p className="text-xs text-surface-text-muted dark:text-zinc-500">
+                    <p className="text-xs text-surface-text-muted">
                       {EQUIPMENT_LABELS[recipe.equipment]}
                     </p>
                   </div>
@@ -80,7 +80,7 @@ export default function FavoritesPage() {
                     </button>
                   </div>
                 </div>
-                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
+                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted">
                   {recipe.steps.map((step, stepIndex) => (
                     <li key={stepIndex}>{step}</li>
                   ))}

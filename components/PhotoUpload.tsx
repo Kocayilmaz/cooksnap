@@ -52,11 +52,11 @@ export default function PhotoUpload({ onPhotoSelected }: PhotoUploadProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-foreground dark:text-zinc-300">
+      <span className="text-sm font-medium text-foreground">
         Yemek fotoğrafı
       </span>
       <div className="relative h-40 w-full">
-        <label className="flex h-40 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-surface-border text-sm text-surface-text-muted hover:bg-surface-warm dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900">
+        <label className="flex h-40 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-surface-border text-sm text-surface-text-muted hover:bg-surface-warm">
           {preview ? (
             <Image
               src={preview}
@@ -88,7 +88,7 @@ export default function PhotoUpload({ onPhotoSelected }: PhotoUploadProps) {
         )}
       </div>
       {error && (
-        <p role="alert" className="text-xs text-state-error dark:text-red-400">
+        <p role="alert" className="text-xs text-state-error">
           {error}
         </p>
       )}

@@ -98,13 +98,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12 dark:bg-black">
-      <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-surface-card p-8 shadow-sm dark:bg-zinc-950">
+    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12">
+      <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-surface-card p-8 shadow-sm">
         <div className="flex flex-col gap-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brand-red">
             CookSnap
           </h1>
-          <p className="text-sm text-surface-text-muted dark:text-zinc-400">
+          <p className="text-sm text-surface-text-muted">
             Fotoğraf çek ya da malzemeleri yaz, elindekilere göre tarifini al.
           </p>
         </div>
@@ -119,28 +119,28 @@ export default function Home() {
           type="button"
           onClick={handleSubmit}
           disabled={(!photo && !hasIngredientsText) || status === "loading" || limitReached}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {status === "loading" && <LoadingSpinner size={16} />}
           {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
         </button>
 
         {isFreeMode && limitReached && (
-          <p className="text-center text-xs text-state-error dark:text-red-400">
+          <p className="text-center text-xs text-state-error">
             Ücretsiz mod limitine ulaştın ({usageCount}/{FREE_USAGE_LIMIT}). Devam etmek için
             Profil sayfasından kendi Claude/OpenAI anahtarını girebilirsin.
           </p>
         )}
 
         {isFreeMode && !limitReached && (
-          <p className="text-center text-xs text-surface-text-muted dark:text-zinc-500">
+          <p className="text-center text-xs text-surface-text-muted">
             Ücretsiz modda kullanılan istek: {usageCount}/{FREE_USAGE_LIMIT}
           </p>
         )}
 
         <div aria-live="polite" className="flex flex-col gap-4">
           {status === "error" && error && (
-            <p role="alert" className="text-center text-sm text-state-error dark:text-red-400">
+            <p role="alert" className="text-center text-sm text-state-error">
               {error}
             </p>
           )}
@@ -150,10 +150,10 @@ export default function Home() {
               {recipes.map((recipe, index) => (
                 <li
                   key={`${recipe.equipment}-${index}`}
-                  className="rounded-xl border border-surface-border p-4 dark:border-zinc-800"
+                  className="rounded-xl border border-surface-border p-4"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-foreground dark:text-zinc-50">
+                    <p className="text-sm font-semibold text-foreground">
                       {recipe.title}
                     </p>
                     <div className="flex shrink-0 items-center gap-3">
@@ -166,7 +166,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted dark:text-zinc-400">
+                  <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted">
                     {recipe.steps.map((step, stepIndex) => (
                       <li key={stepIndex}>{step}</li>
                     ))}

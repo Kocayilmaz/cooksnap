@@ -19,9 +19,9 @@ export default function RecipeHistoryList() {
   if (history.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2 border-t border-surface-border pt-4 dark:border-zinc-800">
+    <div className="flex flex-col gap-2 border-t border-surface-border pt-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-foreground dark:text-zinc-300">
+        <span className="text-sm font-medium text-foreground">
           Son aramalar
         </span>
         <button
@@ -31,7 +31,7 @@ export default function RecipeHistoryList() {
               dispatch(clearHistory());
             }
           }}
-          className="text-xs text-surface-text-muted hover:text-brand-orange dark:text-zinc-500"
+          className="text-xs text-surface-text-muted hover:text-brand-orange"
         >
           Geçmişi temizle
         </button>
@@ -40,7 +40,7 @@ export default function RecipeHistoryList() {
         {history.map((entry) => (
           <li
             key={entry.id}
-            className="rounded-lg border border-surface-border px-3 py-2 text-xs text-surface-text-muted dark:border-zinc-800 dark:text-zinc-400"
+            className="rounded-lg border border-surface-border px-3 py-2 text-xs text-surface-text-muted"
           >
             <div className="flex items-center justify-between gap-2">
               <span>
@@ -50,7 +50,7 @@ export default function RecipeHistoryList() {
               <span>{DATE_FORMATTER.format(entry.createdAt)}</span>
             </div>
             {entry.recipeTitles.length > 0 && (
-              <p className="mt-1 text-foreground dark:text-zinc-300">
+              <p className="mt-1 text-foreground">
                 {entry.recipeTitles.join(", ")}
               </p>
             )}

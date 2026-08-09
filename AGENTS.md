@@ -300,6 +300,18 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
     `npx playwright test` (41/41) hepsi temiz; tarayicida hem acik hem koyu modda, masaustu ve mobil
     genislikte elle de dogrulandi (animasyonlu gecis calisiyor).
 
+19. ✅ **Karanlik mod tamamen kaldirildi (2026-08-09):** Kullanici acikca "karanlik mod diye bir sey
+    olmasin" dedi — sadece login ekranini degil, tum uygulamayi kapsayacak sekilde. `app/globals.css`'teki
+    `@media (prefers-color-scheme: dark)` `:root` override'i silindi; `app/`, `components/` altindaki
+    tum `dark:*` Tailwind siniflari (17 dosya) kaldirildi. DESIGN.md guncellendi (bkz. "Do's/Don'ts" —
+    artik `dark:*` sinifi eklenmemeli). **Dikkat:** ilk denemede toplu `sed` komutu tum dosyalarin
+    girinti/bosluk formatini bozdu (sadece `dark:` degil, her cift-bosluk ve tirnak-oncesi-bosluk
+    kaldirildi); commit edilmeden fark edilip `git checkout --` ile geri alindi, ikinci denemede sadece
+    `" dark:token"` deseni hedeflenerek guvenli sekilde uygulandi. `npm run lint`, `npx tsc --noEmit`,
+    `npm run build`, `npm run test:unit` (112/112) ve `npx playwright test` (41/41) temiz; tarayicida
+    sistem karanlik modu acikken ana sayfa/profil/login sayfalari elle kontrol edildi, hicbir yerde
+    koyu yuzey kalmadigi dogrulandi.
+
 Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar

@@ -16,7 +16,7 @@ export default function NavBar() {
   const { status, email } = useAppSelector((state) => state.auth);
 
   return (
-    <nav className="flex items-center justify-center gap-6 border-b border-surface-border bg-surface-card px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
+    <nav className="flex items-center justify-center gap-6 border-b border-surface-border bg-surface-card px-4 py-3">
       {LINKS.map((link) => {
         const active = pathname === link.href;
         return (
@@ -27,7 +27,7 @@ export default function NavBar() {
             className={`text-sm font-medium transition-colors ${
               active
                 ? "text-brand-orange"
-                : "text-surface-text-muted hover:text-brand-orange dark:text-zinc-400"
+                : "text-surface-text-muted hover:text-brand-orange"
             }`}
           >
             {link.label}
@@ -37,11 +37,11 @@ export default function NavBar() {
 
       {status === "authenticated" ? (
         <div className="flex items-center gap-3">
-          <span className="hidden text-xs text-surface-text-muted sm:inline dark:text-zinc-500">{email}</span>
+          <span className="hidden text-xs text-surface-text-muted sm:inline">{email}</span>
           <button
             type="button"
             onClick={() => signOutUser()}
-            className="text-sm font-medium text-surface-text-muted transition-colors hover:text-brand-orange dark:text-zinc-400"
+            className="text-sm font-medium text-surface-text-muted transition-colors hover:text-brand-orange"
           >
             Çıkış yap
           </button>
@@ -53,7 +53,7 @@ export default function NavBar() {
           className={`text-sm font-medium transition-colors ${
             pathname === "/login"
               ? "text-brand-orange"
-              : "text-surface-text-muted hover:text-brand-orange dark:text-zinc-400"
+              : "text-surface-text-muted hover:text-brand-orange"
           }`}
         >
           Giriş yap

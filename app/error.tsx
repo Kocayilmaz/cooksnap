@@ -7,12 +7,12 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12 dark:bg-black">
-      <main className="flex w-full max-w-md flex-col items-center gap-4 rounded-2xl bg-surface-card p-8 text-center shadow-sm dark:bg-zinc-950">
+    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12">
+      <main className="flex w-full max-w-md flex-col items-center gap-4 rounded-2xl bg-surface-card p-8 text-center shadow-sm">
         <h1 className="text-2xl font-semibold tracking-tight text-state-error">
           Bir şeyler ters gitti
         </h1>
-        <p className="text-sm text-surface-text-muted dark:text-zinc-400">
+        <p className="text-sm text-surface-text-muted">
           Sayfa yüklenirken beklenmeyen bir hata oluştu. Tekrar deneyebilirsin.
         </p>
         <button

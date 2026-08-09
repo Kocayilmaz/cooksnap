@@ -23,7 +23,7 @@ export default function FavoriteButton({ equipment, title, steps, videoId }: Fav
       aria-label={isFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
       onClick={() => dispatch(toggleFavorite({ id, equipment, title, steps, videoId }))}
       className={`shrink-0 text-lg transition-colors ${
-        isFavorite ? "text-brand-orange" : "text-surface-text-muted hover:text-brand-orange dark:text-zinc-500"
+        isFavorite ? "text-brand-orange" : "text-surface-text-muted hover:text-brand-orange"
       }`}
     >
       {isFavorite ? "★" : "☆"}
