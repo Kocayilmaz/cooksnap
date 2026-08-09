@@ -1,4 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { setGuestMode } from "./helpers/guestMode";
+
+test.beforeEach(async ({ page }) => {
+  await setGuestMode(page);
+});
 
 test("24 saatten eski kullanim sayaci sayfa yuklendiginde sifirlanir", async ({ page }) => {
   const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;

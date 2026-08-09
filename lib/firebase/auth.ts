@@ -1,8 +1,11 @@
 import {
   createUserWithEmailAndPassword,
+  FacebookAuthProvider,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   type Auth,
   type Unsubscribe,
@@ -68,6 +71,13 @@ function toTurkishErrorMessage(error: unknown): string {
       return "E-posta veya şifre hatalı.";
     case "auth/too-many-requests":
       return "Çok fazla deneme yapıldı, biraz sonra tekrar dene.";
+    case "auth/popup-closed-by-user":
+    case "auth/cancelled-popup-request":
+      return "Giriş penceresi kapatıldı.";
+    case "auth/account-exists-with-different-credential":
+      return "Bu e-posta adresi başka bir giriş yöntemiyle zaten kayıtlı.";
+    case "auth/popup-blocked":
+      return "Tarayıcı açılır pencereyi engelledi, tekrar dene.";
     default:
       return "Bir şeyler ters gitti, tekrar dene.";
   }
@@ -91,6 +101,30 @@ export async function signInWithEmail(email: string, password: string): Promise<
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, errorMessage: toTurkishErrorMessage(error) };
+  }
+}
+
+export async function signInWithGoogle(): Promise<AuthResult> {
+  const auth = getFirebaseAuth();
+  if (!auth) return { ok: false, errorMessage: "Giriş sistemi şu an kullanılamıyor." };
+
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, errorMessage: toTurkishErrorMessage(error) };
+  }
+}
+
+export async function signInWithFacebook(): Promise<AuthResult> {
+  const auth = getFirebaseAuth();
+  if (!auth) return { ok: false, errorMessage: "Giriş sistemi şu an kullanılamıyor." };
+
+  try {
+    await signInWithPopup(auth, new FacebookAuthProvider());
     return { ok: true };
   } catch (error) {
     return { ok: false, errorMessage: toTurkishErrorMessage(error) };

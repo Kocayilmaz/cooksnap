@@ -7,6 +7,12 @@ function activeForm(page: Page) {
   return page.locator('form:not([aria-hidden="true"])');
 }
 
+test("giris yapilmamisken herhangi bir sayfa ziyaret edilince /login'e yonlendirilir", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page).toHaveURL(/\/login$/);
+});
+
 test("giris sayfasi e-posta/sifre formunu ve yapilandirma uyarisini gosterir", async ({ page }) => {
   await page.goto("/login");
 
@@ -27,12 +33,28 @@ test("hesap olustur moduna gecince aktif form ve gonder butonu degisir", async (
   await expect(activeForm(page).getByRole("button", { name: "Hesap oluştur" })).toBeDisabled();
 });
 
-test("NavBar giris yapilmamisken Giris yap linkini gosterir", async ({ page }) => {
-  await page.goto("/");
+test("Google ve Facebook ile giris butonlari gosterilir, Firebase yapilandirilmadigi icin devre disi kalir", async ({
+  page,
+}) => {
+  await page.goto("/login");
 
-  const loginLink = page.getByRole("link", { name: "Giriş yap" });
-  await expect(loginLink).toBeVisible();
+  const google = activeForm(page).getByRole("button", { name: "Google ile devam et" });
+  const facebook = activeForm(page).getByRole("button", { name: "Facebook ile devam et" });
 
-  await loginLink.click();
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(google).toBeVisible();
+  await expect(facebook).toBeVisible();
+  await expect(google).toBeDisabled();
+  await expect(facebook).toBeDisabled();
+});
+
+test("Simdilik atla tiklaninca misafir olarak sadece ana sayfaya erisim saglanir", async ({ page }) => {
+  await page.goto("/login");
+
+  await page.getByRole("button", { name: "Şimdilik atla" }).click();
+
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("heading", { name: "CookSnap" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ana Sayfa" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Profil" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Favoriler" })).toHaveCount(0);
 });

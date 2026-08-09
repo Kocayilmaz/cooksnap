@@ -5,19 +5,26 @@ import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { signOutUser } from "@/lib/firebase/auth";
 
-const LINKS = [
+const AUTHENTICATED_LINKS = [
   { href: "/", label: "Ana Sayfa" },
   { href: "/favorites", label: "Favoriler" },
   { href: "/profile", label: "Profil" },
 ];
 
+// Misafir modunda (bkz. AuthGate) sadece ana sayfaya erişim var — Favoriler
+// ve Profil girişe özel olduğu için tıklanınca zaten /login'e geri atılır,
+// o yüzden burada da gösterilmiyor.
+const GUEST_LINKS = [{ href: "/", label: "Ana Sayfa" }];
+
 export default function NavBar() {
   const pathname = usePathname();
   const { status, email } = useAppSelector((state) => state.auth);
+  const isAuthenticated = status === "authenticated";
+  const links = isAuthenticated ? AUTHENTICATED_LINKS : GUEST_LINKS;
 
   return (
     <nav className="flex items-center justify-center gap-6 border-b border-surface-border bg-surface-card px-4 py-3">
-      {LINKS.map((link) => {
+      {links.map((link) => {
         const active = pathname === link.href;
         return (
           <Link
@@ -35,7 +42,7 @@ export default function NavBar() {
         );
       })}
 
-      {status === "authenticated" ? (
+      {isAuthenticated ? (
         <div className="flex items-center gap-3">
           <span className="hidden text-xs text-surface-text-muted sm:inline">{email}</span>
           <button

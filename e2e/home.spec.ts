@@ -1,4 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { setGuestMode } from "./helpers/guestMode";
+
+test.beforeEach(async ({ page }) => {
+  await setGuestMode(page);
+});
 
 test("ana sayfa fotoğraf, kişi sayısı ve ekipman seçimini gösterir", async ({ page }) => {
   await page.goto("/");

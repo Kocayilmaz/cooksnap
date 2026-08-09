@@ -1,48 +1,33 @@
 import { test, expect } from "@playwright/test";
+import { setGuestMode } from "./helpers/guestMode";
 
-test("profil sayfasi ad, dil ve ulke alanlarini gosterir", async ({ page }) => {
+// NOT: /profile artik AuthGate ile korunuyor (bkz. components/AuthGate.tsx) —
+// sadece gercekten giris yapmis kullanicilar erisebiliyor, misafir modu
+// (setGuestMode) bile yetmiyor. Bu ortamda gercek bir Firebase projesi henuz
+// yapilandirilmadigi icin (.env.local yok) gercek girisi e2e'de simule etmek
+// mumkun degil — bu yuzden asagidaki testler profil sayfasinin ICERIGINI
+// degil, erisim kapisinin dogru calistigini dogruluyor. Gercek Firebase
+// baglaninca profil formunun kendisini test eden eski senaryolar geri gelmeli.
+
+test("giris yapilmamisken /profile ziyaret edilince /login'e yonlendirilir", async ({ page }) => {
   await page.goto("/profile");
 
-  await expect(page.getByRole("heading", { name: "Profil" })).toBeVisible();
-  await expect(page.getByPlaceholder("Adın soyadın")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Türkçe" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "English" })).toBeVisible();
-  await expect(page.getByPlaceholder("Örn: Türkiye")).toBeVisible();
+  await expect(page).toHaveURL(/\/login$/);
 });
 
-test("profil bilgileri girilip sayfa yenilenince kalici kalir", async ({ page }) => {
+test("misafir modunda bile /profile ziyaret edilince /login'e yonlendirilir", async ({ page }) => {
+  await setGuestMode(page);
   await page.goto("/profile");
 
-  await page.getByPlaceholder("Adın soyadın").fill("Ayşe Yılmaz");
-  await page.getByPlaceholder("Örn: Türkiye").fill("İtalya");
-  await page.getByRole("button", { name: "English" }).click();
-
-  await page.reload();
-
-  await expect(page.getByPlaceholder("Adın soyadın")).toHaveValue("Ayşe Yılmaz");
-  await expect(page.getByPlaceholder("Örn: Türkiye")).toHaveValue("İtalya");
-  await expect(page.getByRole("button", { name: "English" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page).toHaveURL(/\/login$/);
 });
 
-test("Need help bolumu acilip SSS icerigini gosterir", async ({ page }) => {
-  await page.goto("/profile");
-
-  await expect(page.getByText("Fotoğraf çekmek zorunda mıyım?")).toBeHidden();
-
-  await page.getByRole("button", { name: /Need help\?/ }).click();
-
-  await expect(page.getByText("Fotoğraf çekmek zorunda mıyım?")).toBeVisible();
-  await expect(page.getByText("Verilerim nerede saklanıyor?")).toBeVisible();
-});
-
-test("NavBar ile ana sayfa ve profil arasinda gecis yapilabilir", async ({ page }) => {
+test("misafir modunda NavBar'da Profil ve Favoriler linkleri gosterilmez", async ({ page }) => {
+  await setGuestMode(page);
   await page.goto("/");
 
-  await page.getByRole("link", { name: "Profil" }).click();
-  await expect(page).toHaveURL(/\/profile$/);
-  await expect(page.getByRole("heading", { name: "Profil" })).toBeVisible();
-
-  await page.getByRole("link", { name: "Ana Sayfa" }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole("heading", { name: "CookSnap" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ana Sayfa" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Giriş yap" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Profil" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Favoriler" })).toHaveCount(0);
 });

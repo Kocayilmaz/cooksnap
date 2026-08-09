@@ -312,6 +312,43 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
     sistem karanlik modu acikken ana sayfa/profil/login sayfalari elle kontrol edildi, hicbir yerde
     koyu yuzey kalmadigi dogrulandi.
 
+20. ✅ **Site geneli erisim kapisi + Google/Facebook girisi + misafir modu (2026-08-09):** Kullanicinin
+    talebi: `/login` disindaki hicbir sayfa giris yapilmadan acilmayacak. `components/AuthGate.tsx`
+    eklendi (`app/layout.tsx`'te `StoreProvider`'in icinde, `NavBar`'in yerine gecti — NavBar artik
+    AuthGate tarafindan kosullu render ediliyor): `authSlice.status === "loading"` iken bosluk/spinner
+    gosterir (redirect kararini erken vermemek icin), `/login` disinda giris yapilmamis VE misafir
+    degilse `/login`'e, `/profile` veya `/favorites`'e misafir modundayken bile erisilirse yine
+    `/login`'e yonlendirir (bu iki route sadece gercek girise ozel — bkz. "Kritik tasarim karari"
+    yukarida, favoriler/profil kullanici hesabina bagli).
+    - **Misafir modu ("Simdilik atla"):** `lib/redux/guestModeSlice.ts` + `localGuestModeStorage.ts`
+      (diger tercihlerle ayni localStorage deseni, `StoreProvider`'a baglandi). Login sayfasinin
+      altinda `Şimdilik atla` linki `setGuestMode(true)` dispatch edip `/`'e yonlendiriyor. Misafir
+      modunda sadece ana sayfa acik; `NavBar` da bu duruma gore Favoriler/Profil linklerini hic
+      gostermiyor (tiklaninca zaten geri atilacagi icin).
+    - **Google/Facebook ile giris:** `lib/firebase/auth.ts`'e `signInWithGoogle`/`signInWithFacebook`
+      eklendi (`GoogleAuthProvider`/`FacebookAuthProvider` + `signInWithPopup`, diger fonksiyonlarla
+      ayni `AuthResult` desenini kullanir). Login sayfasinda her iki formda da "Google ile devam et" /
+      "Facebook ile devam et" butonlari var (ikonlar `lucide-react`'te olmadigi icin inline SVG).
+      **Onemli:** bu butonlar Firebase projesi yapilandirilmadan (aynen e-posta/sifre gibi) devre disi
+      kalir; Firebase yapilandirilsa bile Facebook girisi ayrica Firebase konsolunda bir Facebook
+      Developer App ID/secret ile provider'in etkinlestirilmesini gerektirir — bu proje henuz o adima
+      gelmedi, kod hazir ama gercek kimlik bilgileriyle denenmedi.
+    - **e2e test kapsami degisti:** Artik `/` de dahil hemen hemen her sayfa korumali oldugu icin
+      `e2e/helpers/guestMode.ts` (`page.addInitScript` ile `cooksnap:guestMode` localStorage'ini
+      onceden yazan bir yardimci) eklendi ve ana sayfa akisini kullanan tum spec dosyalarina
+      (`home`, `copy-recipe`, `favorites`, `photo-upload`, `recipe-history`, `usage-counter*`)
+      `test.beforeEach` ile baglandi. `e2e/profile.spec.ts` ve `e2e/favorites-page.spec.ts` artik
+      sayfa ICERIGINI degil, erisim kapisinin (`/login`'e yonlendirme) dogru calistigini test ediyor —
+      gercek Firebase olmadan bu ortamda gercekten giris yapmak mumkun degil, o yuzden profil/favoriler
+      sayfalarinin kendi icerigi gercek Firebase baglaninca yeniden e2e ile kapsanmali (eski testler
+      git gecmisinde duruyor, referans alinabilir). `e2e/login.spec.ts`'e OAuth butonlarinin
+      gorunurlugu/devre-disi-durumu ve "Simdilik atla" akisi icin yeni testler eklendi.
+    - Tum degisiklikler sonrasi `npm run lint`, `npx tsc --noEmit`, `npm run build`,
+      `npm run test:unit` (119/119) ve `npx playwright test` (41/41) temiz; tarayicida manuel olarak
+      da dogrulandi (misafir modunda ana sayfa acik/profil-favoriler /login'e atiyor, temiz
+      localStorage'da `/` direkt `/login`'e yonlendiriyor, NavBar misafir modunda sadece Ana
+      Sayfa+Giris yap gosteriyor).
+
 Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar

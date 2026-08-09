@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import StoreProvider from "@/lib/redux/StoreProvider";
-import NavBar from "@/components/NavBar";
+import AuthGate from "@/components/AuthGate";
 import { SITE_URL } from "@/lib/siteUrl";
 import "./globals.css";
 
@@ -50,8 +50,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <StoreProvider>
-          <NavBar />
-          {children}
+          <AuthGate>{children}</AuthGate>
         </StoreProvider>
       </body>
     </html>

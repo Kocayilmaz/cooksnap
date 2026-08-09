@@ -1,4 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { setGuestMode } from "./helpers/guestMode";
+
+test.beforeEach(async ({ page }) => {
+  await setGuestMode(page);
+});
 
 const tinyPngBase64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
