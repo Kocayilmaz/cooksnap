@@ -1,8 +1,8 @@
 import {
   createUserWithEmailAndPassword,
-  FacebookAuthProvider,
   getAuth,
   GoogleAuthProvider,
+  OAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -119,12 +119,15 @@ export async function signInWithGoogle(): Promise<AuthResult> {
   }
 }
 
-export async function signInWithFacebook(): Promise<AuthResult> {
+export async function signInWithApple(): Promise<AuthResult> {
   const auth = getFirebaseAuth();
   if (!auth) return { ok: false, errorMessage: "Giriş sistemi şu an kullanılamıyor." };
 
   try {
-    await signInWithPopup(auth, new FacebookAuthProvider());
+    const provider = new OAuthProvider("apple.com");
+    provider.addScope("email");
+    provider.addScope("name");
+    await signInWithPopup(auth, provider);
     return { ok: true };
   } catch (error) {
     return { ok: false, errorMessage: toTurkishErrorMessage(error) };

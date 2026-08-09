@@ -349,6 +349,18 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
       localStorage'da `/` direkt `/login`'e yonlendiriyor, NavBar misafir modunda sadece Ana
       Sayfa+Giris yap gosteriyor).
 
+21. ✅ **Facebook yerine Apple ile giris (2026-08-10):** Kullanici Firebase konsolunda Facebook
+    provider'ini kurarken (ayri bir Facebook Developer App ID/secret gerektirdigini gorunce) vazgecti
+    — "facebook eklemeyelim" dedi, Firebase konsolundaki Facebook adimini iptal etti. `lib/firebase/auth.ts`'teki
+    `signInWithFacebook`/`FacebookAuthProvider` kaldirildi. Ardindan kullanici Firebase konsolunda
+    Apple provider'ini kendisi ekledi ("apple ile giriş ekledim onun yerine") — buna karsilik
+    `signInWithApple` eklendi (`OAuthProvider("apple.com")` + `signInWithPopup`, `email`/`name`
+    scope'lari istenir, diger fonksiyonlarla ayni `AuthResult` deseni). Login sayfasinda artik
+    **Google ile devam et** + **Apple ile devam et** butonlari var (`AppleIcon` inline SVG,
+    `FacebookIcon` silindi). e2e testi (`e2e/login.spec.ts`) Apple butonunu da kapsayacak sekilde
+    guncellendi. Google/Apple ile giris hala gercek kimlik bilgileriyle denenmedi (Firebase projesi
+    kurulum asamasinda — `.env.local` henuz doldurulmadi).
+
 Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar

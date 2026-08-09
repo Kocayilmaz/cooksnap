@@ -8,7 +8,7 @@ import {
   signInWithEmail,
   signUpWithEmail,
   signInWithGoogle,
-  signInWithFacebook,
+  signInWithApple,
   getFirebaseAuth,
 } from "@/lib/firebase/auth";
 import { setGuestMode } from "@/lib/redux/guestModeSlice";
@@ -27,10 +27,10 @@ function GoogleIcon() {
   );
 }
 
-function FacebookIcon() {
+function AppleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="#1877F2">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="#000">
+      <path d="M16.365 1.43c0 1.14-.417 2.27-1.14 3.09-.8.91-2.11 1.61-3.17 1.53-.14-1.11.41-2.28 1.13-3.05.8-.88 2.19-1.55 3.18-1.57zM20.5 17.06c-.4.92-.87 1.78-1.44 2.6-.79 1.13-1.6 2.26-2.87 2.28-1.25.02-1.65-.75-3.08-.75-1.43 0-1.88.73-3.06.77-1.24.04-2.19-1.22-2.99-2.35C5.34 17.75 4.03 13.7 5.63 11c.79-1.34 2.21-2.19 3.75-2.21 1.21-.02 2.36.82 3.1.82.74 0 2.12-1.01 3.58-.86.61.03 2.32.25 3.42 1.87-.09.06-2.04 1.19-2.02 3.55.02 2.82 2.48 3.76 2.51 3.77-.02.06-.39 1.34-1.29 2.62z" />
     </svg>
   );
 }
@@ -63,11 +63,27 @@ export default function LoginPage() {
     router.push("/");
   }
 
-  async function handleOAuth(provider: "google" | "facebook") {
+  async function handleGoogleSignIn() {
     setErrorMessage(null);
     setSubmitting(true);
 
-    const result = provider === "google" ? await signInWithGoogle() : await signInWithFacebook();
+    const result = await signInWithGoogle();
+
+    setSubmitting(false);
+    if (!result.ok) {
+      setErrorMessage(result.errorMessage ?? "Bir şeyler ters gitti, tekrar dene.");
+      return;
+    }
+
+    dispatch(setGuestMode(false));
+    router.push("/");
+  }
+
+  async function handleAppleSignIn() {
+    setErrorMessage(null);
+    setSubmitting(true);
+
+    const result = await signInWithApple();
 
     setSubmitting(false);
     if (!result.ok) {
@@ -152,7 +168,7 @@ export default function LoginPage() {
                 <div className={styles.oauthButtons}>
                   <button
                     type="button"
-                    onClick={() => handleOAuth("google")}
+                    onClick={handleGoogleSignIn}
                     disabled={submitting || !firebaseConfigured}
                     className={styles.oauthBtn}
                   >
@@ -160,11 +176,11 @@ export default function LoginPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleOAuth("facebook")}
+                    onClick={handleAppleSignIn}
                     disabled={submitting || !firebaseConfigured}
                     className={styles.oauthBtn}
                   >
-                    <FacebookIcon /> Facebook ile devam et
+                    <AppleIcon /> Apple ile devam et
                   </button>
                 </div>
 
@@ -236,7 +252,7 @@ export default function LoginPage() {
                 <div className={styles.oauthButtons}>
                   <button
                     type="button"
-                    onClick={() => handleOAuth("google")}
+                    onClick={handleGoogleSignIn}
                     disabled={submitting || !firebaseConfigured}
                     className={styles.oauthBtn}
                   >
@@ -244,11 +260,11 @@ export default function LoginPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleOAuth("facebook")}
+                    onClick={handleAppleSignIn}
                     disabled={submitting || !firebaseConfigured}
                     className={styles.oauthBtn}
                   >
-                    <FacebookIcon /> Facebook ile devam et
+                    <AppleIcon /> Apple ile devam et
                   </button>
                 </div>
 
