@@ -41,7 +41,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={`${styles.page} bg-surface-warm dark:bg-black`}>
+    <div className={`${styles.page} bg-surface-warm`}>
       <div className={`${styles.container} ${mode === "signUp" ? styles.signUpMode : ""}`}>
         <div className={styles.formsContainer}>
           <div className={styles.signinSignup}>

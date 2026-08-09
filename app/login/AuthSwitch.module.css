@@ -17,12 +17,6 @@
   overflow: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
-  .container {
-    background: #18181b;
-  }
-}
-
 .formsContainer {
   position: absolute;
   inset: 0;
@@ -79,7 +73,7 @@
 
 .title {
   font-size: 1.9rem;
-  color: var(--foreground);
+  color: #171717;
   margin-bottom: 6px;
   font-weight: 700;
 }
@@ -106,13 +100,6 @@
   transition: 0.3s;
 }
 
-@media (prefers-color-scheme: dark) {
-  .inputField {
-    background-color: #27272a;
-    border-color: #3f3f46;
-  }
-}
-
 .inputField:focus-within {
   border-color: var(--brand-orange);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-orange) 30%, transparent);
@@ -131,7 +118,7 @@
   border: none;
   font-weight: 500;
   font-size: 0.95rem;
-  color: var(--foreground);
+  color: #171717;
   width: 100%;
 }
 
