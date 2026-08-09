@@ -282,6 +282,24 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
     kritik tasarim kararina gore API key'in sifrelenip Firestore'a senkronize edilmesi
     (`lib/crypto/` + login sirasinda girilen parolayla turetilen anahtar).
 
+18. ✅ **Login ekrani gorsel yenilemesi (2026-08-09):** Kullanicinin verdigi bir referans tasarima
+    (kayan/animasyonlu split-panel giris-kayit karti, ortada donen gradient daire) gore
+    `app/login/page.tsx` + yeni `app/login/AuthSwitch.module.css` ile yeniden tasarlandi — mor yerine
+    mevcut marka renkleri (`--brand-orange` → `--brand-red` gradient) kullanildi, DESIGN.md'ye yeni
+    bir ton eklenmedi. Referans orneginde bulunan Google/Facebook/Twitter/LinkedIn sosyal giris
+    ikonlari **bilincli olarak eklenmedi** — hicbiri gercek bir OAuth entegrasyonuna baglanmayacakti
+    ve projenin "gercek islevi olmayan sahte buton eklenmez" ilkesine (bkz. bu dosyanin basindaki
+    "Login ekrani" notu) aykiri dusuyordu. Ikonlar icin emoji yerine `lucide-react` eklendi (proje
+    ilk kez bir ikon kutuphanesi kullaniyor). Iki form (giris/kayit) animasyon icin ayni anda DOM'da
+    duruyor; aktif olmayani hem ekran okuyucudan hem klavye odagindan gizlemek icin `aria-hidden`
+    + `inert` kullanildi (React 19/Next 16 `inert` prop'unu native destekliyor). e2e testler
+    (`e2e/login.spec.ts`) bu yuzden aktif forma `form:not([aria-hidden="true"])` ile scope oluyor —
+    `getByLabel`/`getByPlaceholder` gibi DOM-tabanli sorgular `aria-hidden`'i gormezden geldigi icin
+    scope olmadan iki eslesme donup testi kirar, sadece `getByRole` erisilebilirlik agacini kullanir.
+    `npm run lint`, `npx tsc --noEmit`, `npm run build`, `npm run test:unit` (112/112) ve
+    `npx playwright test` (41/41) hepsi temiz; tarayicida hem acik hem koyu modda, masaustu ve mobil
+    genislikte elle de dogrulandi (animasyonlu gecis calisiyor).
+
 Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar
