@@ -388,11 +388,14 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
       dokumanina (`favorites/someone-elses-uid`) yazma denemesi **403 PERMISSION_DENIED** —
       kurallar tam beklenen sekilde calisiyor. Test amacli yazilan dokuman hemen silindi
       (production verisinde kalici test verisi birakilmadi).
-    - Test hesabi (`claude-test-cooksnap@example.com`) hala Firebase Authentication kullanici
-      listesinde duruyor — istenirse konsoldan silinebilir.
-    - Login/Firebase entegrasyonu artik uctan uca calisiyor sayilir. Google/Apple ile giris
-      (popup akisi) hala tarayicida gercek tiklamayla denenmedi — sadece "yapilandirildi,
-      buton aktif" durumu dogrulandi.
+    - Test hesabi (`claude-test-cooksnap@example.com`) kullanici tarafindan Firebase
+      konsolundan silindi.
+    - **Google ile giris kullanicinin kendi tarayicisinda gercek tiklamayla denendi ve basarili
+      oldu** (2026-08-10) — otomasyon tarayicisinda popup engellendigi icin (bkz. yukarida) bu
+      adim kullanicinin kendi gerçek tarayicisinda dogrulandi. Login/Firebase entegrasyonu artik
+      butunuyle uctan uca calisiyor: e-posta/sifre + Google ile giris, Firestore favori senkronu,
+      guvenlik kurallari. Apple ile giris hala gercek tiklamayla denenmedi (buton aktif oldugu
+      dogrulandi, ama Apple Developer Program kurulumu/test hesabi tarafi ayri, henuz denenmedi).
 
 Bir sonraki oturumda buradan devam edilecek.
 
