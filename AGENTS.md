@@ -377,8 +377,22 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
     sekmesine yapistirmasi gerekiyor (henuz yapilmadi, varsayilan "tumunu reddet" kurali gecerli
     kaldigi surece favoriler senkronu izin hatasiyla best-effort sessizce basarisiz olur, uygulama
     kirilmaz). `npm run lint`, `npx tsc --noEmit`, `npm run test:unit` (114/114) temiz.
-    **Sirada:** kullanici Firestore Rules'u yapistiracak, ardindan tarayicida gercek bir hesapla
-    (e-posta/sifre ya da Google/Apple) uctan uca giris + favori senkronu denenecek.
+
+23. ✅ **Firestore Rules yayinlandi + uctan uca dogrulandi (2026-08-10):** Kullanici
+    `firestore.rules` icerigini Firebase konsolunda Publish etti. Dogrulama icin:
+    - Tarayicida gercek bir hesapla (`claude-test-cooksnap@example.com`) kayit olundu,
+      giris → ana sayfa yonlendirmesi, `/profile` erisimi calisti (bkz. madde 22).
+    - Kurallarin gercekten calistigini kanitlamak icin Identity Toolkit + Firestore REST
+      API'lerine dogrudan `fetch` ile istek atildi (gercek bir ID token alinip): kullanicinin
+      kendi `favorites/{kendi-uid}` dokumanina yazma **200 basarili**, baska bir uid'nin
+      dokumanina (`favorites/someone-elses-uid`) yazma denemesi **403 PERMISSION_DENIED** —
+      kurallar tam beklenen sekilde calisiyor. Test amacli yazilan dokuman hemen silindi
+      (production verisinde kalici test verisi birakilmadi).
+    - Test hesabi (`claude-test-cooksnap@example.com`) hala Firebase Authentication kullanici
+      listesinde duruyor — istenirse konsoldan silinebilir.
+    - Login/Firebase entegrasyonu artik uctan uca calisiyor sayilir. Google/Apple ile giris
+      (popup akisi) hala tarayicida gercek tiklamayla denenmedi — sadece "yapilandirildi,
+      buton aktif" durumu dogrulandi.
 
 Bir sonraki oturumda buradan devam edilecek.
 
