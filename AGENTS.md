@@ -397,6 +397,37 @@ sizinca herkesin anahtari acik olur) kullanilmayacak.
       guvenlik kurallari. Apple ile giris hala gercek tiklamayla denenmedi (buton aktif oldugu
       dogrulandi, ama Apple Developer Program kurulumu/test hesabi tarafi ayri, henuz denenmedi).
 
+24. ⏳ **Apple ile giris hatasi + Vercel prod deploy sorunlari (2026-08-10, devam ediyor):**
+    - **Apple ile giris kullanicinin kendi tarayicisinda gercek tiklamayla denendi ama hata verdi**
+      ("Bir seyler ters gitti, tekrar dene" — eslesmeyen/bilinmeyen bir Firebase hata kodu).
+      `lib/firebase/auth.ts`'teki `toTurkishErrorMessage`'in `default` dalina
+      `console.error("Firebase auth hatasi:", error)` eklendi (commit `c01f7db`) — bir sonraki
+      denemede devtools console'da gercek `auth/xxx` kodu gorunecek. **Sirada:** kullanici Apple'i
+      tekrar deneyip console'daki hata kodunu paylasacak, ona gore teshis edilecek (muhtemelen
+      Apple Developer Program'da Services ID/Team ID/Key ID/private key eksik/yanlis — Apple girisi
+      Firebase'de Google'dan farkli olarak bu ek kurulumu gerektiriyor).
+    - **Vercel'deki canli site (`cooksnap-git-master-enes-projects-112ef54c.vercel.app`,
+      `ne-pisirsem-mu.vercel.app`) henuz calismiyor** — `.env.local` gitignore'da oldugu icin
+      Vercel'in bu degerleri hic gormedigi ortaya cikti. Kullanici Vercel proje ayarlarinda
+      **Environment Variables**'a 5 `NEXT_PUBLIC_FIREBASE_*` degiskenini eklemeye basladi, ama bir
+      veri bozulmasi sorunu yasadi: `NEXT_PUBLIC_FIREBASE_API_KEY` degerini yapistirirken (muhtemelen
+      tarayicinin sifre yoneticisi/otomatik doldurma eklentisi "Value" alanini parola alani sanip
+      kendi maskeli degerini enjekte etti) gercek anahtar yerine `•` (nokta) karakterleri kaydedildi
+      — canli sitede `auth/api-key-not-valid` hatasina yol acti. Oturum sonunda kullanici bu
+      degiskeni "Production and Preview" kapsaminda yeniden ekliyordu, Value alani bu sefer dogru
+      gorunuyordu ama **Key alani** "gecersiz karakter iceriyor" hatasi veriyordu (kopyala-
+      yapistirdan bulasan gorunmez bir karakter olasi) — kullaniciya Key'i elle yazmasi soylendi.
+      **Sirada:**
+      1. Kullanicinin bu son kayit denemesinin basarili olup olmadigini dogrula.
+      2. Vercel'deki 5 `NEXT_PUBLIC_FIREBASE_*` degiskeninin hepsinin (goz ikonuyla acip kontrol
+         ederek) gercek/bozulmamis degerlere sahip oldugunu dogrula (sadece API_KEY degil, digerleri
+         de ayni sekilde bozulmus olabilir, kontrol edilmedi).
+      3. Vercel'de **Redeploy** tetikle.
+      4. Firebase konsolu → **Authentication → Settings → Authorized domains**'e Vercel'in
+         deployment domain'i (ve varsa custom domain) eklenmeli — henuz yapilmadi, yapilmazsa env
+         degiskenleri dogru olsa bile Google/Apple girisi prod'da "unauthorized domain" hatasi verir.
+      5. Canli sitede e-posta/sifre + Google girisini tekrar test et.
+
 Bir sonraki oturumda buradan devam edilecek.
 
 ## Günlük commit rutini için notlar
