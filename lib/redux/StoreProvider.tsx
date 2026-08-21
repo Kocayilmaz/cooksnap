@@ -76,7 +76,16 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     // kalmaması için burada elle "unauthenticated"e çekiyoruz.
     const unsubscribeAuth = subscribeToAuthState((user) => {
       if (user) {
-        store.dispatch(setAuthenticatedUser({ uid: user.uid, email: user.email }));
+        store.dispatch(
+          setAuthenticatedUser({ uid: user.uid, email: user.email, photoURL: user.photoURL }),
+        );
+
+        // Google/Apple gibi bir sağlayıcı displayName veriyorsa ve kullanıcı
+        // henüz kendi adını girmemişse (profil adı boşsa) otomatik doldur —
+        // sonradan /profile'dan kendi adını girip üzerine yazabilir.
+        if (user.displayName && !store.getState().userProfile.name) {
+          store.dispatch(setName(user.displayName));
+        }
 
         // Firestore senkronu sadece gercek girisle, kullanicinin kendi uid'si
         // altinda calisir (bkz. lib/firebase/favoritesSync.ts + firestore.rules).

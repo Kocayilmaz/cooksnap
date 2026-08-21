@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -18,7 +19,7 @@ const GUEST_LINKS = [{ href: "/", label: "Ana Sayfa" }];
 
 export default function NavBar() {
   const pathname = usePathname();
-  const { status, email } = useAppSelector((state) => state.auth);
+  const { status, email, photoURL } = useAppSelector((state) => state.auth);
   const isAuthenticated = status === "authenticated";
   const links = isAuthenticated ? AUTHENTICATED_LINKS : GUEST_LINKS;
 
@@ -44,6 +45,16 @@ export default function NavBar() {
 
       {isAuthenticated ? (
         <div className="flex items-center gap-3">
+          {photoURL && (
+            <Image
+              src={photoURL}
+              alt=""
+              width={24}
+              height={24}
+              className="rounded-full"
+              referrerPolicy="no-referrer"
+            />
+          )}
           <span className="hidden text-xs text-surface-text-muted sm:inline">{email}</span>
           <button
             type="button"

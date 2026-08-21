@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { setName, setLanguage, setCountry, type RecipeLanguage } from "@/lib/redux/userProfileSlice";
 import ApiKeyInput from "@/components/ApiKeyInput";
@@ -12,12 +13,23 @@ const LANGUAGE_LABELS: Record<RecipeLanguage, string> = {
 
 export default function ProfilePage() {
   const { name, language, country } = useAppSelector((state) => state.userProfile);
+  const { photoURL } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   return (
     <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12">
       <main className="flex w-full max-w-md flex-col gap-6 rounded-2xl bg-surface-card p-8 shadow-sm">
-        <div className="flex flex-col gap-1 text-center">
+        <div className="flex flex-col items-center gap-1 text-center">
+          {photoURL && (
+            <Image
+              src={photoURL}
+              alt=""
+              width={72}
+              height={72}
+              className="mb-2 rounded-full"
+              referrerPolicy="no-referrer"
+            />
+          )}
           <h1 className="text-2xl font-semibold tracking-tight text-brand-red">Profil</h1>
           <p className="text-sm text-surface-text-muted">
             Bu bilgiler tarayıcında saklanır ve tariflerini kişiselleştirmek için kullanılır.
