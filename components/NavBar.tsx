@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { signOutUser } from "@/lib/firebase/auth";
+import DefaultAvatar from "@/components/DefaultAvatar";
 
 const AUTHENTICATED_LINKS = [
   { href: "/", label: "Ana Sayfa" },
@@ -45,7 +46,7 @@ export default function NavBar() {
 
       {isAuthenticated ? (
         <div className="flex items-center gap-3">
-          {photoURL && (
+          {photoURL ? (
             <Image
               src={photoURL}
               alt=""
@@ -54,6 +55,8 @@ export default function NavBar() {
               className="rounded-full"
               referrerPolicy="no-referrer"
             />
+          ) : (
+            <DefaultAvatar size={24} />
           )}
           <span className="hidden text-xs text-surface-text-muted sm:inline">{email}</span>
           <button

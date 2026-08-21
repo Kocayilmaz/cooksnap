@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { setName, setLanguage, setCountry, type RecipeLanguage } from "@/lib/redux/userProfileSlice";
 import ApiKeyInput from "@/components/ApiKeyInput";
 import HelpSection from "@/components/HelpSection";
+import DefaultAvatar from "@/components/DefaultAvatar";
 
 const LANGUAGE_LABELS: Record<RecipeLanguage, string> = {
   tr: "Türkçe",
@@ -20,7 +21,7 @@ export default function ProfilePage() {
     <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12">
       <main className="flex w-full max-w-md flex-col gap-6 rounded-2xl bg-surface-card p-8 shadow-sm">
         <div className="flex flex-col items-center gap-1 text-center">
-          {photoURL && (
+          {photoURL ? (
             <Image
               src={photoURL}
               alt=""
@@ -29,6 +30,8 @@ export default function ProfilePage() {
               className="mb-2 rounded-full"
               referrerPolicy="no-referrer"
             />
+          ) : (
+            <DefaultAvatar size={72} className="mb-2" />
           )}
           <h1 className="text-2xl font-semibold tracking-tight text-brand-red">Profil</h1>
           <p className="text-sm text-surface-text-muted">

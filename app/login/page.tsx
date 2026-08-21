@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import {
   signInWithEmail,
@@ -11,6 +11,7 @@ import {
   getFirebaseAuth,
 } from "@/lib/firebase/auth";
 import { setGuestMode } from "@/lib/redux/guestModeSlice";
+import { setName } from "@/lib/redux/userProfileSlice";
 import styles from "./AuthSwitch.module.css";
 
 type Mode = "signIn" | "signUp";
@@ -32,6 +33,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<Mode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signUpName, setSignUpName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -48,6 +50,10 @@ export default function LoginPage() {
     if (!result.ok) {
       setErrorMessage(result.errorMessage ?? "Bir şeyler ters gitti, tekrar dene.");
       return;
+    }
+
+    if (mode === "signUp" && signUpName.trim()) {
+      dispatch(setName(signUpName.trim()));
     }
 
     dispatch(setGuestMode(false));
@@ -170,6 +176,21 @@ export default function LoginPage() {
                     Giriş sistemi henüz yapılandırılmadı.
                   </p>
                 )}
+
+                <label className={styles.inputField}>
+                  <span className={styles.inputIcon}>
+                    <User size={18} aria-hidden="true" />
+                  </span>
+                  <input
+                    type="text"
+                    value={signUpName}
+                    onChange={(event) => setSignUpName(event.target.value)}
+                    placeholder="Ad soyad"
+                    aria-label="Ad soyad"
+                    autoComplete="name"
+                    required
+                  />
+                </label>
 
                 <label className={styles.inputField}>
                   <span className={styles.inputIcon}>

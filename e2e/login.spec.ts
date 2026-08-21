@@ -33,6 +33,19 @@ test("hesap olustur moduna gecince aktif form ve gonder butonu degisir", async (
   await expect(activeForm(page).getByRole("button", { name: "Hesap oluştur" })).toBeDisabled();
 });
 
+test("hesap olustur formunda ad soyad alani da istenir", async ({ page }) => {
+  await page.goto("/login");
+
+  await page.getByRole("button", { name: "Hesap oluştur" }).click();
+
+  const nameField = activeForm(page).getByLabel("Ad soyad");
+  await expect(nameField).toBeVisible();
+  await expect(nameField).toHaveAttribute("required", "");
+  // giris formunda (e-posta/sifre ile) ad soyad alani istenmiyor, sadece kayitta
+  await page.getByRole("button", { name: "Giriş yap", exact: true }).click();
+  await expect(activeForm(page).getByLabel("Ad soyad")).toHaveCount(0);
+});
+
 test("Google ile giris butonu gosterilir, Firebase yapilandirilmadigi icin devre disi kalir", async ({
   page,
 }) => {
