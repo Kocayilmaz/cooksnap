@@ -33,18 +33,15 @@ test("hesap olustur moduna gecince aktif form ve gonder butonu degisir", async (
   await expect(activeForm(page).getByRole("button", { name: "Hesap oluştur" })).toBeDisabled();
 });
 
-test("Google ve Apple ile giris butonlari gosterilir, Firebase yapilandirilmadigi icin devre disi kalir", async ({
+test("Google ile giris butonu gosterilir, Firebase yapilandirilmadigi icin devre disi kalir", async ({
   page,
 }) => {
   await page.goto("/login");
 
   const google = activeForm(page).getByRole("button", { name: "Google ile devam et" });
-  const apple = activeForm(page).getByRole("button", { name: "Apple ile devam et" });
 
   await expect(google).toBeVisible();
-  await expect(apple).toBeVisible();
   await expect(google).toBeDisabled();
-  await expect(apple).toBeDisabled();
 });
 
 test("Simdilik atla tiklaninca misafir olarak sadece ana sayfaya erisim saglanir", async ({ page }) => {

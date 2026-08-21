@@ -16,7 +16,7 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     // e2e testleri gercek bir Firebase projesine (gelistiricinin kendi
-    // .env.local'i) bagli olmamali — Google/Apple OAuth popup'lari headless
+    // .env.local'i) bagli olmamali — Google OAuth popup'lari headless
     // Playwright'ta tamamlanamaz ve e-posta/sifre ile gercek hesap
     // olusturmak gercek veriyi kirletir. process.env burada .env.local'den
     // once oncelikli oldugu icin bu degerler bos kalip Firebase her zaman
