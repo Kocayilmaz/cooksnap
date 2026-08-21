@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Heart, User, type LucideIcon } from "lucide-react";
@@ -31,9 +32,8 @@ export default function NavBar() {
 
   return (
     <nav className="flex items-center justify-between border-b border-surface-border bg-surface-card px-4 py-3">
-      <Link href="/" className="text-2xl font-extrabold tracking-tight text-brand-orange">
-        {/* İkon henüz tasarlanmadı, hazır olunca buraya eklenecek. */}
-        CookSnap
+      <Link href="/" className="flex items-center">
+        <Image src="/logo.png" alt="CookSnap" width={120} height={36} priority />
       </Link>
 
       <div className="flex items-center gap-6">
