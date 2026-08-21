@@ -33,7 +33,7 @@ export default function NavBar() {
   return (
     <nav className="flex items-center justify-between border-b border-surface-border bg-surface-card px-4 py-3">
       <Link href="/" className="flex items-center">
-        <Image src="/logo.png" alt="CookSnap" width={120} height={36} priority />
+        <Image src="/logo.png" alt="CookSnap" width={168} height={50} priority />
       </Link>
 
       <div className="flex items-center gap-6">
