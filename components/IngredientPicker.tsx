@@ -108,7 +108,7 @@ export default function IngredientPicker() {
           &quot;{query.trim()}&quot; için malzeme bulunamadı.
         </p>
       ) : (
-        <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8">
+        <div className="no-scrollbar flex gap-3 overflow-x-auto pb-2">
           {visible.map((ing) => {
             const isSelected = selected.includes(ing.name);
             const label = getIngredientLabel(ing.name);
@@ -119,14 +119,14 @@ export default function IngredientPicker() {
                 onClick={() => toggle(ing.name)}
                 aria-pressed={isSelected}
                 aria-label={isSelected ? `${label} seçimini kaldır` : `${label} ekle`}
-                className="flex flex-col items-center gap-1.5"
+                className="flex w-16 shrink-0 flex-col items-center gap-1.5 sm:w-20"
               >
                 <div
                   className={`relative aspect-square w-full overflow-hidden rounded-xl border-2 bg-surface-warm transition-colors ${
                     isSelected ? "border-brand-orange" : "border-transparent"
                   }`}
                 >
-                  <Image src={ing.thumb} alt={label} fill sizes="120px" className="object-cover" />
+                  <Image src={ing.thumb} alt={label} fill sizes="80px" className="object-cover" />
                   <span
                     className={`absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full shadow-sm transition-colors ${
                       isSelected ? "bg-brand-orange text-white" : "bg-white/90 text-foreground"
