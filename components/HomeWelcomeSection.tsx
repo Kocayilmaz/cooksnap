@@ -13,31 +13,43 @@ const HERO_IMAGES = [
   {
     src: "/pngtree-turkish-food-png-png-image_14618786.png",
     alt: "Türk mutfağından bir tabak",
+    width: 2500,
+    height: 2500,
     className: "hidden sm:block sm:w-24 sm:top-4 sm:left-6 lg:w-40 lg:top-10 lg:left-16 animate-float",
   },
   {
     src: "/pngtree-carrot-beef-stew-specialties-home-cooking-dining-png-image_3943729.jpg",
     alt: "Ev yapımı güveç",
+    width: 516,
+    height: 404,
     className: "hidden sm:block sm:w-20 sm:top-4 sm:right-6 lg:w-36 lg:top-8 lg:right-16 animate-float-delayed",
   },
   {
     src: "/png-clipart-pulihora-saffron-rice-hyderabadi-biryani-pilaf-rice-food-recipe-thumbnail.png",
     alt: "Zerdeçallı pilav",
+    width: 348,
+    height: 260,
     className: "hidden sm:block sm:w-20 sm:bottom-4 sm:right-8 lg:w-32 lg:bottom-8 lg:right-24 animate-float",
   },
   {
     src: "/png-clipart-lentil-soup-khash-turkish-cuisine-others-miscellaneous-soup-thumbnail.png",
     alt: "Mercimek çorbası",
+    width: 348,
+    height: 288,
     className: "hidden w-16 bottom-6 left-6 sm:block animate-float-delayed",
   },
   {
     src: "/pngtree-home-cooking-spicy-fish-png-image_3871415.jpg",
     alt: "Ev usulü balık",
+    width: 391,
+    height: 261,
     className: "hidden w-14 top-1/2 right-4 -translate-y-1/2 sm:block animate-float",
   },
   {
     src: "/seramik-kasede-kizarmis-yumurta-ve-taze-otlarla-hazirlanan-ev-yapimi-tuzlu-kahvalti-guveci_84443-90268.avif",
     alt: "Otlu kahvaltı güveci",
+    width: 740,
+    height: 740,
     className: "hidden w-14 top-1/2 left-2 -translate-y-1/2 md:block animate-float-delayed",
   },
 ];

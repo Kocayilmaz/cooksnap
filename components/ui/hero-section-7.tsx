@@ -4,6 +4,9 @@ import Image from "next/image";
 interface FloatingFoodHeroImage {
   src: string;
   alt: string;
+  /** Görselin gerçek piksel boyutları (en/boy oranını korumak için). */
+  width: number;
+  height: number;
   /** Konum + boyut sınıfları (ör. "w-40 top-10 left-4 animate-float"). */
   className: string;
 }
@@ -21,18 +24,15 @@ export function FloatingFoodHero({ title, description, images, children }: Float
       {images.map((image) => (
         <div
           key={image.src + image.className}
-          className={`pointer-events-none absolute aspect-square overflow-hidden rounded-full shadow-lg ring-4 ring-white/25 ${image.className}`}
+          className={`pointer-events-none absolute ${image.className}`}
         >
-          {/* scale-125: kaynak fotoğrafların çoğunun kenarlarında ince bir
-              stüdyo arka planı var, hafif yakınlaştırma dairesel maskenin
-              sınırına o arka planı sızdırmadan sadece yemeği gösteriyor. */}
           <Image
             src={image.src}
             alt={image.alt}
-            fill
-            sizes="200px"
+            width={image.width}
+            height={image.height}
             priority
-            className="scale-125 object-cover"
+            className="h-auto w-full drop-shadow-xl"
           />
         </div>
       ))}
