@@ -21,7 +21,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-1 justify-center bg-surface-warm px-4 py-8">
-      <div className="flex w-full max-w-5xl flex-col gap-8">
+      <div className="flex w-full max-w-6xl flex-col gap-8">
         <HomeWelcomeSection />
 
         <IngredientPicker />
