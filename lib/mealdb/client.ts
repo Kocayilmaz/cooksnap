@@ -144,3 +144,25 @@ export async function getMealsByCategory(categoryName: string): Promise<MealSear
     area: "",
   }));
 }
+
+/** Verilen mutfaktaki (area/ülke) tarifleri özet halde döner. */
+export async function getMealsByArea(areaName: string): Promise<MealSearchResult[]> {
+  const response = await fetch(
+    `${getBaseUrl()}/filter.php?a=${encodeURIComponent(areaName)}`,
+    {
+      next: { revalidate: CATEGORY_REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    },
+  );
+  if (!response.ok) {
+    throw new ProviderRequestError(`TheMealDB isteği başarısız oldu (${response.status}).`);
+  }
+  const data = (await response.json()) as { meals: RawFilteredMeal[] | null };
+  return (data.meals ?? []).map((meal) => ({
+    id: meal.idMeal,
+    name: meal.strMeal,
+    thumbnail: meal.strMealThumb,
+    category: "",
+    area: areaName,
+  }));
+}

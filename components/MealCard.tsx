@@ -6,6 +6,7 @@ import { ArrowRight, Heart } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getCategoryLabel } from "@/lib/mealdb/categoryMeta";
+import { getAreaLabel } from "@/lib/mealdb/areaMeta";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { toggleMealFavorite } from "@/lib/redux/mealFavoritesSlice";
 import type { MealSearchResult } from "@/lib/types/meal";
@@ -20,6 +21,9 @@ interface MealCardProps {
 export default function MealCard({ meal, className = "w-full" }: MealCardProps) {
   const dispatch = useAppDispatch();
   const isFavorited = useAppSelector((state) => Boolean(state.mealFavorites[meal.id]));
+  // Mutfağa göre (area) gelen sonuçlarda kategori boş olabiliyor (bkz.
+  // getMealsByArea) — rozette o zaman mutfak adını gösteriyoruz.
+  const badgeLabel = meal.category ? getCategoryLabel(meal.category) : meal.area ? getAreaLabel(meal.area) : "";
 
   return (
     <Link href={`/meal/${meal.id}`} className={`block shrink-0 ${className}`}>
@@ -45,7 +49,7 @@ export default function MealCard({ meal, className = "w-full" }: MealCardProps) 
           >
             <Heart size={16} className={isFavorited ? "fill-brand-orange text-brand-orange" : ""} />
           </button>
-          <Badge className="absolute left-2 top-2">{getCategoryLabel(meal.category)}</Badge>
+          {badgeLabel && <Badge className="absolute left-2 top-2">{badgeLabel}</Badge>}
         </div>
 
         <div className="flex flex-1 flex-col justify-between">
@@ -54,7 +58,7 @@ export default function MealCard({ meal, className = "w-full" }: MealCardProps) 
               {meal.name}
             </h3>
             {meal.area && (
-              <p className="text-xs tracking-tight text-surface-text-muted">{meal.area}</p>
+              <p className="text-xs tracking-tight text-surface-text-muted">{getAreaLabel(meal.area)}</p>
             )}
           </CardContent>
 
