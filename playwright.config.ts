@@ -11,6 +11,14 @@ export default defineConfig({
     baseURL,
     trace: "on-first-retry",
   },
+  // Next.js dev modunda ilk kez ziyaret edilen bir route (ör. /chat, /meal/[id])
+  // Turbopack tarafindan istek anında derleniyor; 6 paralel worker ayni anda
+  // farkli route'lari tetikleyince bu derleme varsayilan 5s'i asip
+  // "click calisti ama toHaveURL zaman asimina ugradi" seklinde flaky
+  // testlere yol aciyordu (navigasyon mantigi degil, dev-server yuku).
+  expect: {
+    timeout: 10000,
+  },
   webServer: {
     command: `npm run dev -- -p ${port}`,
     url: baseURL,
