@@ -51,7 +51,7 @@ const HERO_IMAGES = [
     alt: "Pizza dilimi",
     width: 647,
     height: 787,
-    className: "hidden lg:block lg:w-16 lg:top-[125px] lg:left-[304px] animate-float-delayed",
+    className: "hidden lg:block lg:w-20 lg:top-[214px] lg:left-[140px] animate-float-delayed",
   },
 ];
 

@@ -17,7 +17,7 @@ export default defineConfig({
   // "click calisti ama toHaveURL zaman asimina ugradi" seklinde flaky
   // testlere yol aciyordu (navigasyon mantigi degil, dev-server yuku).
   expect: {
-    timeout: 10000,
+    timeout: 15000,
   },
   webServer: {
     command: `npm run dev -- -p ${port}`,
