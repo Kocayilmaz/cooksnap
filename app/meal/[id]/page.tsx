@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getMealById } from "@/lib/mealdb/client";
 import { getSpoonacularMealById, isSpoonacularId, stripSpoonacularPrefix } from "@/lib/spoonacular/client";
+import { getOwnMealById, isOwnRecipeId, stripOwnRecipePrefix } from "@/lib/firebase/recipesClient";
 import { translateMealToTurkish } from "@/lib/ai/groqTranslate";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 
@@ -13,16 +14,21 @@ interface MealPageProps {
 
 export default async function MealPage({ params }: MealPageProps) {
   const { id } = await params;
-  const rawMeal = await (isSpoonacularId(id)
-    ? getSpoonacularMealById(stripSpoonacularPrefix(id))
-    : getMealById(id)
+  const isOwn = isOwnRecipeId(id);
+  const rawMeal = await (isOwn
+    ? getOwnMealById(stripOwnRecipePrefix(id))
+    : isSpoonacularId(id)
+      ? getSpoonacularMealById(stripSpoonacularPrefix(id))
+      : getMealById(id)
   ).catch(() => null);
 
   if (!rawMeal) notFound();
 
-  // Çeviri en iyi çaba (best-effort) — Groq yapılandırılmamışsa ya da hata
-  // verirse orijinal İngilizce içerikle devam edilir, sayfa çökmez.
-  const meal = await translateMealToTurkish(rawMeal).catch(() => rawMeal);
+  // Kendi tariflerimiz (lib/firebase/recipesClient.ts) Firestore'da zaten
+  // Türkçe tutuluyor, tekrar çeviriye gerek yok. Diğer kaynaklar İngilizce
+  // geldiği için çeviri en iyi çaba (best-effort) — Groq yapılandırılmamışsa ya
+  // da hata verirse orijinal içerikle devam edilir, sayfa çökmez.
+  const meal = isOwn ? rawMeal : await translateMealToTurkish(rawMeal).catch(() => rawMeal);
 
   return (
     <div className="flex flex-1 justify-center bg-surface-warm px-4 py-12">

@@ -10,6 +10,15 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // recipes/{id}: CookSnap'in kendi cok dilli tarif veritabani (bkz.
+    // lib/firebase/recipesClient.ts). Herkese acik okuma; yazma sadece
+    // scripts/seedRecipes.ts'in kullandigi firebase-admin servis hesabi
+    // uzerinden yapilir, uygulama client'indan asla.
+    match /recipes/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

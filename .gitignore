@@ -37,6 +37,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# Firebase Admin SDK servis hesabi anahtari (scripts/seedRecipes.ts) — asla commit edilmez.
+firebase-service-account.json
+
 # vercel
 .vercel
 

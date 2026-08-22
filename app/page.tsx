@@ -6,10 +6,15 @@ import CategoryIngredientFilter from "@/components/CategoryIngredientFilter";
 import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
 import { FEATURED_CATEGORY_ORDER, sortCategoriesFeaturedFirst } from "@/lib/mealdb/categoryMeta";
 import { searchMealsByQuery } from "@/lib/spoonacular/client";
+import { getOwnMealsByCategory } from "@/lib/firebase/recipesClient";
 
 /** Her kategori satırına TheMealDB sonuçlarının yanına eklenecek ek Spoonacular
  * tarif sayısı — genel çeşitliliği artırmak icin (bkz. lib/spoonacular/client.ts). */
 const EXTRA_MEALS_PER_CATEGORY = 6;
+/** Kendi Firestore tarif veritabanımızdan (bkz. lib/firebase/recipesClient.ts)
+ * kategori başına çekilecek en fazla kayıt — kota/ToS riski yok, sınır yok
+ * denecek kadar cömert tutuluyor. */
+const OWN_MEALS_PER_CATEGORY = 20;
 
 const SECTIONS_TO_SHOW = FEATURED_CATEGORY_ORDER;
 
@@ -19,11 +24,12 @@ export default async function Home() {
 
   const sections = await Promise.all(
     SECTIONS_TO_SHOW.map(async (categoryName) => {
-      const [mealdbMeals, spoonacularMeals] = await Promise.all([
+      const [ownMeals, mealdbMeals, spoonacularMeals] = await Promise.all([
+        getOwnMealsByCategory(categoryName, OWN_MEALS_PER_CATEGORY).catch(() => []),
         getMealsByCategory(categoryName).catch(() => []),
         searchMealsByQuery(categoryName, EXTRA_MEALS_PER_CATEGORY, categoryName).catch(() => []),
       ]);
-      return { categoryName, meals: [...mealdbMeals, ...spoonacularMeals] };
+      return { categoryName, meals: [...ownMeals, ...mealdbMeals, ...spoonacularMeals] };
     }),
   );
 
