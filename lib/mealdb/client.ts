@@ -1,5 +1,28 @@
 import { ProviderNotConfiguredError, ProviderRequestError } from "@/lib/ai/providers";
-import type { MealDetail, MealIngredient, MealSearchResult } from "@/lib/types/meal";
+import type { MealCategory, MealDetail, MealIngredient, MealSearchResult } from "@/lib/types/meal";
+
+interface RawCategory {
+  strCategory: string;
+  strCategoryThumb: string;
+  strCategoryDescription: string;
+}
+
+/** Kategori filtresiyle dönen özet tarif — search/lookup'tan farklı olarak
+ * strCategory içermiyor, kategori zaten filtre parametresinden biliniyor. */
+interface RawFilteredMeal {
+  idMeal: string;
+  strMeal: string;
+  strMealThumb: string;
+}
+
+/** Kategori listesi ve kategoriye göre filtrelenmiş tarifler nadiren değişir,
+ * ana sayfanın hızlı yüklenmesi için 1 saat önbelleklenir. */
+const CATEGORY_REVALIDATE_SECONDS = 3600;
+
+/** TheMealDB yavaş/erişilemez olsa bile sayfa süresiz beklemesin diye her
+ * istek bu sürede zaman aşımına uğrar (bkz. fetchMeals, getCategories,
+ * getMealsByCategory) — çağıran taraf best-effort olarak boş sonuçla devam eder. */
+const REQUEST_TIMEOUT_MS = 2500;
 
 /** TheMealDB'nin ham JSON şekli — sadece bu dosya içinde kullanılır, dışarıya
  * her zaman lib/types/meal.ts'teki temiz tipler döner. */
@@ -61,7 +84,9 @@ function toMealDetail(meal: RawMeal): MealDetail {
 }
 
 async function fetchMeals(path: string): Promise<RawMeal[]> {
-  const response = await fetch(`${getBaseUrl()}/${path}`);
+  const response = await fetch(`${getBaseUrl()}/${path}`, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
   if (!response.ok) {
     throw new ProviderRequestError(`TheMealDB isteği başarısız oldu (${response.status}).`);
   }
@@ -79,4 +104,43 @@ export async function searchMeals(query: string): Promise<MealSearchResult[]> {
 export async function getMealById(id: string): Promise<MealDetail | null> {
   const meals = await fetchMeals(`lookup.php?i=${encodeURIComponent(id)}`);
   return meals[0] ? toMealDetail(meals[0]) : null;
+}
+
+/** Tüm TheMealDB kategorilerini (Anasayfa'daki kategori barı için) döner. */
+export async function getCategories(): Promise<MealCategory[]> {
+  const response = await fetch(`${getBaseUrl()}/categories.php`, {
+    next: { revalidate: CATEGORY_REVALIDATE_SECONDS },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
+  if (!response.ok) {
+    throw new ProviderRequestError(`TheMealDB isteği başarısız oldu (${response.status}).`);
+  }
+  const data = (await response.json()) as { categories: RawCategory[] };
+  return data.categories.map((category) => ({
+    name: category.strCategory,
+    thumbnail: category.strCategoryThumb,
+    description: category.strCategoryDescription,
+  }));
+}
+
+/** Verilen kategorideki tarifleri özet halde (kutu görünümü için) döner. */
+export async function getMealsByCategory(categoryName: string): Promise<MealSearchResult[]> {
+  const response = await fetch(
+    `${getBaseUrl()}/filter.php?c=${encodeURIComponent(categoryName)}`,
+    {
+      next: { revalidate: CATEGORY_REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    },
+  );
+  if (!response.ok) {
+    throw new ProviderRequestError(`TheMealDB isteği başarısız oldu (${response.status}).`);
+  }
+  const data = (await response.json()) as { meals: RawFilteredMeal[] | null };
+  return (data.meals ?? []).map((meal) => ({
+    id: meal.idMeal,
+    name: meal.strMeal,
+    thumbnail: meal.strMealThumb,
+    category: categoryName,
+    area: "",
+  }));
 }

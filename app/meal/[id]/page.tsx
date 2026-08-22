@@ -12,7 +12,7 @@ interface MealPageProps {
 
 export default async function MealPage({ params }: MealPageProps) {
   const { id } = await params;
-  const rawMeal = await getMealById(id);
+  const rawMeal = await getMealById(id).catch(() => null);
 
   if (!rawMeal) notFound();
 
