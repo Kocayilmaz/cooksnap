@@ -13,19 +13,25 @@ describe("getCategoryLabel", () => {
 
 describe("sortCategoriesFeaturedFirst", () => {
   it("one cikan kategorileri FEATURED_CATEGORY_ORDER sirasiyla basa alir", () => {
-    const categories = [{ name: "Goat" }, { name: "Pasta" }, { name: "Breakfast" }, { name: "Lamb" }];
+    const categories = [
+      { name: "Bilinmeyen-Kategori" },
+      { name: "Pasta" },
+      { name: "Breakfast" },
+      { name: "Lamb" },
+    ];
 
     const sorted = sortCategoriesFeaturedFirst(categories);
 
-    expect(sorted.map((c) => c.name)).toEqual(["Breakfast", "Pasta", "Goat", "Lamb"]);
+    // Bilinmeyen-Kategori FEATURED_CATEGORY_ORDER'da yok, en sona duser.
+    expect(sorted.map((c) => c.name)).toEqual(["Breakfast", "Pasta", "Lamb", "Bilinmeyen-Kategori"]);
   });
 
   it("one cikan olmayanlarin kendi aralarindaki sirasini korur", () => {
-    const categories = [{ name: "Lamb" }, { name: "Goat" }, { name: "Pork" }];
+    const categories = [{ name: "Zeta" }, { name: "Alpha" }, { name: "Beta" }];
 
     const sorted = sortCategoriesFeaturedFirst(categories);
 
-    expect(sorted.map((c) => c.name)).toEqual(["Lamb", "Goat", "Pork"]);
+    expect(sorted.map((c) => c.name)).toEqual(["Zeta", "Alpha", "Beta"]);
   });
 
   it("orijinal diziyi degistirmez", () => {

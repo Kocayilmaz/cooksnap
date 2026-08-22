@@ -14,6 +14,9 @@ export interface HistoryEntry {
   /** Dönen tariflerin başlıkları, geçmiş listesinde kısa önizleme için. */
   recipeTitles: string[];
   createdAt: number;
+  /** Kullanıcı bu sohbeti favoriledi mi (bkz. ChatSidebar) — favorilenen kayıtlar
+   * MAX_HISTORY_ENTRIES kırpmasından muaf tutulur. */
+  isFavorite: boolean;
 }
 
 /** Geçmişte tutulan en fazla arama sayısı; localStorage'ın şişmesini önler. */
@@ -27,14 +30,34 @@ const historySlice = createSlice({
   name: "history",
   initialState,
   reducers: {
-    addHistoryEntry(state, action: PayloadAction<Omit<HistoryEntry, "id" | "createdAt">>) {
+    addHistoryEntry(
+      state,
+      action: PayloadAction<Omit<HistoryEntry, "id" | "createdAt" | "isFavorite">>,
+    ) {
       const entry: HistoryEntry = {
         ...action.payload,
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         createdAt: Date.now(),
+        isFavorite: false,
       };
       state.unshift(entry);
-      state.length = Math.min(state.length, MAX_HISTORY_ENTRIES);
+
+      // Favorilenen kayıtlar kırpmadan muaf — sadece favorisiz kayıtlar
+      // MAX_HISTORY_ENTRIES'e indirilir, favoriler ne kadar eski olursa olsun kalır.
+      let keptNonFavorite = 0;
+      const trimmed = state.filter((item) => {
+        if (item.isFavorite) return true;
+        keptNonFavorite += 1;
+        return keptNonFavorite <= MAX_HISTORY_ENTRIES;
+      });
+      if (trimmed.length !== state.length) {
+        state.length = 0;
+        state.push(...trimmed);
+      }
+    },
+    toggleHistoryFavorite(state, action: PayloadAction<string>) {
+      const entry = state.find((item) => item.id === action.payload);
+      if (entry) entry.isFavorite = !entry.isFavorite;
     },
     setHistory(_state, action: PayloadAction<HistoryState>) {
       return action.payload;
@@ -45,5 +68,6 @@ const historySlice = createSlice({
   },
 });
 
-export const { addHistoryEntry, setHistory, clearHistory } = historySlice.actions;
+export const { addHistoryEntry, toggleHistoryFavorite, setHistory, clearHistory } =
+  historySlice.actions;
 export default historySlice.reducer;

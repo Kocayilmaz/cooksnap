@@ -11,12 +11,21 @@ import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import FavoriteButton from "@/components/FavoriteButton";
 import CopyRecipeButton from "@/components/CopyRecipeButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import RecipeHistoryList from "@/components/RecipeHistoryList";
+import ChatSidebar from "@/components/ChatSidebar";
+import CookingTimer from "@/components/CookingTimer";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { EQUIPMENT_KEYS } from "@/lib/redux/equipmentSlice";
+import { EQUIPMENT_KEYS, setEquipment, type Equipment } from "@/lib/redux/equipmentSlice";
 import { FREE_USAGE_LIMIT, incrementUsage } from "@/lib/redux/usageCounterSlice";
-import { addHistoryEntry } from "@/lib/redux/historySlice";
+import { addHistoryEntry, type HistoryEntry } from "@/lib/redux/historySlice";
+import { setPersonCount } from "@/lib/redux/personCountSlice";
+import { setRecipeMode } from "@/lib/redux/recipeModeSlice";
 import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/types/recipe";
+
+function buildEquipmentState(selected: Equipment[]): Record<Equipment, boolean> {
+  const state = {} as Record<Equipment, boolean>;
+  for (const key of EQUIPMENT_KEYS) state[key] = selected.includes(key);
+  return state;
+}
 
 type Status = "idle" | "loading" | "error" | "success";
 
@@ -109,8 +118,25 @@ function ChatPageContent() {
     }
   }
 
+  function handleNewChat() {
+    setPhoto(null);
+    setIngredientsText("");
+    setStatus("idle");
+    setError(null);
+    setRecipes([]);
+  }
+
+  function handleSelectEntry(entry: HistoryEntry) {
+    setIngredientsText(entry.ingredientsText ?? "");
+    dispatch(setPersonCount(entry.personCount));
+    dispatch(setEquipment(buildEquipmentState(entry.equipment)));
+    dispatch(setRecipeMode(entry.mode));
+  }
+
   return (
-    <div className="flex flex-1 items-center justify-center bg-surface-warm px-4 py-12">
+    <div className="flex flex-1 justify-center gap-6 bg-surface-warm px-4 py-12">
+      <ChatSidebar onNewChat={handleNewChat} onSelectEntry={handleSelectEntry} />
+
       <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-surface-card p-8 shadow-sm">
         <div className="flex flex-col gap-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brand-red">
@@ -191,9 +217,9 @@ function ChatPageContent() {
             </ul>
           )}
         </div>
-
-        <RecipeHistoryList />
       </main>
+
+      <CookingTimer />
     </div>
   );
 }

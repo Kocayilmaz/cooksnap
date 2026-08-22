@@ -17,7 +17,10 @@ function isHistoryEntry(value: unknown): value is HistoryEntry {
     RECIPE_MODE_KEYS.includes(record.mode) &&
     Array.isArray(record.recipeTitles) &&
     record.recipeTitles.every((title) => typeof title === "string") &&
-    typeof record.createdAt === "number"
+    typeof record.createdAt === "number" &&
+    // isFavorite alanı sonradan eklendi — eski (alansız) kayıtlarla geriye
+    // dönük uyum için burada opsiyonel kabul edilir, okurken false'a normalize edilir.
+    (record.isFavorite === undefined || typeof record.isFavorite === "boolean")
   );
 }
 
@@ -35,7 +38,7 @@ export function readStoredHistory(): HistoryState | null {
 
     const parsed: unknown = JSON.parse(raw);
     if (!isHistoryState(parsed)) return null;
-    return parsed;
+    return parsed.map((entry) => ({ ...entry, isFavorite: entry.isFavorite ?? false }));
   } catch {
     return null;
   }

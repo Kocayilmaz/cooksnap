@@ -4,10 +4,11 @@ import reducer, {
   clearHistory,
   MAX_HISTORY_ENTRIES,
   setHistory,
+  toggleHistoryFavorite,
   type HistoryEntry,
 } from "./historySlice";
 
-const baseEntry: Omit<HistoryEntry, "id" | "createdAt"> = {
+const baseEntry: Omit<HistoryEntry, "id" | "createdAt" | "isFavorite"> = {
   hadPhoto: true,
   personCount: 2,
   equipment: ["oven"],
@@ -23,6 +24,7 @@ describe("historySlice", () => {
     expect(state[0]).toMatchObject(baseEntry);
     expect(typeof state[0].id).toBe("string");
     expect(typeof state[0].createdAt).toBe("number");
+    expect(state[0].isFavorite).toBe(false);
   });
 
   it("en yeni kayit listenin basinda olur", () => {
@@ -50,8 +52,31 @@ describe("historySlice", () => {
   });
 
   it("setHistory tum state'i verilen degerle degistirir", () => {
-    const replacement = [{ ...baseEntry, id: "x", createdAt: 0 }];
+    const replacement = [{ ...baseEntry, id: "x", createdAt: 0, isFavorite: false }];
 
     expect(reducer([], setHistory(replacement))).toEqual(replacement);
+  });
+
+  it("toggleHistoryFavorite verilen kaydin favori durumunu ters cevirir", () => {
+    let state = reducer([], addHistoryEntry(baseEntry));
+    const id = state[0].id;
+
+    state = reducer(state, toggleHistoryFavorite(id));
+    expect(state[0].isFavorite).toBe(true);
+
+    state = reducer(state, toggleHistoryFavorite(id));
+    expect(state[0].isFavorite).toBe(false);
+  });
+
+  it("favorilenen kayitlar MAX_HISTORY_ENTRIES kirpmasindan muaf tutulur", () => {
+    let state = reducer([], addHistoryEntry({ ...baseEntry, recipeTitles: ["Favori"] }));
+    state = reducer(state, toggleHistoryFavorite(state[0].id));
+
+    for (let i = 0; i < MAX_HISTORY_ENTRIES + 5; i++) {
+      state = reducer(state, addHistoryEntry({ ...baseEntry, recipeTitles: [`Tarif ${i}`] }));
+    }
+
+    expect(state).toHaveLength(MAX_HISTORY_ENTRIES + 1);
+    expect(state.some((entry) => entry.recipeTitles[0] === "Favori")).toBe(true);
   });
 });

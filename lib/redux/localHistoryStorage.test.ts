@@ -20,6 +20,7 @@ const entry: HistoryEntry = {
   mode: "home",
   recipeTitles: ["Firinda Tavuk"],
   createdAt: 1700000000000,
+  isFavorite: false,
 };
 
 afterEach(() => {
@@ -73,5 +74,15 @@ describe("localHistoryStorage", () => {
     vi.stubGlobal("window", { localStorage });
 
     expect(readStoredHistory()).toBeNull();
+  });
+
+  it("isFavorite alani olmayan eski kayitlar false olarak normalize edilir", () => {
+    const localStorage = createLocalStorageMock();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kasıtlı olarak atılıyor
+    const { isFavorite: _isFavorite, ...legacyEntry } = entry;
+    localStorage.setItem("cooksnap:history", JSON.stringify([legacyEntry]));
+    vi.stubGlobal("window", { localStorage });
+
+    expect(readStoredHistory()).toEqual([{ ...legacyEntry, isFavorite: false }]);
   });
 });
