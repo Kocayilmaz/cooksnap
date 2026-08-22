@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  FEATURED_CATEGORY_ORDER,
-  getCategoryDescription,
-  getCategoryLabel,
-  sortCategoriesFeaturedFirst,
-} from "./categoryMeta";
+import { FEATURED_CATEGORY_ORDER, getCategoryLabel, sortCategoriesFeaturedFirst } from "./categoryMeta";
 
 describe("getCategoryLabel", () => {
   it("bilinen kategori icin Turkce etiket doner", () => {
@@ -13,16 +8,6 @@ describe("getCategoryLabel", () => {
 
   it("bilinmeyen kategori icin orijinal adi doner", () => {
     expect(getCategoryLabel("Unicorn")).toBe("Unicorn");
-  });
-});
-
-describe("getCategoryDescription", () => {
-  it("bilinen kategori icin Turkce aciklama doner", () => {
-    expect(getCategoryDescription("Breakfast")).toContain("kahvaltılık");
-  });
-
-  it("bilinmeyen kategori icin bos metin doner", () => {
-    expect(getCategoryDescription("Unicorn")).toBe("");
   });
 });
 

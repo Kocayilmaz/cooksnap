@@ -18,23 +18,6 @@ export const CATEGORY_LABELS_TR: Record<string, string> = {
   Goat: "Keçi Eti",
 };
 
-export const CATEGORY_DESCRIPTIONS_TR: Record<string, string> = {
-  Breakfast: "Güne enerjik başlamak için kahvaltılık tarifler.",
-  Chicken: "Tavuk etiyle hazırlanan pratik ve lezzetli tarifler.",
-  Pasta: "Her damak zevkine uygun makarna çeşitleri.",
-  Dessert: "Tatlı kriziniz için nefis tarifler.",
-  Vegetarian: "Et içermeyen, sebze ağırlıklı doyurucu tarifler.",
-  Seafood: "Balık ve deniz ürünleriyle hazırlanan tarifler.",
-  Beef: "Dana etiyle yapılan klasik ve doyurucu yemekler.",
-  Vegan: "Hayvansal ürün içermeyen bitkisel tarifler.",
-  Side: "Ana yemeklerin yanına yakışan garnitürler.",
-  Starter: "Sofraya iştah açıcı başlangıçlar.",
-  Pork: "Domuz etiyle hazırlanan tarifler.",
-  Lamb: "Kuzu etiyle yapılan geleneksel lezzetler.",
-  Miscellaneous: "Kategorilere sığmayan farklı tarifler.",
-  Goat: "Keçi etiyle hazırlanan özel tarifler.",
-};
-
 /** Kategori barında bu sırayla, en başta gösterilecek olanlar — geri kalan
  * kategoriler TheMealDB'den geldiği sırayla bunların ardından eklenir. */
 export const FEATURED_CATEGORY_ORDER = [
@@ -48,10 +31,6 @@ export const FEATURED_CATEGORY_ORDER = [
 
 export function getCategoryLabel(name: string): string {
   return CATEGORY_LABELS_TR[name] ?? name;
-}
-
-export function getCategoryDescription(name: string): string {
-  return CATEGORY_DESCRIPTIONS_TR[name] ?? "";
 }
 
 /** Kategorileri, öne çıkanlar en başta olacak şekilde sıralar. */
