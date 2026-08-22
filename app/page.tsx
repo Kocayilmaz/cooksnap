@@ -1,4 +1,5 @@
 import HomeWelcomeSection from "@/components/HomeWelcomeSection";
+import IngredientPicker from "@/components/IngredientPicker";
 import CategoryNav from "@/components/CategoryNav";
 import CategoryMealsSection from "@/components/CategoryMealsSection";
 import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
@@ -21,6 +22,8 @@ export default async function Home() {
     <div className="flex flex-1 justify-center bg-surface-warm px-4 py-8">
       <div className="flex w-full max-w-5xl flex-col gap-8">
         <HomeWelcomeSection />
+
+        <IngredientPicker />
 
         {orderedCategories.length > 0 && (
           <div className="flex flex-col gap-6">

@@ -67,7 +67,7 @@ test("arama kutusu odaklaninca (yazmadan) populer aramalar gosterilir", async ({
   await page.getByPlaceholder("Tarif, malzeme ara").click();
 
   await expect(page.getByText("Popüler aramalar")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Tavuk" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tavuk", exact: true })).toBeVisible();
   await expect(page.getByText("Geçmiş aramalar")).toBeHidden();
 });
 
@@ -101,7 +101,7 @@ test("populer arama etiketine tiklaninca o terimle arama tetiklenir", async ({ p
   await page.goto("/");
 
   await page.getByPlaceholder("Tarif, malzeme ara").click();
-  await page.getByRole("button", { name: "Tavuk" }).click();
+  await page.getByRole("button", { name: "Tavuk", exact: true }).click();
 
   await expect(page.getByPlaceholder("Tarif, malzeme ara")).toHaveValue("Tavuk");
   await expect(page.getByRole("link", { name: /Roast Chicken/ })).toBeVisible();

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import PhotoUpload from "@/components/PhotoUpload";
 import IngredientTextInput from "@/components/IngredientTextInput";
 import PersonCountSelector from "@/components/PersonCountSelector";
@@ -20,8 +21,19 @@ import type { ApiErrorResponse, RecipeResponse, RecipeSuggestion } from "@/lib/t
 type Status = "idle" | "loading" | "error" | "success";
 
 export default function ChatPage() {
+  return (
+    <Suspense fallback={null}>
+      <ChatPageContent />
+    </Suspense>
+  );
+}
+
+function ChatPageContent() {
+  const searchParams = useSearchParams();
   const [photo, setPhoto] = useState<string | null>(null);
-  const [ingredientsText, setIngredientsText] = useState("");
+  // Anasayfadaki malzeme seçici /chat?ingredients=... ile buraya yönlendiriyor
+  // (bkz. components/IngredientPicker.tsx) — varsa metin kutusunu onunla doldur.
+  const [ingredientsText, setIngredientsText] = useState(() => searchParams.get("ingredients") ?? "");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<RecipeSuggestion[]>([]);
