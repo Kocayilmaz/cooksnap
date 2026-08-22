@@ -16,7 +16,7 @@ const HERO_IMAGES = [
     alt: "Şiş kebap",
     width: 869,
     height: 977,
-    className: "hidden sm:block sm:w-28 sm:top-4 sm:left-6 lg:w-44 lg:top-10 lg:left-16 animate-float",
+    className: "hidden sm:block sm:w-28 sm:top-1 sm:left-6 lg:w-44 lg:top-3 lg:left-16 animate-float",
   },
   {
     src: "/domates-soslu-makarna.png",
@@ -49,9 +49,9 @@ const HERO_IMAGES = [
   {
     src: "/pizza-dilimi.png",
     alt: "Pizza dilimi",
-    width: 583,
-    height: 800,
-    className: "hidden w-12 bottom-6 left-24 md:block animate-float-delayed",
+    width: 647,
+    height: 787,
+    className: "hidden lg:block lg:w-16 lg:top-[125px] lg:left-[304px] animate-float-delayed",
   },
 ];
 
