@@ -71,6 +71,15 @@ test("arama kutusu odaklaninca (yazmadan) populer aramalar gosterilir", async ({
   await expect(page.getByText("Geçmiş aramalar")).toBeHidden();
 });
 
+test("populer aramalarin altindaki AI'dan tarif iste butonu Chat'e gider", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByPlaceholder("Tarif, malzeme ara").click();
+  await page.getByRole("link", { name: "AI'dan tarif iste" }).click();
+
+  await expect(page).toHaveURL(/\/chat$/);
+});
+
 test("populer arama etiketine tiklaninca o terimle arama tetiklenir", async ({ page }) => {
   await page.route("**/api/meals/search*", async (route) => {
     await route.fulfill({

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, MessageCircle } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { addMealSearchHistoryEntry, clearMealSearchHistory } from "@/lib/redux/mealSearchHistorySlice";
 import type { MealSearchResult } from "@/lib/types/meal";
@@ -161,6 +161,15 @@ export default function MealSearchBar() {
                   ))}
                 </div>
               </div>
+
+              <Link
+                href="/chat"
+                onClick={() => setIsOpen(false)}
+                className="mt-1 flex items-center justify-center gap-2 rounded-lg border-t border-surface-border px-3 py-2.5 text-sm font-medium text-brand-orange transition-colors hover:bg-surface-warm"
+              >
+                <MessageCircle size={16} aria-hidden="true" />
+                AI&apos;dan tarif iste
+              </Link>
             </>
           ) : (
             <>
