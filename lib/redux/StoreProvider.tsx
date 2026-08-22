@@ -20,6 +20,11 @@ import { setAuthenticatedUser, setUnauthenticated } from "./authSlice";
 import { subscribeToAuthState } from "@/lib/firebase/auth";
 import { readStoredGuestMode, writeStoredGuestMode } from "./localGuestModeStorage";
 import { setGuestMode } from "./guestModeSlice";
+import {
+  readStoredMealSearchHistory,
+  writeStoredMealSearchHistory,
+} from "./localMealSearchHistoryStorage";
+import { setMealSearchHistory } from "./mealSearchHistorySlice";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -69,6 +74,11 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
 
     if (readStoredGuestMode()) {
       store.dispatch(setGuestMode(true));
+    }
+
+    const storedMealSearchHistory = readStoredMealSearchHistory();
+    if (storedMealSearchHistory) {
+      store.dispatch(setMealSearchHistory(storedMealSearchHistory));
     }
 
     // Firebase yapılandırılmamışsa subscribeToAuthState hiç dinlemeye başlamadan
@@ -185,6 +195,17 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const current = store.getState().guestMode;
       if (current !== previous) {
         writeStoredGuestMode(current.isGuest);
+        previous = current;
+      }
+    });
+  }, [store]);
+
+  useEffect(() => {
+    let previous = store.getState().mealSearchHistory;
+    return store.subscribe(() => {
+      const current = store.getState().mealSearchHistory;
+      if (current !== previous) {
+        writeStoredMealSearchHistory(current);
         previous = current;
       }
     });

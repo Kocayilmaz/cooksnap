@@ -61,6 +61,91 @@ test("sonuc bulunamayinca Chat'e yonlendiren not gosterilir", async ({ page }) =
   await expect(page).toHaveURL(/\/chat$/);
 });
 
+test("arama kutusu odaklaninca (yazmadan) populer aramalar gosterilir", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByPlaceholder("Tarif, malzeme ara").click();
+
+  await expect(page.getByText("Popüler aramalar")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tavuk" })).toBeVisible();
+  await expect(page.getByText("Geçmiş aramalar")).toBeHidden();
+});
+
+test("populer arama etiketine tiklaninca o terimle arama tetiklenir", async ({ page }) => {
+  await page.route("**/api/meals/search*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        meals: [
+          {
+            id: "1",
+            name: "Roast Chicken",
+            thumbnail: "https://www.themealdb.com/images/media/meals/example.jpg",
+            category: "Chicken",
+            area: "British",
+          },
+        ],
+      }),
+    });
+  });
+  await page.goto("/");
+
+  await page.getByPlaceholder("Tarif, malzeme ara").click();
+  await page.getByRole("button", { name: "Tavuk" }).click();
+
+  await expect(page.getByPlaceholder("Tarif, malzeme ara")).toHaveValue("Tavuk");
+  await expect(page.getByRole("link", { name: /Roast Chicken/ })).toBeVisible();
+});
+
+test("secilen tarif gecmis aramalara eklenir, tekrar tiklaninca api'ye istek atmadan detaya gider ve temizlenebilir", async ({
+  page,
+}) => {
+  let searchRequestCount = 0;
+  await page.route("**/api/meals/search*", async (route) => {
+    searchRequestCount++;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        meals: [
+          {
+            id: "52771",
+            name: "Spicy Arrabiata Penne",
+            thumbnail: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg",
+            category: "Vegetarian",
+            area: "Italian",
+          },
+        ],
+      }),
+    });
+  });
+  await page.goto("/");
+
+  await page.getByPlaceholder("Tarif, malzeme ara").fill("arrabiata");
+  await page.getByRole("link", { name: /Spicy Arrabiata Penne/ }).click();
+  await expect(page).toHaveURL(/\/meal\/52771$/);
+
+  const requestsAfterFirstSearch = searchRequestCount;
+
+  await page.goto("/");
+  await page.getByPlaceholder("Tarif, malzeme ara").click();
+
+  await expect(page.getByText("Geçmiş aramalar")).toBeVisible();
+  const historyLink = page.getByRole("link", { name: /Spicy Arrabiata Penne/ });
+  await expect(historyLink).toBeVisible();
+
+  await historyLink.click();
+  await expect(page).toHaveURL(/\/meal\/52771$/);
+  expect(searchRequestCount).toBe(requestsAfterFirstSearch);
+
+  await page.goto("/");
+  await page.getByPlaceholder("Tarif, malzeme ara").click();
+  await page.getByRole("button", { name: "Temizle" }).click();
+
+  await expect(page.getByText("Geçmiş aramalar")).toBeHidden();
+});
+
 test("2 karakterden kisa sorguda arama yapilmaz", async ({ page }) => {
   let requested = false;
   await page.route("**/api/meals/search*", async (route) => {
