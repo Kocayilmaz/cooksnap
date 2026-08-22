@@ -31,7 +31,6 @@ export function FloatingFoodHero({ title, description, images, children }: Float
             alt={image.alt}
             width={image.width}
             height={image.height}
-            priority
             className="h-auto w-full drop-shadow-xl"
           />
         </div>
