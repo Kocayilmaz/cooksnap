@@ -30,7 +30,7 @@ const HERO_IMAGES = [
     alt: "Yumurtalı kahvaltı tabağı",
     width: 1000,
     height: 787,
-    className: "hidden sm:block sm:w-24 sm:bottom-4 sm:right-14 lg:w-40 lg:bottom-4 lg:right-72 animate-float",
+    className: "hidden sm:block sm:w-24 sm:bottom-4 sm:right-14 lg:w-40 lg:bottom-8 lg:right-72 animate-float",
   },
   {
     src: "/sebzeli-corba.png",
