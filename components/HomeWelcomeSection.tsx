@@ -23,14 +23,14 @@ const HERO_IMAGES = [
     alt: "Domates soslu makarna",
     width: 1000,
     height: 800,
-    className: "hidden sm:block sm:w-24 sm:top-4 sm:right-6 lg:w-40 lg:top-8 lg:right-16 animate-float-delayed",
+    className: "hidden sm:block sm:w-24 sm:top-6 sm:right-7 lg:w-28 lg:top-12 lg:right-20 animate-float-delayed",
   },
   {
     src: "/yumurtali-kahvalti.png",
     alt: "Yumurtalı kahvaltı tabağı",
     width: 1000,
     height: 787,
-    className: "hidden sm:block sm:w-20 sm:bottom-4 sm:right-8 lg:w-32 lg:bottom-8 lg:right-24 animate-float",
+    className: "hidden sm:block sm:w-24 sm:bottom-4 sm:right-12 lg:w-40 lg:bottom-8 lg:right-28 animate-float",
   },
   {
     src: "/sebzeli-corba.png",
