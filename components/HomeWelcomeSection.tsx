@@ -16,7 +16,7 @@ const HERO_IMAGES = [
     alt: "Şiş kebap",
     width: 869,
     height: 977,
-    className: "hidden sm:block sm:w-28 sm:top-3 sm:left-6 lg:w-44 lg:top-9 lg:left-16 animate-float",
+    className: "hidden sm:block sm:w-28 sm:top-4 sm:left-6 lg:w-44 lg:top-12 lg:left-16 animate-float",
   },
   {
     src: "/domates-soslu-makarna.png",
@@ -56,7 +56,9 @@ const HERO_IMAGES = [
 ];
 
 export default function HomeWelcomeSection() {
-  const name = useAppSelector((state) => state.userProfile.name);
+  const isLoggedIn = useAppSelector((state) => state.auth.status === "authenticated");
+  const storedName = useAppSelector((state) => state.userProfile.name);
+  const name = isLoggedIn ? storedName : "";
   const history = useAppSelector((state) => state.history);
   const favorites = useAppSelector((state) => state.favorites);
 
