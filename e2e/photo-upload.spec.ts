@@ -9,7 +9,7 @@ const tinyPngBase64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
 
 test("resim olmayan dosya yüklenince hata mesajı gösterilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/chat");
 
   await page.locator('input[type="file"]').setInputFiles({
     name: "notes.txt",
@@ -22,7 +22,7 @@ test("resim olmayan dosya yüklenince hata mesajı gösterilir", async ({ page }
 });
 
 test("8MB'den büyük dosya yüklenince hata mesajı gösterilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/chat");
 
   const oversized = Buffer.alloc(8 * 1024 * 1024 + 1, 1);
   await page.locator('input[type="file"]').setInputFiles({
@@ -35,7 +35,7 @@ test("8MB'den büyük dosya yüklenince hata mesajı gösterilir", async ({ page
 });
 
 test("yüklenen fotoğraf 'Fotoğrafı kaldır' butonuyla kaldırılabilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/chat");
 
   await page.locator('input[type="file"]').setInputFiles({
     name: "yemek.png",

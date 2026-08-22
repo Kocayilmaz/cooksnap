@@ -38,7 +38,7 @@ async function submitWithPhoto(page: import("@playwright/test").Page) {
 
 test("ücretsiz modda başarılı tarif isteği sayacı artırır", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
 
   await expect(page.getByText("Ücretsiz modda kullanılan istek: 0")).toBeVisible();
 
@@ -49,7 +49,7 @@ test("ücretsiz modda başarılı tarif isteği sayacı artırır", async ({ pag
 
 test("kullanım sayacı sayfa yenilenince kalıcı kalır", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
   await submitWithPhoto(page);
   await expect(page.getByText("Ücretsiz modda kullanılan istek: 1")).toBeVisible();
 
@@ -63,7 +63,7 @@ test("ücretsiz mod limitine ulaşılınca tarif butonu devre dışı kalır", a
   await page.addInitScript(() => {
     window.localStorage.setItem("cooksnap:usageCount", "5");
   });
-  await page.goto("/");
+  await page.goto("/chat");
 
   await expect(page.getByText("Ücretsiz mod limitine ulaştın (5/5)")).toBeVisible();
   await page.locator('input[type="file"]').setInputFiles({

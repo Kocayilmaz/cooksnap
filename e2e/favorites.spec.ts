@@ -38,7 +38,7 @@ async function submitWithPhoto(page: import("@playwright/test").Page) {
 
 test("tarif favorilere eklenip çıkarılabilir", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
   await submitWithPhoto(page);
 
   const favoriteButton = page.getByRole("button", { name: "Favorilere ekle" });
@@ -54,7 +54,7 @@ test("tarif favorilere eklenip çıkarılabilir", async ({ page }) => {
 
 test("favori durumu sayfa yenilenince kalıcı kalır", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
   await submitWithPhoto(page);
 
   await page.getByRole("button", { name: "Favorilere ekle" }).click();

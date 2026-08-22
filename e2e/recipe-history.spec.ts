@@ -29,7 +29,7 @@ async function mockRecipeResponse(page: import("@playwright/test").Page) {
 
 test("basarili tarif istegi son aramalar listesine eklenir", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
 
   await expect(page.getByText("Son aramalar")).toBeHidden();
 
@@ -46,7 +46,7 @@ test("basarili tarif istegi son aramalar listesine eklenir", async ({ page }) =>
 
 test("gecmis sayfa yenilenince kalicidir ve temizlenebilir", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
   await page.locator('input[type="file"]').setInputFiles({
     name: "test.png",
     mimeType: "image/png",
@@ -65,7 +65,7 @@ test("gecmis sayfa yenilenince kalicidir ve temizlenebilir", async ({ page }) =>
 
 test("gecmisi temizle onay istemi reddedilirse gecmis silinmez", async ({ page }) => {
   await mockRecipeResponse(page);
-  await page.goto("/");
+  await page.goto("/chat");
   await page.locator('input[type="file"]').setInputFiles({
     name: "test.png",
     mimeType: "image/png",

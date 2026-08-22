@@ -26,7 +26,7 @@ test("misafir modunda NavBar'da Profil ve Favoriler linkleri gosterilmez", async
   await setGuestMode(page);
   await page.goto("/");
 
-  await expect(page.getByRole("link", { name: "Ana Sayfa" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Chat" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Giriş yap" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Profil" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Favoriler" })).toHaveCount(0);

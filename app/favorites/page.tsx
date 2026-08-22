@@ -45,7 +45,7 @@ export default function FavoritesPage() {
 
         {allRecipes.length === 0 ? (
           <p className="text-center text-sm text-surface-text-muted">
-            Henüz favori tarifin yok. Ana sayfada bir tarif alıp yıldız butonuna basarak
+            Henüz favori tarifin yok. Chat&apos;ten bir tarif alıp yıldız butonuna basarak
             ekleyebilirsin.
           </p>
         ) : recipes.length === 0 ? (

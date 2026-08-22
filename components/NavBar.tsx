@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, User, Search, type LucideIcon } from "lucide-react";
+import { MessageCircle, Heart, User, Search, type LucideIcon } from "lucide-react";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { signOutUser } from "@/lib/firebase/auth";
 
@@ -14,14 +14,14 @@ interface NavLink {
 }
 
 const AUTHENTICATED_LINKS: NavLink[] = [
-  { href: "/", label: "Ana Sayfa", icon: Home },
+  { href: "/chat", label: "Chat", icon: MessageCircle },
   { href: "/favorites", label: "Favoriler", icon: Heart },
 ];
 
-// Misafir modunda (bkz. AuthGate) sadece ana sayfaya erişim var — Favoriler
-// ve Hesabım girişe özel olduğu için tıklanınca zaten /login'e geri atılır,
-// o yüzden burada da gösterilmiyor.
-const GUEST_LINKS: NavLink[] = [{ href: "/", label: "Ana Sayfa", icon: Home }];
+// Misafir modunda (bkz. AuthGate) Chat'e erişim var — Favoriler ve Hesabım
+// girişe özel olduğu için tıklanınca zaten /login'e geri atılır, o yüzden
+// burada da gösterilmiyor. Anasayfa'ya (/) logoya tıklayarak gidilir.
+const GUEST_LINKS: NavLink[] = [{ href: "/chat", label: "Chat", icon: MessageCircle }];
 
 export default function NavBar() {
   const pathname = usePathname();

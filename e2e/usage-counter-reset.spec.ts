@@ -14,7 +14,7 @@ test("24 saatten eski kullanim sayaci sayfa yuklendiginde sifirlanir", async ({ 
     );
   }, twoDaysAgo);
 
-  await page.goto("/");
+  await page.goto("/chat");
 
   await expect(page.getByText("Ücretsiz modda kullanılan istek: 0")).toBeVisible();
 });
@@ -28,7 +28,7 @@ test("24 saat dolmadan kullanim sayaci korunur", async ({ page }) => {
     );
   }, oneHourAgo);
 
-  await page.goto("/");
+  await page.goto("/chat");
 
   await expect(page.getByText("Ücretsiz modda kullanılan istek: 3")).toBeVisible();
 });

@@ -31,7 +31,7 @@ test("tarif kopyala butonu panoya kopyalar ve geri bildirim gösterir", async ({
     });
   });
 
-  await page.goto("/");
+  await page.goto("/chat");
   await page.locator('input[type="file"]').setInputFiles({
     name: "test.png",
     mimeType: "image/png",

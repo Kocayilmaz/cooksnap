@@ -11,8 +11,8 @@ const AUTH_ONLY_ROUTES = ["/profile", "/favorites"];
 /**
  * Site genelinde erişim kapısı: giriş yapılmadan (veya "Şimdilik atla" ile
  * misafir moduna geçilmeden) /login dışındaki hiçbir sayfa açılmaz. Misafir
- * modu sadece ana sayfaya izin verir — profil ve favoriler girişe özel
- * (bkz. AGENTS.md "Erişim kapısı" notu).
+ * modu Anasayfa (/) ve Chat'e (/chat) izin verir — profil ve favoriler
+ * girişe özel (bkz. AGENTS.md "Erişim kapısı" notu).
  */
 export default function AuthGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
