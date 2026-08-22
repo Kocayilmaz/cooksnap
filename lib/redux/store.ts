@@ -10,6 +10,7 @@ import historyReducer from "./historySlice";
 import authReducer from "./authSlice";
 import guestModeReducer from "./guestModeSlice";
 import mealSearchHistoryReducer from "./mealSearchHistorySlice";
+import mealFavoritesReducer from "./mealFavoritesSlice";
 
 const rootReducer = combineReducers({
   personCount: personCountReducer,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   guestMode: guestModeReducer,
   mealSearchHistory: mealSearchHistoryReducer,
+  mealFavorites: mealFavoritesReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

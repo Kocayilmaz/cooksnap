@@ -40,3 +40,23 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Sayfanın genel dikey scroll çubuğu gizli — kaydırma fare tekerleği/trackpad/
+   dokunmatikle çalışmaya devam ediyor, sadece gri çubuk görünmüyor. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ok butonlarıyla kaydırılan yatay şeritlerde (kategori barı, tarif kutucuk
+   sıraları) tarayıcı scrollbar'ını gizler — bkz. CategoryNav, CategoryMealsSection. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

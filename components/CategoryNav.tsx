@@ -5,7 +5,7 @@ import type { MealCategory } from "@/lib/types/meal";
 
 export default function CategoryNav({ categories }: { categories: MealCategory[] }) {
   return (
-    <nav className="flex gap-1 overflow-x-auto border-b border-surface-border pb-2">
+    <nav className="no-scrollbar flex gap-1 overflow-x-auto border-b border-surface-border pb-2">
       {categories.map((category) => (
         <div key={category.name} className="group relative shrink-0">
           <Link

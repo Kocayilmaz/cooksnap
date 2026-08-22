@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Heart } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getCategoryLabel } from "@/lib/mealdb/categoryMeta";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { toggleMealFavorite } from "@/lib/redux/mealFavoritesSlice";
 import type { MealSearchResult } from "@/lib/types/meal";
 
 interface MealCardProps {
@@ -17,10 +18,8 @@ interface MealCardProps {
 }
 
 export default function MealCard({ meal, className = "w-full" }: MealCardProps) {
-  // Şimdilik sadece görsel — MealDB tarifleri henüz gerçek favoriler sistemine
-  // (lib/redux/favoritesSlice.ts) bağlı değil, o sistem AI-tarif akışına özel
-  // bir veri şekli bekliyor. Kalıcı favorileme istenirse ayrı bir iş olarak ele alınmalı.
-  const [isFavorited, setIsFavorited] = useState(false);
+  const dispatch = useAppDispatch();
+  const isFavorited = useAppSelector((state) => Boolean(state.mealFavorites[meal.id]));
 
   return (
     <Link href={`/meal/${meal.id}`} className={`block shrink-0 ${className}`}>
@@ -38,7 +37,7 @@ export default function MealCard({ meal, className = "w-full" }: MealCardProps) 
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              setIsFavorited((current) => !current);
+              dispatch(toggleMealFavorite(meal));
             }}
             aria-label={isFavorited ? "Favorilerden çıkar" : "Favorilere ekle"}
             aria-pressed={isFavorited}

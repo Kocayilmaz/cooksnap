@@ -52,7 +52,7 @@ export default function CategoryMealsSection({ categoryName, meals }: CategoryMe
           </Link>
         </div>
       </div>
-      <div ref={scrollContainerRef} className="flex gap-3 overflow-x-auto pb-2 scroll-smooth">
+      <div ref={scrollContainerRef} className="no-scrollbar flex gap-3 overflow-x-auto pb-2 scroll-smooth">
         {meals.map((meal) => (
           <MealCard key={meal.id} meal={meal} className="w-36 sm:w-40" />
         ))}

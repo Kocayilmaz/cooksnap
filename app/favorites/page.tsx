@@ -6,13 +6,16 @@ import { toggleFavorite } from "@/lib/redux/favoritesSlice";
 import { EQUIPMENT_LABELS } from "@/lib/redux/equipmentSlice";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 import CopyRecipeButton from "@/components/CopyRecipeButton";
+import MealCard from "@/components/MealCard";
 
 export default function FavoritesPage() {
   const favorites = useAppSelector((state) => state.favorites);
+  const mealFavorites = useAppSelector((state) => state.mealFavorites);
   const dispatch = useAppDispatch();
   const [query, setQuery] = useState("");
 
   const allRecipes = Object.values(favorites).sort((a, b) => b.savedAt - a.savedAt);
+  const savedMeals = Object.values(mealFavorites).sort((a, b) => b.savedAt - a.savedAt);
   const normalizedQuery = query.trim().toLocaleLowerCase("tr-TR");
   const recipes = normalizedQuery
     ? allRecipes.filter((recipe) =>
@@ -91,6 +94,17 @@ export default function FavoritesPage() {
               </li>
             ))}
           </ul>
+        )}
+
+        {savedMeals.length > 0 && (
+          <section className="flex flex-col gap-3 border-t border-surface-border pt-4">
+            <h2 className="text-sm font-semibold text-foreground">Kaydedilen Tarifler</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {savedMeals.map((meal) => (
+                <MealCard key={meal.id} meal={meal} />
+              ))}
+            </div>
+          </section>
         )}
       </main>
     </div>

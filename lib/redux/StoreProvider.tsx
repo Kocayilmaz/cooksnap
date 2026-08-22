@@ -25,6 +25,11 @@ import {
   writeStoredMealSearchHistory,
 } from "./localMealSearchHistoryStorage";
 import { setMealSearchHistory } from "./mealSearchHistorySlice";
+import {
+  readStoredMealFavorites,
+  writeStoredMealFavorites,
+} from "./localMealFavoritesStorage";
+import { setMealFavorites } from "./mealFavoritesSlice";
 
 export default function StoreProvider({ children }: { children: ReactNode }) {
   const [store] = useState(() => makeStore());
@@ -79,6 +84,11 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
     const storedMealSearchHistory = readStoredMealSearchHistory();
     if (storedMealSearchHistory) {
       store.dispatch(setMealSearchHistory(storedMealSearchHistory));
+    }
+
+    const storedMealFavorites = readStoredMealFavorites();
+    if (storedMealFavorites) {
+      store.dispatch(setMealFavorites(storedMealFavorites));
     }
 
     // Firebase yapılandırılmamışsa subscribeToAuthState hiç dinlemeye başlamadan
@@ -206,6 +216,17 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const current = store.getState().mealSearchHistory;
       if (current !== previous) {
         writeStoredMealSearchHistory(current);
+        previous = current;
+      }
+    });
+  }, [store]);
+
+  useEffect(() => {
+    let previous = store.getState().mealFavorites;
+    return store.subscribe(() => {
+      const current = store.getState().mealFavorites;
+      if (current !== previous) {
+        writeStoredMealFavorites(current);
         previous = current;
       }
     });
