@@ -16,7 +16,7 @@ const HERO_IMAGES = [
     alt: "Şiş kebap",
     width: 869,
     height: 977,
-    className: "hidden sm:block sm:w-28 sm:top-1 sm:left-6 lg:w-44 lg:top-3 lg:left-16 animate-float",
+    className: "hidden sm:block sm:w-28 sm:top-3 sm:left-6 lg:w-44 lg:top-9 lg:left-16 animate-float",
   },
   {
     src: "/domates-soslu-makarna.png",
@@ -51,7 +51,7 @@ const HERO_IMAGES = [
     alt: "Pizza dilimi",
     width: 647,
     height: 787,
-    className: "hidden sm:block sm:w-24 sm:bottom-1 sm:left-8 lg:w-36 lg:bottom-1 lg:left-24 animate-float-delayed",
+    className: "hidden sm:block sm:w-24 sm:bottom-1 sm:left-9 lg:w-40 lg:bottom-1 lg:left-28 animate-float-delayed",
   },
 ];
 
@@ -69,7 +69,7 @@ export default function HomeWelcomeSection() {
     <main className="flex flex-col gap-6">
       <FloatingFoodHero
         title="CookSnap"
-        description={`${name ? `Merhaba, ${name}!` : "Merhaba!"} Bugün ne pişirmek istersin?`}
+        description={`${name ? `Merhaba, ${name}!` : "Merhaba!"} Dolabındaki malzemelerin fotoğrafını çek, öğrenci/ev yemeği/aşçı modundan birini seç, AI saniyeler içinde tarifini çıkarsın.`}
         images={HERO_IMAGES}
       >
         <Link
