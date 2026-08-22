@@ -10,18 +10,11 @@ import type { MealSearchResult } from "@/lib/types/meal";
 interface CategoryMealsSectionProps {
   categoryName: string;
   meals: MealSearchResult[];
-  /** "Tümünü gör" linki her kategori için `/category/[categoryName]` sayfasına
-   * gider — bu sayfası olmayan bölümler (ör. anasayfadaki "Keşfet") için false verilir. */
-  showCategoryLink?: boolean;
 }
 
 const SCROLL_AMOUNT_PX = 320;
 
-export default function CategoryMealsSection({
-  categoryName,
-  meals,
-  showCategoryLink = true,
-}: CategoryMealsSectionProps) {
+export default function CategoryMealsSection({ categoryName, meals }: CategoryMealsSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   if (meals.length === 0) return null;
@@ -51,14 +44,12 @@ export default function CategoryMealsSection({
           >
             <ChevronRight size={16} />
           </button>
-          {showCategoryLink && (
-            <Link
-              href={`/category/${encodeURIComponent(categoryName)}`}
-              className="ml-1 text-sm text-surface-text-muted hover:text-brand-orange"
-            >
-              Tümünü gör
-            </Link>
-          )}
+          <Link
+            href={`/category/${encodeURIComponent(categoryName)}`}
+            className="ml-1 text-sm text-surface-text-muted hover:text-brand-orange"
+          >
+            Tümünü gör
+          </Link>
         </div>
       </div>
       <div ref={scrollContainerRef} className="no-scrollbar flex gap-3 overflow-x-auto pb-2 scroll-smooth">

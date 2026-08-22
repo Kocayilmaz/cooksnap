@@ -82,18 +82,28 @@ function toMealDetail(meal: RawSpoonacularMealDetail): MealDetail {
   };
 }
 
-/** Anasayfadaki "Keşfet" bölümü için rastgele tarifler döner (bkz. app/page.tsx). */
-export async function getRandomMeals(count: number): Promise<MealSearchResult[]> {
+/** Anasayfadaki kategori bölümlerine (bkz. app/page.tsx) TheMealDB sonuçlarının
+ * yanına ek çeşitlilik için Spoonacular'dan da tarif arar. `categoryLabel`
+ * verilirse rozette TheMealDB kategorisiyle tutarlı görünmesi için sonuçların
+ * `category` alanı buna göre override edilir (complexSearch dishTypes döndürmüyor). */
+export async function searchMealsByQuery(
+  query: string,
+  count: number,
+  categoryLabel?: string,
+): Promise<MealSearchResult[]> {
   const apiKey = getApiKey();
   const response = await fetch(
-    `${BASE_URL}/recipes/random?number=${count}&apiKey=${apiKey}`,
+    `${BASE_URL}/recipes/complexSearch?query=${encodeURIComponent(query)}&number=${count}&apiKey=${apiKey}`,
     { next: { revalidate: 3600 }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
   );
   if (!response.ok) {
     throw new ProviderRequestError(`Spoonacular isteği başarısız oldu (${response.status}).`);
   }
-  const data = (await response.json()) as { recipes: RawSpoonacularMeal[] };
-  return (data.recipes ?? []).map(toSearchResult);
+  const data = (await response.json()) as { results: RawSpoonacularMeal[] };
+  return (data.results ?? []).map((meal) => {
+    const result = toSearchResult(meal);
+    return categoryLabel ? { ...result, category: categoryLabel } : result;
+  });
 }
 
 /** Tek bir Spoonacular tarifinin tüm detayını döner (bkz. app/meal/[id]/page.tsx). */
@@ -101,7 +111,7 @@ export async function getSpoonacularMealById(rawId: string): Promise<MealDetail 
   const apiKey = getApiKey();
   const response = await fetch(
     `${BASE_URL}/recipes/${encodeURIComponent(rawId)}/information?apiKey=${apiKey}`,
-    { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
+    { next: { revalidate: 3600 }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
   );
   if (response.status === 404) return null;
   if (!response.ok) {
