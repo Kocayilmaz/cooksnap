@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { Plus, Search, X } from "lucide-react";
 import { ALL_INGREDIENTS, type MealIngredientEntry } from "@/lib/mealdb/ingredientList";
 import { getIngredientLabel } from "@/lib/mealdb/ingredientMeta";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { toggleSelectedIngredient } from "@/lib/redux/selectedIngredientsSlice";
 
 const MIN_QUERY_LENGTH = 2;
 const MAX_SEARCH_RESULTS = 60;
@@ -34,8 +36,9 @@ const POPULAR_INGREDIENTS = POPULAR_INGREDIENT_NAMES
 
 export default function IngredientPicker() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
+  const selected = useAppSelector((state) => state.selectedIngredients);
 
   const trimmedQuery = query.trim().toLowerCase();
   const searchResults = useMemo(() => {
@@ -50,7 +53,7 @@ export default function IngredientPicker() {
   const visible = searchResults ?? POPULAR_INGREDIENTS;
 
   function toggle(name: string) {
-    setSelected((prev) => (prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]));
+    dispatch(toggleSelectedIngredient(name));
   }
 
   function handleShowRecipe() {

@@ -1,5 +1,6 @@
 import HomeWelcomeSection from "@/components/HomeWelcomeSection";
 import IngredientPicker from "@/components/IngredientPicker";
+import HomeCategoryGate from "@/components/HomeCategoryGate";
 import CategoryNav from "@/components/CategoryNav";
 import CategoryMealsSection from "@/components/CategoryMealsSection";
 import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
@@ -26,12 +27,14 @@ export default async function Home() {
         <IngredientPicker />
 
         {orderedCategories.length > 0 && (
-          <div className="flex flex-col gap-6">
-            <CategoryNav categories={orderedCategories} />
-            {sections.map(({ categoryName, meals }) => (
-              <CategoryMealsSection key={categoryName} categoryName={categoryName} meals={meals} />
-            ))}
-          </div>
+          <HomeCategoryGate>
+            <div className="flex flex-col gap-6">
+              <CategoryNav categories={orderedCategories} />
+              {sections.map(({ categoryName, meals }) => (
+                <CategoryMealsSection key={categoryName} categoryName={categoryName} meals={meals} />
+              ))}
+            </div>
+          </HomeCategoryGate>
         )}
       </div>
     </div>
