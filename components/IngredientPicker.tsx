@@ -108,7 +108,7 @@ export default function IngredientPicker() {
           &quot;{query.trim()}&quot; için malzeme bulunamadı.
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+        <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8">
           {visible.map((ing) => {
             const isSelected = selected.includes(ing.name);
             const label = getIngredientLabel(ing.name);
