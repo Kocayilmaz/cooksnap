@@ -53,6 +53,55 @@ const HERO_IMAGES = [
     height: 787,
     className: "hidden sm:block sm:w-24 sm:bottom-1 sm:left-9 lg:w-40 lg:bottom-1 lg:left-28 animate-float-delayed",
   },
+  {
+    src: "/yaprak-1.png",
+    alt: "Yaprak",
+    width: 600,
+    height: 600,
+    className: "hidden lg:block lg:w-10 lg:top-2 lg:left-2 animate-float",
+  },
+  {
+    src: "/yaprak-2.png",
+    alt: "Yaprak",
+    width: 500,
+    height: 877,
+    className: "hidden lg:block lg:w-10 lg:bottom-24 lg:left-1 animate-float-delayed",
+  },
+  {
+    src: "/yaprak-3.png",
+    alt: "Yaprak",
+    width: 2953,
+    height: 2953,
+    className: "hidden lg:block lg:w-10 lg:top-2 lg:right-2 animate-float",
+  },
+  {
+    src: "/domates.png",
+    alt: "Domates",
+    width: 2362,
+    height: 2362,
+    className: "hidden lg:block lg:w-12 lg:bottom-8 lg:left-72 animate-float-delayed",
+  },
+  {
+    src: "/nane.png",
+    alt: "Nane",
+    width: 1183,
+    height: 1063,
+    className: "hidden lg:block lg:w-10 lg:bottom-24 lg:left-80 animate-float",
+  },
+  {
+    src: "/cilek.png",
+    alt: "Çilek",
+    width: 1600,
+    height: 1548,
+    className: "hidden lg:block lg:w-12 lg:bottom-8 lg:right-80 animate-float-delayed",
+  },
+  {
+    src: "/yaban-mersini.png",
+    alt: "Yaban mersini",
+    width: 626,
+    height: 500,
+    className: "hidden lg:block lg:w-10 lg:bottom-24 lg:right-72 animate-float",
+  },
 ];
 
 export default function HomeWelcomeSection() {
