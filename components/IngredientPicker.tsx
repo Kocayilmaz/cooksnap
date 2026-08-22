@@ -106,7 +106,7 @@ export default function IngredientPicker() {
           &quot;{query.trim()}&quot; için malzeme bulunamadı.
         </p>
       ) : (
-        <div className="no-scrollbar flex gap-3 overflow-x-auto pb-2">
+        <div className="no-scrollbar flex justify-center gap-3 overflow-x-auto pb-2">
           {visible.map((ing) => {
             const isSelected = selected.includes(ing.name);
             const label = getIngredientLabel(ing.name);
