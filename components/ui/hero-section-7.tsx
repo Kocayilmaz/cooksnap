@@ -20,7 +20,7 @@ interface FloatingFoodHeroProps {
 
 export function FloatingFoodHero({ title, description, images, children }: FloatingFoodHeroProps) {
   return (
-    <div className="relative isolate overflow-hidden rounded-2xl bg-linear-to-br from-brand-orange to-brand-red px-6 py-20 text-center shadow-sm sm:py-24">
+    <div className="relative isolate overflow-hidden rounded-2xl bg-linear-to-br from-brand-orange to-brand-red px-6 py-28 text-center shadow-sm sm:py-32">
       {images.map((image) => (
         <div
           key={image.src + image.className}

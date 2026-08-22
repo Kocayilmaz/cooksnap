@@ -37,21 +37,21 @@ const HERO_IMAGES = [
     alt: "Sebzeli çorba",
     width: 360,
     height: 360,
-    className: "hidden w-16 bottom-6 left-6 sm:block animate-float-delayed",
+    className: "hidden lg:block lg:w-28 lg:top-4 lg:left-64 animate-float-delayed",
   },
   {
     src: "/frambuazli-cheesecake.png",
     alt: "Frambuazlı cheesecake",
     width: 800,
     height: 631,
-    className: "hidden w-14 top-44 right-2 sm:block animate-float",
+    className: "hidden w-20 top-44 right-2 sm:block animate-float",
   },
   {
     src: "/pizza-dilimi.png",
     alt: "Pizza dilimi",
     width: 647,
     height: 787,
-    className: "hidden lg:block lg:w-20 lg:top-[214px] lg:left-[140px] animate-float-delayed",
+    className: "hidden sm:block sm:w-24 sm:bottom-1 sm:left-8 lg:w-36 lg:bottom-1 lg:left-24 animate-float-delayed",
   },
 ];
 
