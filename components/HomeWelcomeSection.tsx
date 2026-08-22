@@ -23,14 +23,14 @@ const HERO_IMAGES = [
     alt: "Domates soslu makarna",
     width: 1000,
     height: 800,
-    className: "hidden sm:block sm:w-24 sm:top-6 sm:right-9 lg:w-40 lg:top-12 lg:right-24 animate-float-delayed",
+    className: "hidden sm:block sm:w-24 sm:top-6 sm:right-11 lg:w-40 lg:top-12 lg:right-28 animate-float-delayed",
   },
   {
     src: "/yumurtali-kahvalti.png",
     alt: "Yumurtalı kahvaltı tabağı",
     width: 1000,
     height: 787,
-    className: "hidden sm:block sm:w-24 sm:bottom-4 sm:right-12 lg:w-40 lg:bottom-8 lg:right-28 animate-float",
+    className: "hidden sm:block sm:w-24 sm:bottom-4 sm:right-14 lg:w-40 lg:bottom-8 lg:right-32 animate-float",
   },
   {
     src: "/sebzeli-corba.png",
@@ -44,7 +44,7 @@ const HERO_IMAGES = [
     alt: "Frambuazlı cheesecake",
     width: 800,
     height: 631,
-    className: "hidden w-24 top-48 right-4 sm:block animate-float",
+    className: "hidden w-28 top-48 right-4 sm:block animate-float",
   },
   {
     src: "/pizza-dilimi.png",
