@@ -87,7 +87,18 @@ export default function MealSearchBar() {
             <p className="px-3 py-2 text-sm text-state-error">Arama şu an kullanılamıyor.</p>
           )}
           {status === "idle" && results.length === 0 && (
-            <p className="px-3 py-2 text-sm text-surface-text-muted">Sonuç bulunamadı.</p>
+            <div className="flex flex-col gap-1 px-3 py-2 text-sm">
+              <p className="text-surface-text-muted">
+                &quot;{query.trim()}&quot; için sonuç bulunamadı.
+              </p>
+              <Link
+                href="/chat"
+                onClick={() => setIsOpen(false)}
+                className="font-medium text-brand-orange hover:underline"
+              >
+                Chat&apos;te AI&apos;dan bu tarifi iste →
+              </Link>
+            </div>
           )}
           {status === "idle" &&
             results.map((meal) => (

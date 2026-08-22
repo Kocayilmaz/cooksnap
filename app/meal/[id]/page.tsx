@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getMealById } from "@/lib/mealdb/client";
+import { translateMealToTurkish } from "@/lib/ai/groqTranslate";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 
 interface MealPageProps {
@@ -11,9 +12,13 @@ interface MealPageProps {
 
 export default async function MealPage({ params }: MealPageProps) {
   const { id } = await params;
-  const meal = await getMealById(id);
+  const rawMeal = await getMealById(id);
 
-  if (!meal) notFound();
+  if (!rawMeal) notFound();
+
+  // Çeviri en iyi çaba (best-effort) — Groq yapılandırılmamışsa ya da hata
+  // verirse orijinal İngilizce içerikle devam edilir, sayfa çökmez.
+  const meal = await translateMealToTurkish(rawMeal).catch(() => rawMeal);
 
   return (
     <div className="flex flex-1 justify-center bg-surface-warm px-4 py-12">

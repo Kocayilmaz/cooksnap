@@ -45,6 +45,22 @@ test("sonuca tiklaninca tarif detay sayfasina gider", async ({ page }) => {
   await expect(page).toHaveURL(/\/meal\/52771$/);
 });
 
+test("sonuc bulunamayinca Chat'e yonlendiren not gosterilir", async ({ page }) => {
+  await page.route("**/api/meals/search*", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: '{"meals":[]}' });
+  });
+  await page.goto("/");
+
+  await page.getByPlaceholder("Tarif, malzeme ara").fill("menemen");
+
+  await expect(page.getByText('"menemen" için sonuç bulunamadı.')).toBeVisible();
+  const chatLink = page.getByRole("link", { name: "Chat'te AI'dan bu tarifi iste →" });
+  await expect(chatLink).toBeVisible();
+
+  await chatLink.click();
+  await expect(page).toHaveURL(/\/chat$/);
+});
+
 test("2 karakterden kisa sorguda arama yapilmaz", async ({ page }) => {
   let requested = false;
   await page.route("**/api/meals/search*", async (route) => {
