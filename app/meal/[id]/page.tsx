@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getMealById } from "@/lib/mealdb/client";
+import { getSpoonacularMealById, isSpoonacularId, stripSpoonacularPrefix } from "@/lib/spoonacular/client";
 import { translateMealToTurkish } from "@/lib/ai/groqTranslate";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 
@@ -12,7 +13,10 @@ interface MealPageProps {
 
 export default async function MealPage({ params }: MealPageProps) {
   const { id } = await params;
-  const rawMeal = await getMealById(id).catch(() => null);
+  const rawMeal = await (isSpoonacularId(id)
+    ? getSpoonacularMealById(stripSpoonacularPrefix(id))
+    : getMealById(id)
+  ).catch(() => null);
 
   if (!rawMeal) notFound();
 

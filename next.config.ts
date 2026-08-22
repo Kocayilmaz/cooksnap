@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       // TheMealDB tarif fotoğrafları (bkz. lib/mealdb/client.ts).
       { protocol: "https", hostname: "www.themealdb.com" },
+      // Spoonacular tarif fotoğrafları (bkz. lib/spoonacular/client.ts).
+      { protocol: "https", hostname: "img.spoonacular.com" },
     ],
   },
 };

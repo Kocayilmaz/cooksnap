@@ -5,6 +5,9 @@ import CategoryMealsSection from "@/components/CategoryMealsSection";
 import CategoryIngredientFilter from "@/components/CategoryIngredientFilter";
 import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
 import { FEATURED_CATEGORY_ORDER, sortCategoriesFeaturedFirst } from "@/lib/mealdb/categoryMeta";
+import { getRandomMeals } from "@/lib/spoonacular/client";
+
+const DISCOVER_MEALS_COUNT = 12;
 
 const SECTIONS_TO_SHOW = FEATURED_CATEGORY_ORDER;
 
@@ -18,6 +21,9 @@ export default async function Home() {
       meals: await getMealsByCategory(categoryName).catch(() => []),
     })),
   );
+  // İkinci tarif kaynağı (Spoonacular) — TheMealDB'nin kategori sistemine dahil
+  // edilmiyor, tek amacı genel çeşitliliği artırmak (bkz. lib/spoonacular/client.ts).
+  const discoverMeals = await getRandomMeals(DISCOVER_MEALS_COUNT).catch(() => []);
 
   return (
     <div className="flex flex-1 justify-center bg-surface-warm px-4 py-8">
@@ -37,6 +43,10 @@ export default async function Home() {
               </div>
             </CategoryIngredientFilter>
           </div>
+        )}
+
+        {discoverMeals.length > 0 && (
+          <CategoryMealsSection categoryName="Keşfet" meals={discoverMeals} showCategoryLink={false} />
         )}
       </div>
     </div>
