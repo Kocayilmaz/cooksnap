@@ -4,8 +4,43 @@ import Link from "next/link";
 import { MessageCircle, Clock, Star } from "lucide-react";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_LABELS } from "@/lib/redux/equipmentSlice";
+import { FloatingFoodHero } from "@/components/ui/hero-section-7";
 
 const RECENT_PREVIEW_COUNT = 3;
+
+/** Ev yemeği fotoğrafları (public/ altına elle eklendi). */
+const HERO_IMAGES = [
+  {
+    src: "/pngtree-turkish-food-png-png-image_14618786.png",
+    alt: "Türk mutfağından bir tabak",
+    className: "hidden sm:block sm:w-24 sm:top-4 sm:left-6 lg:w-40 lg:top-10 lg:left-16 animate-float",
+  },
+  {
+    src: "/pngtree-carrot-beef-stew-specialties-home-cooking-dining-png-image_3943729.jpg",
+    alt: "Ev yapımı güveç",
+    className: "hidden sm:block sm:w-20 sm:top-4 sm:right-6 lg:w-36 lg:top-8 lg:right-16 animate-float-delayed",
+  },
+  {
+    src: "/png-clipart-pulihora-saffron-rice-hyderabadi-biryani-pilaf-rice-food-recipe-thumbnail.png",
+    alt: "Zerdeçallı pilav",
+    className: "hidden sm:block sm:w-20 sm:bottom-4 sm:right-8 lg:w-32 lg:bottom-8 lg:right-24 animate-float",
+  },
+  {
+    src: "/png-clipart-lentil-soup-khash-turkish-cuisine-others-miscellaneous-soup-thumbnail.png",
+    alt: "Mercimek çorbası",
+    className: "hidden w-16 bottom-6 left-6 sm:block animate-float-delayed",
+  },
+  {
+    src: "/pngtree-home-cooking-spicy-fish-png-image_3871415.jpg",
+    alt: "Ev usulü balık",
+    className: "hidden w-14 top-1/2 right-4 -translate-y-1/2 sm:block animate-float",
+  },
+  {
+    src: "/seramik-kasede-kizarmis-yumurta-ve-taze-otlarla-hazirlanan-ev-yapimi-tuzlu-kahvalti-guveci_84443-90268.avif",
+    alt: "Otlu kahvaltı güveci",
+    className: "hidden w-14 top-1/2 left-2 -translate-y-1/2 md:block animate-float-delayed",
+  },
+];
 
 export default function HomeWelcomeSection() {
   const name = useAppSelector((state) => state.userProfile.name);
@@ -18,24 +53,23 @@ export default function HomeWelcomeSection() {
     .slice(0, RECENT_PREVIEW_COUNT);
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-8 rounded-2xl bg-surface-card p-8 shadow-sm">
-      <div className="flex flex-col gap-1 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-brand-red">CookSnap</h1>
-        <p className="text-sm text-surface-text-muted">
-          {name ? `Merhaba, ${name}!` : "Merhaba!"} Bugün ne pişirmek istersin?
-        </p>
-      </div>
-
-      <Link
-        href="/chat"
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark"
+    <main className="flex flex-col gap-6">
+      <FloatingFoodHero
+        title="CookSnap"
+        description={`${name ? `Merhaba, ${name}!` : "Merhaba!"} Bugün ne pişirmek istersin?`}
+        images={HERO_IMAGES}
       >
-        <MessageCircle size={18} aria-hidden="true" />
-        Sohbete Başla
-      </Link>
+        <Link
+          href="/chat"
+          className="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-brand-red transition-colors hover:bg-white/90"
+        >
+          <MessageCircle size={18} aria-hidden="true" />
+          Sohbete Başla
+        </Link>
+      </FloatingFoodHero>
 
       {recentHistory.length > 0 && (
-        <section className="flex flex-col gap-2 border-t border-surface-border pt-4">
+        <section className="flex flex-col gap-2 rounded-2xl bg-surface-card p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
               <Clock size={16} aria-hidden="true" />
@@ -63,7 +97,7 @@ export default function HomeWelcomeSection() {
       )}
 
       {recentFavorites.length > 0 && (
-        <section className="flex flex-col gap-2 border-t border-surface-border pt-4">
+        <section className="flex flex-col gap-2 rounded-2xl bg-surface-card p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-sm font-medium text-foreground">
               <Star size={16} aria-hidden="true" />
