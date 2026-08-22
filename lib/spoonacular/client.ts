@@ -3,6 +3,9 @@ import type { MealDetail, MealIngredient, MealSearchResult } from "@/lib/types/m
 
 const BASE_URL = "https://api.spoonacular.com";
 const REQUEST_TIMEOUT_MS = 4000;
+/** Ücretsiz katman günlük ~150 istekle sınırlı — anasayfa kategori başına ayrı
+ * istek attığı için önbellek süresi bilinçli olarak uzun tutuluyor (12 saat). */
+const CACHE_REVALIDATE_SECONDS = 12 * 60 * 60;
 
 /** Spoonacular id'leri TheMealDB'ninkiyle aynı (düz sayısal string) namespace'te
  * çakışabilir — favoriler/geçmiş/dedup id'yi opak string olarak kullandığı için
@@ -94,7 +97,7 @@ export async function searchMealsByQuery(
   const apiKey = getApiKey();
   const response = await fetch(
     `${BASE_URL}/recipes/complexSearch?query=${encodeURIComponent(query)}&number=${count}&apiKey=${apiKey}`,
-    { next: { revalidate: 3600 }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
+    { next: { revalidate: CACHE_REVALIDATE_SECONDS }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
   );
   if (!response.ok) {
     throw new ProviderRequestError(`Spoonacular isteği başarısız oldu (${response.status}).`);
@@ -111,7 +114,7 @@ export async function getSpoonacularMealById(rawId: string): Promise<MealDetail 
   const apiKey = getApiKey();
   const response = await fetch(
     `${BASE_URL}/recipes/${encodeURIComponent(rawId)}/information?apiKey=${apiKey}`,
-    { next: { revalidate: 3600 }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
+    { next: { revalidate: CACHE_REVALIDATE_SECONDS }, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
   );
   if (response.status === 404) return null;
   if (!response.ok) {
