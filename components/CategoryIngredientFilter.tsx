@@ -96,16 +96,25 @@ function IngredientChipField({ label, placeholder, selected, onAdd, onRemove }: 
   );
 }
 
+type FoodType = "all" | "sweet" | "savory";
+
+const FOOD_TYPE_OPTIONS: { value: FoodType; label: string }[] = [
+  { value: "all", label: "Tümü" },
+  { value: "sweet", label: "Tatlı" },
+  { value: "savory", label: "Tuzlu" },
+];
+
 export default function CategoryIngredientFilter({ children }: { children: ReactNode }) {
   const [include, setInclude] = useState<string[]>([]);
   const [exclude, setExclude] = useState<string[]>([]);
+  const [foodType, setFoodType] = useState<FoodType>("all");
   const [meals, setMeals] = useState<MealSearchResult[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
-  const hasFilter = include.length > 0 || exclude.length > 0;
+  const hasFilter = include.length > 0 || exclude.length > 0 || foodType !== "all";
 
-  function runFilter(nextInclude: string[], nextExclude: string[]) {
-    if (nextInclude.length === 0 && nextExclude.length === 0) {
+  function runFilter(nextInclude: string[], nextExclude: string[], nextFoodType: FoodType) {
+    if (nextInclude.length === 0 && nextExclude.length === 0 && nextFoodType === "all") {
       setMeals([]);
       setStatus("idle");
       return;
@@ -114,6 +123,7 @@ export default function CategoryIngredientFilter({ children }: { children: React
     const params = new URLSearchParams();
     if (nextInclude.length > 0) params.set("include", nextInclude.join(","));
     if (nextExclude.length > 0) params.set("exclude", nextExclude.join(","));
+    if (nextFoodType !== "all") params.set("foodType", nextFoodType);
 
     fetch(`/api/meals/category-filter?${params.toString()}`)
       .then((response) => response.json() as Promise<MealCategoryFilterResponse>)
@@ -127,22 +137,26 @@ export default function CategoryIngredientFilter({ children }: { children: React
   function handleIncludeAdd(name: string) {
     const next = [...include, name];
     setInclude(next);
-    runFilter(next, exclude);
+    runFilter(next, exclude, foodType);
   }
   function handleIncludeRemove(name: string) {
     const next = include.filter((n) => n !== name);
     setInclude(next);
-    runFilter(next, exclude);
+    runFilter(next, exclude, foodType);
   }
   function handleExcludeAdd(name: string) {
     const next = [...exclude, name];
     setExclude(next);
-    runFilter(include, next);
+    runFilter(include, next, foodType);
   }
   function handleExcludeRemove(name: string) {
     const next = exclude.filter((n) => n !== name);
     setExclude(next);
-    runFilter(include, next);
+    runFilter(include, next, foodType);
+  }
+  function handleFoodTypeChange(next: FoodType) {
+    setFoodType(next);
+    runFilter(include, exclude, next);
   }
 
   return (
@@ -162,6 +176,26 @@ export default function CategoryIngredientFilter({ children }: { children: React
           onAdd={handleExcludeAdd}
           onRemove={handleExcludeRemove}
         />
+
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-foreground">Yemek tipi</span>
+          <div className="flex gap-2">
+            {FOOD_TYPE_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleFoodTypeChange(option.value)}
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                  foodType === option.value
+                    ? "bg-brand-orange text-white"
+                    : "bg-surface-warm text-foreground hover:bg-surface-border"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </aside>
 
       <div className="min-w-0 flex-1">
