@@ -90,8 +90,11 @@ async function fetchMeals(path: string): Promise<RawMeal[]> {
   if (!response.ok) {
     throw new ProviderRequestError(`TheMealDB isteği başarısız oldu (${response.status}).`);
   }
-  const data = (await response.json()) as { meals: RawMeal[] | null };
-  return data.meals ?? [];
+  const data = (await response.json()) as { meals: RawMeal[] | null | string };
+  // TheMealDB gecersiz/bozuk bir id verildiginde "meals" alanini dizi/null yerine
+  // duz bir string doner (ornegin {"meals":"Invalid ID"}, canli test edilerek
+  // dogrulandi) — dizi olmayan durumda bos sonucla devam edilir.
+  return Array.isArray(data.meals) ? data.meals : [];
 }
 
 /** İsme göre tarif arar (TheMealDB kısmi/substring eşleşme yapıyor). */

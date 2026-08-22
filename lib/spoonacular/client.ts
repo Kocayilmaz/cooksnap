@@ -6,8 +6,11 @@ const REQUEST_TIMEOUT_MS = 4000;
 
 /** Spoonacular id'leri TheMealDB'ninkiyle aynı (düz sayısal string) namespace'te
  * çakışabilir — favoriler/geçmiş/dedup id'yi opak string olarak kullandığı için
- * burada normalize edilirken bu önek eklenir (bkz. app/meal/[id]/page.tsx). */
-const ID_PREFIX = "spoonacular:";
+ * burada normalize edilirken bu önek eklenir (bkz. app/meal/[id]/page.tsx).
+ * Önekte ':' değil '-' kullanılıyor: ':' URL path segmentinde bazı router/link
+ * katmanlarınca '%3A'ya encode edilip geri çözülmüyor (test edilerek doğrulandı),
+ * '-' ise URL-safe olduğu için hiç encode edilmiyor. */
+const ID_PREFIX = "spoonacular-";
 
 export function isSpoonacularId(id: string): boolean {
   return id.startsWith(ID_PREFIX);
@@ -59,9 +62,13 @@ function toInstructionsText(meal: RawSpoonacularMealDetail): string {
 }
 
 function toMealDetail(meal: RawSpoonacularMealDetail): MealDetail {
+  // Spoonacular'in "original" alani zaten miktar+isim birlesik geliyor (ör.
+  // "1/4 cup breadcrumbs") — TheMealDB'nin aksine ayri bir "measure" yok, bu
+  // yuzden name alanina tam metni koyup measure'i bos birakiyoruz (yoksa sayfa
+  // sablonu "{measure} {name}" seklinde ismi iki kez gosterir).
   const ingredients: MealIngredient[] = meal.extendedIngredients.map((ingredient) => ({
-    name: ingredient.name,
-    measure: ingredient.original,
+    name: ingredient.original,
+    measure: "",
   }));
 
   return {
