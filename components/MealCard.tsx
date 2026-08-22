@@ -1,6 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Heart } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { getCategoryLabel } from "@/lib/mealdb/categoryMeta";
 import type { MealSearchResult } from "@/lib/types/meal";
 
 interface MealCardProps {
@@ -11,40 +17,56 @@ interface MealCardProps {
 }
 
 export default function MealCard({ meal, className = "w-full" }: MealCardProps) {
-  const subtitle = [meal.category, meal.area].filter(Boolean).join(" · ");
+  // Şimdilik sadece görsel — MealDB tarifleri henüz gerçek favoriler sistemine
+  // (lib/redux/favoritesSlice.ts) bağlı değil, o sistem AI-tarif akışına özel
+  // bir veri şekli bekliyor. Kalıcı favorileme istenirse ayrı bir iş olarak ele alınmalı.
+  const [isFavorited, setIsFavorited] = useState(false);
 
   return (
-    <Link
-      href={`/meal/${meal.id}`}
-      className={`group relative block aspect-[3/4] shrink-0 overflow-hidden rounded-2xl shadow-md transition-all duration-500 ease-in-out hover:scale-[1.03] hover:shadow-xl hover:shadow-brand-orange/30 ${className}`}
-    >
-      <Image
-        src={meal.thumbnail}
-        alt={meal.name}
-        fill
-        sizes="(max-width: 640px) 40vw, 200px"
-        className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-      />
-
-      {/* Alttan koyulaşan gradyan — başlık/buton her fotoğrafta okunaklı kalsın diye. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-      <div className="absolute inset-0 flex flex-col justify-end p-3">
-        <h3 className="line-clamp-2 text-sm font-semibold text-white">{meal.name}</h3>
-        {subtitle && <p className="mt-0.5 truncate text-xs text-white/75">{subtitle}</p>}
-
-        <div
-          className="mt-2 flex items-center justify-between rounded-lg border border-white/25 bg-white/10 px-2.5 py-1.5
-                     backdrop-blur-sm transition-colors duration-300
-                     group-hover:border-brand-orange/60 group-hover:bg-brand-orange/80"
-        >
-          <span className="text-[11px] font-semibold tracking-wide text-white">Tarifi Gör</span>
-          <ArrowRight
-            size={14}
-            className="text-white transition-transform duration-300 group-hover:translate-x-1"
+    <Link href={`/meal/${meal.id}`} className={`block shrink-0 ${className}`}>
+      <Card className="group flex h-full flex-col overflow-hidden rounded-xl border-0 shadow-sm transition-shadow duration-300 hover:shadow-md">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-xl">
+          <Image
+            src={meal.thumbnail}
+            alt={meal.name}
+            fill
+            sizes="(max-width: 640px) 40vw, 200px"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              setIsFavorited((current) => !current);
+            }}
+            aria-label={isFavorited ? "Favorilerden çıkar" : "Favorilere ekle"}
+            aria-pressed={isFavorited}
+            className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-foreground backdrop-blur-sm transition-colors hover:bg-white/90"
+          >
+            <Heart size={16} className={isFavorited ? "fill-brand-orange text-brand-orange" : ""} />
+          </button>
+          <Badge className="absolute left-2 top-2">{getCategoryLabel(meal.category)}</Badge>
         </div>
-      </div>
+
+        <div className="flex flex-1 flex-col justify-between">
+          <CardContent className="p-2 pt-3 pb-0">
+            <h3 className="line-clamp-2 text-sm font-medium tracking-tight text-foreground">
+              {meal.name}
+            </h3>
+            {meal.area && (
+              <p className="text-xs tracking-tight text-surface-text-muted">{meal.area}</p>
+            )}
+          </CardContent>
+
+          <CardFooter className="mt-auto flex items-center gap-1 p-2 pt-2 text-xs">
+            <span className="ml-auto flex items-center gap-1 font-medium text-brand-orange">
+              Tarifi Gör
+              <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </CardFooter>
+        </div>
+      </Card>
     </Link>
   );
 }
