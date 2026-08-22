@@ -24,8 +24,6 @@ const POPULAR_INGREDIENT_NAMES = [
   "Aubergine",
   "Cucumber",
   "Carrots",
-  "Rice",
-  "Garlic",
 ];
 
 const INGREDIENTS_BY_NAME = new Map(ALL_INGREDIENTS.map((ing) => [ing.name, ing]));
