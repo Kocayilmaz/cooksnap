@@ -25,9 +25,9 @@ export default function CategoryNav({ categories }: { categories: MealCategory[]
             absolute kapsayıcı içinde neredeyse sıfıra çöküyor (tarayıcı fr
             track'lerini min=0 alıyor), bu da isimlerin üst üste binmesine yol
             açıyordu. */}
-        <div className="invisible absolute left-0 top-full z-20 w-80 max-w-[92vw] pt-2 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 sm:w-[640px]">
-          <div className="flex max-h-[75vh] flex-col gap-5 overflow-y-auto rounded-xl border border-surface-border bg-surface-card p-4 shadow-md sm:flex-row sm:gap-6">
-            <div className="sm:w-1/2">
+        <div className="invisible absolute left-0 top-full z-20 w-80 max-w-[92vw] pt-2 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 lg:w-[904px]">
+          <div className="flex max-h-[75vh] flex-col gap-5 overflow-y-auto rounded-xl border border-surface-border bg-surface-card p-4 shadow-md lg:flex-row lg:gap-6">
+            <div className="lg:w-72">
               <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-surface-text-muted">
                 Kategoriler
               </p>
@@ -44,11 +44,13 @@ export default function CategoryNav({ categories }: { categories: MealCategory[]
               </div>
             </div>
 
-            <div className="border-t border-surface-border pt-4 sm:w-1/2 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+            {/* 26 mutfak 4 sütuna bölünüyor (7 satır), Kategoriler'in 7 satırıyla
+                dengeli görünsün diye — 2 sütunda cok daha uzun kaliyordu. */}
+            <div className="border-t border-surface-border pt-4 lg:w-[560px] lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
               <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-surface-text-muted">
                 Mutfaklar
               </p>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 lg:grid-cols-4">
                 {AREAS.map((area) => (
                   <Link
                     key={area}
