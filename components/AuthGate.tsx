@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/lib/redux/hooks";
 import NavBar from "./NavBar";
+import Footer from "./Footer";
 import LoadingSpinner from "./LoadingSpinner";
 
 const AUTH_ONLY_ROUTES = ["/profile", "/favorites"];
@@ -67,6 +68,7 @@ export default function AuthGate({ children }: { children: ReactNode }) {
     <>
       <NavBar />
       {children}
+      <Footer />
     </>
   );
 }
