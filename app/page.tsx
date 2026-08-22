@@ -2,6 +2,7 @@ import HomeWelcomeSection from "@/components/HomeWelcomeSection";
 import IngredientPicker from "@/components/IngredientPicker";
 import CategoryNav from "@/components/CategoryNav";
 import CategoryMealsSection from "@/components/CategoryMealsSection";
+import CategoryIngredientFilter from "@/components/CategoryIngredientFilter";
 import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
 import { FEATURED_CATEGORY_ORDER, sortCategoriesFeaturedFirst } from "@/lib/mealdb/categoryMeta";
 
@@ -28,9 +29,13 @@ export default async function Home() {
         {orderedCategories.length > 0 && (
           <div className="flex flex-col gap-6">
             <CategoryNav categories={orderedCategories} />
-            {sections.map(({ categoryName, meals }) => (
-              <CategoryMealsSection key={categoryName} categoryName={categoryName} meals={meals} />
-            ))}
+            <CategoryIngredientFilter>
+              <div className="flex flex-col gap-6">
+                {sections.map(({ categoryName, meals }) => (
+                  <CategoryMealsSection key={categoryName} categoryName={categoryName} meals={meals} />
+                ))}
+              </div>
+            </CategoryIngredientFilter>
           </div>
         )}
       </div>

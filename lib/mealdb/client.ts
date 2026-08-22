@@ -166,3 +166,26 @@ export async function getMealsByArea(areaName: string): Promise<MealSearchResult
     area: areaName,
   }));
 }
+
+/** Verilen malzemeyi içeren tarifleri özet halde döner. TheMealDB'nin
+ * filter.php'si tek malzeme kabul ediyor (virgülle birden fazla malzeme
+ * verilince 0 sonuç dönüyor, test edildi) — çağıran taraf birden fazla
+ * malzemeye göre filtrelemek istiyorsa bu fonksiyonu her malzeme için ayrı
+ * çağırıp sonuçların kesişimini kendi hesaplamalı. */
+export async function getMealsByIngredient(ingredientName: string): Promise<MealSearchResult[]> {
+  const response = await fetch(
+    `${getBaseUrl()}/filter.php?i=${encodeURIComponent(ingredientName)}`,
+    { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
+  );
+  if (!response.ok) {
+    throw new ProviderRequestError(`TheMealDB isteği başarısız oldu (${response.status}).`);
+  }
+  const data = (await response.json()) as { meals: RawFilteredMeal[] | null };
+  return (data.meals ?? []).map((meal) => ({
+    id: meal.idMeal,
+    name: meal.strMeal,
+    thumbnail: meal.strMealThumb,
+    category: "",
+    area: "",
+  }));
+}
