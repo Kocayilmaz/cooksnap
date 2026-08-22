@@ -9,7 +9,7 @@ export default function CategoryNav({ categories }: { categories: MealCategory[]
   const featuredCategories = categories.slice(0, FEATURED_CATEGORY_ORDER.length);
 
   return (
-    <nav className="flex items-center gap-1 border-b border-surface-border pb-2">
+    <nav className="flex flex-wrap items-center gap-1 border-b border-surface-border pb-2">
       <div className="group relative shrink-0">
         <button
           type="button"
@@ -19,9 +19,12 @@ export default function CategoryNav({ categories }: { categories: MealCategory[]
           Kategoriler
         </button>
 
-        {/* Üzerine gelince tüm kategorileri gösteren mega-menü. */}
-        <div className="invisible absolute left-0 top-full z-20 pt-2 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1 rounded-xl border border-surface-border bg-surface-card p-4 shadow-md sm:grid-cols-3">
+        {/* Üzerine gelince tüm kategorileri gösteren mega-menü. Sabit genişlik şart:
+            grid-cols + fr, width:auto (shrink-to-fit) bir absolute kapsayıcı içinde
+            neredeyse sıfıra çöküyor (tarayıcı fr track'lerini min=0 alıyor), bu da
+            kategori isimlerinin üst üste binmesine yol açıyordu. */}
+        <div className="invisible absolute left-0 top-full z-20 w-80 max-w-[92vw] pt-2 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 rounded-xl border border-surface-border bg-surface-card p-4 shadow-md">
             {categories.map((category) => (
               <Link
                 key={category.name}
@@ -35,7 +38,7 @@ export default function CategoryNav({ categories }: { categories: MealCategory[]
         </div>
       </div>
 
-      <div className="no-scrollbar flex gap-1 overflow-x-auto">
+      <div className="flex flex-wrap gap-1">
         {featuredCategories.map((category) => (
           <Link
             key={category.name}

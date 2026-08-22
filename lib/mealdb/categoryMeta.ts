@@ -27,6 +27,10 @@ export const FEATURED_CATEGORY_ORDER = [
   "Dessert",
   "Vegetarian",
   "Seafood",
+  "Beef",
+  "Vegan",
+  "Side",
+  "Starter",
 ];
 
 export function getCategoryLabel(name: string): string {
