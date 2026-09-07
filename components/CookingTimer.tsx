@@ -35,8 +35,10 @@ function playBeep() {
 }
 
 /** Mutfakta kullanırken süre tutmak için sağ altta sabit duran zamanlayıcı
- * (bkz. app/chat/page.tsx). Redux'a bağlı değil — sayfa yenilenince sıfırlanması
- * sorun değil, kullanım anlık/mutfak amaçlı. */
+ * (bkz. app/chat/page.tsx). Masaüstünde (lg+) bunun yerine ChatSidebar'a gömülü
+ * SidebarCookingTimer gösteriliyor — bu bileşen sadece sidebar'ın gizlendiği
+ * mobil/tablet ekranlarda görünür. Redux'a bağlı değil — sayfa yenilenince
+ * sıfırlanması sorun değil, kullanım anlık/mutfak amaçlı. */
 export default function CookingTimer() {
   const [isOpen, setIsOpen] = useState(false);
   const [minutes, setMinutes] = useState(DEFAULT_MINUTES);
@@ -91,7 +93,7 @@ export default function CookingTimer() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-20 flex flex-col items-end gap-3">
+    <div className="fixed bottom-6 right-6 z-20 flex flex-col items-end gap-3 lg:hidden">
       {isOpen && (
         <div className="flex w-56 flex-col gap-4 rounded-2xl border border-surface-border bg-surface-card p-4 shadow-md">
           <div className="flex items-center justify-between">
