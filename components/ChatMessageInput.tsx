@@ -62,8 +62,9 @@ export default function ChatMessageInput({
           <button
             type="button"
             onClick={() => onAttachPhoto(null)}
+            disabled={disabled}
             aria-label="Fotoğrafı kaldır"
-            className="text-surface-text-muted hover:text-brand-orange"
+            className="text-surface-text-muted hover:text-brand-orange disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X size={14} aria-hidden="true" />
           </button>
@@ -81,8 +82,9 @@ export default function ChatMessageInput({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
+          disabled={disabled}
           aria-label="Fotoğraf ekle"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
         >
           <Plus size={18} aria-hidden="true" />
         </button>
