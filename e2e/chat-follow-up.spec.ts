@@ -41,6 +41,31 @@ test("ilk istekten sonra sohbet akisina gecilir ve takip mesaji gonderilebilir",
   await expect(page.getByText("Domatesli Ispanaklı Omlet", { exact: true })).toBeVisible();
 });
 
+test("takip mesaji sadece fotograf ekleyip metin yazmadan gonderilebilir", async ({ page }) => {
+  await mockSequentialRecipeResponses(page);
+  await page.goto("/chat");
+
+  await page.getByPlaceholder("Örn: 2 yumurta, bir avuç ıspanak, biraz peynir").fill("2 yumurta, ıspanak");
+  await page.getByRole("button", { name: "Tarifi getir" }).click();
+  await expect(page.getByText("Ispanaklı Omlet", { exact: true }).last()).toBeVisible();
+
+  const sendButton = page.getByRole("button", { name: "Gönder" });
+  await expect(sendButton).toBeDisabled();
+
+  const tinyPngBase64 =
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "domates.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(tinyPngBase64, "base64"),
+  });
+
+  await expect(sendButton).toBeEnabled();
+  await sendButton.click();
+
+  await expect(page.getByText("Domatesli Ispanaklı Omlet", { exact: true })).toBeVisible();
+});
+
 test("yeni sohbet sohbet akisini kapatip formu geri gosterir", async ({ page }) => {
   await mockSequentialRecipeResponses(page);
   await page.goto("/chat");
