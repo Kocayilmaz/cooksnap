@@ -40,11 +40,11 @@ test("basarili tarif istegi ChatSidebar'daki eski sohbetler listesine eklenir", 
   await mockRecipeResponse(page);
   await page.goto("/chat");
 
-  await expect(page.getByText("Eski sohbetler")).toBeHidden();
+  await expect(page.getByText("Sohbetler")).toBeHidden();
 
   await submitWithPhoto(page);
 
-  await expect(page.getByText("Eski sohbetler")).toBeVisible();
+  await expect(page.getByText("Sohbetler")).toBeVisible();
   await expect(page.getByText("Fırında Sebzeli Tavuk", { exact: false }).last()).toBeVisible();
 });
 
@@ -52,14 +52,14 @@ test("gecmis sayfa yenilenince kalicidir ve temizlenebilir", async ({ page }) =>
   await mockRecipeResponse(page);
   await page.goto("/chat");
   await submitWithPhoto(page);
-  await expect(page.getByText("Eski sohbetler")).toBeVisible();
+  await expect(page.getByText("Sohbetler")).toBeVisible();
 
   await page.reload();
-  await expect(page.getByText("Eski sohbetler")).toBeVisible();
+  await expect(page.getByText("Sohbetler")).toBeVisible();
 
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Temizle" }).click();
-  await expect(page.getByText("Eski sohbetler")).toBeHidden();
+  await expect(page.getByText("Sohbetler")).toBeHidden();
   await expect(page.getByText("Henüz bir sohbet geçmişin yok.")).toBeVisible();
 });
 
@@ -67,9 +67,9 @@ test("gecmisi temizle onay istemi reddedilirse gecmis silinmez", async ({ page }
   await mockRecipeResponse(page);
   await page.goto("/chat");
   await submitWithPhoto(page);
-  await expect(page.getByText("Eski sohbetler")).toBeVisible();
+  await expect(page.getByText("Sohbetler")).toBeVisible();
 
   page.once("dialog", (dialog) => dialog.dismiss());
   await page.getByRole("button", { name: "Temizle" }).click();
-  await expect(page.getByText("Eski sohbetler")).toBeVisible();
+  await expect(page.getByText("Sohbetler")).toBeVisible();
 });

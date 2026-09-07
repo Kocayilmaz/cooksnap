@@ -28,7 +28,7 @@ test("ilk istekten sonra sohbet akisina gecilir ve takip mesaji gonderilebilir",
   await page.getByRole("button", { name: "Tarifi getir" }).click();
 
   await expect(page.getByText("2 yumurta, ıspanak", { exact: true })).toBeVisible();
-  // Baslik hem "Eski sohbetler" sidebar onizlemesinde hem de tarif kartinda
+  // Baslik hem "Sohbetler" sidebar onizlemesinde hem de tarif kartinda
   // gorunuyor, bu yuzden .last() ile ana akistaki karti hedefliyoruz.
   await expect(page.getByText("Ispanaklı Omlet", { exact: true }).last()).toBeVisible();
 
