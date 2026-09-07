@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import NewChatForm from "@/components/NewChatForm";
 import ChatSidebar from "@/components/ChatSidebar";
@@ -66,6 +66,11 @@ function ChatPageContent() {
 
   const hasIngredientsText = ingredientsText.trim().length > 0;
   const hasStartedChat = messages.length > 0;
+
+  const threadEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    threadEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, isSendingFollowUp]);
 
   async function requestRecipes(ingredientsDescription: string, photoDataUrl?: string) {
     const equipment = EQUIPMENT_KEYS.filter((key) => equipmentState[key]);
