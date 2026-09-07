@@ -248,6 +248,7 @@ function ChatPageContent() {
                 {followUpError}
               </p>
             )}
+            <div ref={threadEndRef} />
           </div>
 
           <ChatMessageInput
