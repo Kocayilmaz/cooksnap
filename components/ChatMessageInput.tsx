@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowUp, ChefHat, Mic, Plus, X } from "lucide-react";
 import type { RecipeMode } from "@/lib/redux/recipeModeSlice";
 
@@ -9,6 +9,10 @@ const MODE_LABELS: Record<RecipeMode, string> = {
   home: "Ev yemeği",
   chef: "Aşçı",
 };
+
+/** components/PhotoUpload.tsx'teki üst sınırla aynı — base64 data URL'e
+ * çevrilip isteğe eklendiği için makul bir sınır konuldu. */
+const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024;
 
 interface ChatMessageInputProps {
   value: string;
@@ -35,6 +39,7 @@ export default function ChatMessageInput({
   onAttachPhoto,
 }: ChatMessageInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const canSend = !disabled && (value.trim().length > 0 || Boolean(photoDataUrl));
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -47,8 +52,22 @@ export default function ChatMessageInput({
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setFileError("Sadece resim dosyaları yüklenebilir (jpg, png, webp vb.).");
+      event.target.value = "";
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setFileError("Dosya çok büyük. En fazla 8 MB yükleyebilirsin.");
+      event.target.value = "";
+      return;
+    }
+
+    setFileError(null);
     const reader = new FileReader();
     reader.onload = () => onAttachPhoto(typeof reader.result === "string" ? reader.result : null);
+    reader.onerror = () => setFileError("Fotoğraf okunamadı, tekrar dener misin?");
     reader.readAsDataURL(file);
     event.target.value = "";
   }
@@ -61,7 +80,10 @@ export default function ChatMessageInput({
           <img src={photoDataUrl} alt="Eklenen fotoğraf" className="h-10 w-10 rounded-lg object-cover" />
           <button
             type="button"
-            onClick={() => onAttachPhoto(null)}
+            onClick={() => {
+              onAttachPhoto(null);
+              setFileError(null);
+            }}
             disabled={disabled}
             aria-label="Fotoğrafı kaldır"
             className="text-surface-text-muted hover:text-brand-orange disabled:cursor-not-allowed disabled:opacity-50"
@@ -69,6 +91,12 @@ export default function ChatMessageInput({
             <X size={14} aria-hidden="true" />
           </button>
         </div>
+      )}
+
+      {fileError && (
+        <p role="alert" className="text-xs text-state-error">
+          {fileError}
+        </p>
       )}
 
       <div className="flex items-center gap-1.5 rounded-full border border-surface-border bg-surface-card px-2 py-2 shadow-sm">
