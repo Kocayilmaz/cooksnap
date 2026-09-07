@@ -15,6 +15,10 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("tr-TR", {
 interface ChatSidebarProps {
   onNewChat: () => void;
   onSelectEntry: (entry: HistoryEntry) => void;
+  /** Bir takip mesajı gönderiliyorken true — yarı yolda sohbet değiştirilip
+   * yanıtın kaybolmaması için "Yeni sohbet" ve geçmiş seçimi geçici olarak
+   * kapatılır (bkz. app/chat/page.tsx isSendingFollowUp). */
+  disabled?: boolean;
 }
 
 function summarize(entry: HistoryEntry): string {
@@ -24,15 +28,22 @@ function summarize(entry: HistoryEntry): string {
 function HistoryRow({
   entry,
   onSelectEntry,
+  disabled,
 }: {
   entry: HistoryEntry;
   onSelectEntry: (entry: HistoryEntry) => void;
+  disabled?: boolean;
 }) {
   const dispatch = useAppDispatch();
 
   return (
     <li className="flex items-start gap-1 rounded-lg border border-surface-border px-3 py-2 text-xs text-surface-text-muted">
-      <button type="button" onClick={() => onSelectEntry(entry)} className="min-w-0 flex-1 text-left">
+      <button
+        type="button"
+        onClick={() => onSelectEntry(entry)}
+        disabled={disabled}
+        className="min-w-0 flex-1 text-left disabled:cursor-not-allowed disabled:opacity-50"
+      >
         <div className="flex items-center justify-between gap-2">
           <span className="truncate">{summarize(entry)}</span>
           <span className="shrink-0">{DATE_FORMATTER.format(entry.createdAt)}</span>
@@ -61,7 +72,7 @@ function HistoryRow({
 
 /** Chat sayfasının solundaki gezinme alanı: yeni sohbet başlatma + geçmiş
  * istekleri (bkz. historySlice) favori/eski olarak iki grupta listeler. */
-export default function ChatSidebar({ onNewChat, onSelectEntry }: ChatSidebarProps) {
+export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: ChatSidebarProps) {
   const history = useAppSelector((state) => state.history);
   const dispatch = useAppDispatch();
   const favorites = history.filter((entry) => entry.isFavorite);
@@ -78,7 +89,8 @@ export default function ChatSidebar({ onNewChat, onSelectEntry }: ChatSidebarPro
       <button
         type="button"
         onClick={onNewChat}
-        className="flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark"
+        disabled={disabled}
+        className="flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Plus size={16} aria-hidden="true" />
         Yeni sohbet
@@ -89,7 +101,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry }: ChatSidebarPro
           <span className="text-sm font-medium text-foreground">Favori sohbetler</span>
           <ul className="flex flex-col gap-2">
             {favorites.map((entry) => (
-              <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} />
+              <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} disabled={disabled} />
             ))}
           </ul>
         </div>
@@ -109,7 +121,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry }: ChatSidebarPro
           </div>
           <ul className="flex flex-col gap-2">
             {others.map((entry) => (
-              <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} />
+              <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} disabled={disabled} />
             ))}
           </ul>
         </div>

@@ -228,7 +228,7 @@ function ChatPageContent() {
 
   return (
     <div className="flex flex-1 justify-center gap-6 bg-surface-warm px-4 py-12">
-      <ChatSidebar onNewChat={handleNewChat} onSelectEntry={handleSelectEntry} />
+      <ChatSidebar onNewChat={handleNewChat} onSelectEntry={handleSelectEntry} disabled={isSendingFollowUp} />
 
       {hasStartedChat ? (
         <div className="flex w-full max-w-2xl flex-col gap-4">
