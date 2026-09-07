@@ -8,7 +8,7 @@ import ChatMessageBubble from "@/components/ChatMessageBubble";
 import ChatMessageInput from "@/components/ChatMessageInput";
 import CookingTimer from "@/components/CookingTimer";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { EQUIPMENT_KEYS, setEquipment, type Equipment } from "@/lib/redux/equipmentSlice";
+import { EQUIPMENT_KEYS, EQUIPMENT_LABELS, setEquipment, type Equipment } from "@/lib/redux/equipmentSlice";
 import { FREE_USAGE_LIMIT, incrementUsage } from "@/lib/redux/usageCounterSlice";
 import { addHistoryEntry, type HistoryEntry } from "@/lib/redux/historySlice";
 import { setPersonCount } from "@/lib/redux/personCountSlice";
@@ -196,10 +196,34 @@ function ChatPageContent() {
   }
 
   function handleSelectEntry(entry: HistoryEntry) {
-    setIngredientsText(entry.ingredientsText ?? "");
     dispatch(setPersonCount(entry.personCount));
     dispatch(setEquipment(buildEquipmentState(entry.equipment)));
     dispatch(setRecipeMode(entry.mode));
+
+    // Gecmis kayitlarda sadece tarif basliklari saklaniyor (fotograf/tam
+    // adimlar tutulmuyor, bkz. lib/redux/historySlice.ts) — bu yuzden eski
+    // bir sohbet secildiginde tam RecipeMessageCard yeniden olusturulamiyor,
+    // en iyi caba (best-effort) olarak baslikları metin balonu ile gosteriyoruz.
+    const equipmentLabels = entry.equipment.map((key) => EQUIPMENT_LABELS[key]).join(", ");
+    setMessages([
+      {
+        id: makeMessageId(),
+        role: "user",
+        text: entry.ingredientsText || (entry.hadPhoto ? "Fotoğrafımdaki malzemelerle ne yapabilirim?" : ""),
+        createdAt: entry.createdAt,
+      },
+      {
+        id: makeMessageId(),
+        role: "assistant",
+        text:
+          entry.recipeTitles.length > 0
+            ? `${entry.recipeTitles.join(", ")} (${equipmentLabels} · ${entry.personCount} kişilik)`
+            : "Bu sohbet için kayıtlı tarif bulunamadı.",
+        createdAt: entry.createdAt,
+      },
+    ]);
+    setStatus("idle");
+    setFollowUpError(null);
   }
 
   return (
