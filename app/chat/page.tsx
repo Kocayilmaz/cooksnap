@@ -5,13 +5,14 @@ import { useSearchParams } from "next/navigation";
 import NewChatForm from "@/components/NewChatForm";
 import ChatSidebar from "@/components/ChatSidebar";
 import ChatMessageBubble from "@/components/ChatMessageBubble";
+import ChatMessageInput from "@/components/ChatMessageInput";
 import CookingTimer from "@/components/CookingTimer";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { EQUIPMENT_KEYS, setEquipment, type Equipment } from "@/lib/redux/equipmentSlice";
 import { FREE_USAGE_LIMIT, incrementUsage } from "@/lib/redux/usageCounterSlice";
 import { addHistoryEntry, type HistoryEntry } from "@/lib/redux/historySlice";
 import { setPersonCount } from "@/lib/redux/personCountSlice";
-import { setRecipeMode } from "@/lib/redux/recipeModeSlice";
+import { RECIPE_MODE_KEYS, setRecipeMode } from "@/lib/redux/recipeModeSlice";
 import type { ApiErrorResponse, RecipeResponse } from "@/lib/types/recipe";
 import type { ChatMessage } from "@/lib/types/chat";
 
@@ -46,6 +47,12 @@ function ChatPageContent() {
   // Sohbet başladıktan (ilk istek gönderildikten) sonra akış mesaj balonlarıyla
   // gösterilir — bkz. ChatMessageBubble. Boşsa NewChatForm gösteriliyor.
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // Sohbete devam ederken kullanılan alt mesaj kutusu (bkz. ChatMessageInput) —
+  // ilk formdan bağımsız, kendi metin/fotoğraf/gönderiliyor durumunu tutar.
+  const [followUpText, setFollowUpText] = useState("");
+  const [followUpPhoto, setFollowUpPhoto] = useState<string | null>(null);
+  const [isSendingFollowUp, setIsSendingFollowUp] = useState(false);
+  const [followUpError, setFollowUpError] = useState<string | null>(null);
 
   const equipmentState = useAppSelector((state) => state.equipment);
   const personCount = useAppSelector((state) => state.personCount.value);
@@ -132,6 +139,55 @@ function ChatPageContent() {
     setStatus("idle");
     setError(null);
     setMessages([]);
+    setFollowUpText("");
+    setFollowUpPhoto(null);
+    setFollowUpError(null);
+  }
+
+  async function handleFollowUpSend() {
+    const trimmed = followUpText.trim();
+    if ((!trimmed && !followUpPhoto) || isSendingFollowUp || limitReached) return;
+
+    // Onceki tarif basliklarini kisa bir baglam olarak ekleyip AI'in konusmaya
+    // devam ediyormus gibi yanit vermesini sagliyoruz — /api/recipe tek seferlik
+    // bir uc nokta oldugu icin gercek bir sohbet gecmisi tutmuyor, baglam
+    // burada metne gomuluyor (bkz. lib/ai/buildRecipePrompt.ts).
+    const lastAssistantMessage = [...messages].reverse().find((m) => m.role === "assistant");
+    const previousTitles = lastAssistantMessage?.recipes?.map((r) => r.title).join(", ");
+    const combinedText = previousTitles
+      ? `Önceki tarif(ler): ${previousTitles}. Ek istek: ${trimmed || "(fotoğrafa bak)"}`
+      : trimmed;
+
+    setIsSendingFollowUp(true);
+    setFollowUpError(null);
+
+    const userMessage: ChatMessage = {
+      id: makeMessageId(),
+      role: "user",
+      text: trimmed || "Fotoğrafımdaki malzemelerle ne yapabilirim?",
+      createdAt: Date.now(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setFollowUpText("");
+    setFollowUpPhoto(null);
+
+    try {
+      const recipes = await requestRecipes(combinedText, followUpPhoto ?? undefined);
+      setMessages((prev) => [
+        ...prev,
+        { id: makeMessageId(), role: "assistant", recipes, createdAt: Date.now() },
+      ]);
+    } catch (err) {
+      setFollowUpError(err instanceof Error ? err.message : "Beklenmeyen bir hata oluştu.");
+    } finally {
+      setIsSendingFollowUp(false);
+    }
+  }
+
+  function handleCycleMode() {
+    const currentIndex = RECIPE_MODE_KEYS.indexOf(recipeMode);
+    const nextMode = RECIPE_MODE_KEYS[(currentIndex + 1) % RECIPE_MODE_KEYS.length];
+    dispatch(setRecipeMode(nextMode));
   }
 
   function handleSelectEntry(entry: HistoryEntry) {
@@ -147,9 +203,34 @@ function ChatPageContent() {
 
       {hasStartedChat ? (
         <div className="flex w-full max-w-2xl flex-col gap-4">
-          {messages.map((message) => (
-            <ChatMessageBubble key={message.id} message={message} />
-          ))}
+          <div aria-live="polite" className="flex flex-1 flex-col gap-4">
+            {messages.map((message) => (
+              <ChatMessageBubble key={message.id} message={message} />
+            ))}
+            {isSendingFollowUp && (
+              <div className="flex justify-start">
+                <div className="rounded-2xl rounded-bl-md border border-surface-border bg-surface-card px-4 py-2.5 text-sm text-surface-text-muted">
+                  Tarif hazırlanıyor…
+                </div>
+              </div>
+            )}
+            {followUpError && (
+              <p role="alert" className="text-center text-sm text-state-error">
+                {followUpError}
+              </p>
+            )}
+          </div>
+
+          <ChatMessageInput
+            value={followUpText}
+            onChange={setFollowUpText}
+            onSend={handleFollowUpSend}
+            disabled={isSendingFollowUp || limitReached}
+            mode={recipeMode}
+            onCycleMode={handleCycleMode}
+            photoDataUrl={followUpPhoto}
+            onAttachPhoto={setFollowUpPhoto}
+          />
         </div>
       ) : (
         <NewChatForm
