@@ -2,15 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import PhotoUpload from "@/components/PhotoUpload";
-import IngredientTextInput from "@/components/IngredientTextInput";
-import PersonCountSelector from "@/components/PersonCountSelector";
-import EquipmentSelector from "@/components/EquipmentSelector";
-import RecipeModeSelector from "@/components/RecipeModeSelector";
-import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
-import FavoriteButton from "@/components/FavoriteButton";
-import CopyRecipeButton from "@/components/CopyRecipeButton";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import NewChatForm from "@/components/NewChatForm";
 import ChatSidebar from "@/components/ChatSidebar";
 import CookingTimer from "@/components/CookingTimer";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
@@ -137,87 +129,19 @@ function ChatPageContent() {
     <div className="flex flex-1 justify-center gap-6 bg-surface-warm px-4 py-12">
       <ChatSidebar onNewChat={handleNewChat} onSelectEntry={handleSelectEntry} />
 
-      <main className="flex w-full max-w-md flex-col gap-8 rounded-2xl bg-surface-card p-8 shadow-sm">
-        <div className="flex flex-col gap-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-brand-red">
-            CookSnap
-          </h1>
-          <p className="text-sm text-surface-text-muted">
-            Fotoğraf çek ya da malzemeleri yaz, elindekilere göre tarifini al.
-          </p>
-        </div>
-
-        <PhotoUpload onPhotoSelected={setPhoto} />
-        <IngredientTextInput value={ingredientsText} onChange={setIngredientsText} />
-        <PersonCountSelector />
-        <EquipmentSelector />
-        <RecipeModeSelector />
-
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={(!photo && !hasIngredientsText) || status === "loading" || limitReached}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-orange px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
-        >
-          {status === "loading" && <LoadingSpinner size={16} />}
-          {status === "loading" ? "Tarif hazırlanıyor…" : "Tarifi getir"}
-        </button>
-
-        {isFreeMode && limitReached && (
-          <p className="text-center text-xs text-state-error">
-            Ücretsiz mod limitine ulaştın ({usageCount}/{FREE_USAGE_LIMIT}). Devam etmek için
-            Profil sayfasından kendi Claude/OpenAI anahtarını girebilirsin.
-          </p>
-        )}
-
-        {isFreeMode && !limitReached && (
-          <p className="text-center text-xs text-surface-text-muted">
-            Ücretsiz modda kullanılan istek: {usageCount}/{FREE_USAGE_LIMIT}
-          </p>
-        )}
-
-        <div aria-live="polite" className="flex flex-col gap-4">
-          {status === "error" && error && (
-            <p role="alert" className="text-center text-sm text-state-error">
-              {error}
-            </p>
-          )}
-
-          {status === "success" && (
-            <ul className="flex flex-col gap-4">
-              {recipes.map((recipe, index) => (
-                <li
-                  key={`${recipe.equipment}-${index}`}
-                  className="rounded-xl border border-surface-border p-4"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-foreground">
-                      {recipe.title}
-                    </p>
-                    <div className="flex shrink-0 items-center gap-3">
-                      <CopyRecipeButton title={recipe.title} steps={recipe.steps} />
-                      <FavoriteButton
-                        equipment={recipe.equipment}
-                        title={recipe.title}
-                        steps={recipe.steps}
-                        videoId={recipe.videoId}
-                      />
-                    </div>
-                  </div>
-                  <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-surface-text-muted">
-                    {recipe.steps.map((step, stepIndex) => (
-                      <li key={stepIndex}>{step}</li>
-                    ))}
-                  </ol>
-                  {recipe.videoId && (
-                    <RecipeVideoEmbed videoId={recipe.videoId} title={recipe.title} />
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </main>
+      <NewChatForm
+        ingredientsText={ingredientsText}
+        onIngredientsChange={setIngredientsText}
+        onPhotoSelected={setPhoto}
+        onSubmit={handleSubmit}
+        canSubmit={Boolean(photo) || hasIngredientsText}
+        isLoading={status === "loading"}
+        limitReached={limitReached}
+        isFreeMode={isFreeMode}
+        usageCount={usageCount}
+        freeUsageLimit={FREE_USAGE_LIMIT}
+        error={status === "error" ? error : null}
+      />
 
       <CookingTimer />
     </div>
