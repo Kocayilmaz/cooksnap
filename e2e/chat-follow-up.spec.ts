@@ -66,6 +66,41 @@ test("takip mesaji sadece fotograf ekleyip metin yazmadan gonderilebilir", async
   await expect(page.getByText("Domatesli Ispanaklı Omlet", { exact: true })).toBeVisible();
 });
 
+test("takip mesajina resim olmayan dosya eklenince hata mesaji gosterilir", async ({ page }) => {
+  await mockSequentialRecipeResponses(page);
+  await page.goto("/chat");
+
+  await page.getByPlaceholder("Örn: 2 yumurta, bir avuç ıspanak, biraz peynir").fill("2 yumurta, ıspanak");
+  await page.getByRole("button", { name: "Tarifi getir" }).click();
+  await expect(page.getByText("Ispanaklı Omlet", { exact: true }).last()).toBeVisible();
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "notlar.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("bu bir resim değil"),
+  });
+
+  await expect(page.getByText("Sadece resim dosyaları yüklenebilir")).toBeVisible();
+});
+
+test("takip mesajina 8MB'den buyuk dosya eklenince hata mesaji gosterilir", async ({ page }) => {
+  await mockSequentialRecipeResponses(page);
+  await page.goto("/chat");
+
+  await page.getByPlaceholder("Örn: 2 yumurta, bir avuç ıspanak, biraz peynir").fill("2 yumurta, ıspanak");
+  await page.getByRole("button", { name: "Tarifi getir" }).click();
+  await expect(page.getByText("Ispanaklı Omlet", { exact: true }).last()).toBeVisible();
+
+  const oversized = Buffer.alloc(8 * 1024 * 1024 + 1, 1);
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "buyuk-foto.png",
+    mimeType: "image/png",
+    buffer: oversized,
+  });
+
+  await expect(page.getByText("Dosya çok büyük. En fazla 8 MB yükleyebilirsin.")).toBeVisible();
+});
+
 test("yeni sohbet sohbet akisini kapatip formu geri gosterir", async ({ page }) => {
   await mockSequentialRecipeResponses(page);
   await page.goto("/chat");
