@@ -260,6 +260,16 @@ function ChatPageContent() {
             photoDataUrl={followUpPhoto}
             onAttachPhoto={setFollowUpPhoto}
           />
+
+          {isFreeMode && (
+            <p
+              className={`text-center text-xs ${limitReached ? "text-state-error" : "text-surface-text-muted"}`}
+            >
+              {limitReached
+                ? `Ücretsiz mod limitine ulaştın (${usageCount}/${FREE_USAGE_LIMIT}).`
+                : `Ücretsiz modda kullanılan istek: ${usageCount}/${FREE_USAGE_LIMIT}`}
+            </p>
+          )}
         </div>
       ) : (
         <NewChatForm
