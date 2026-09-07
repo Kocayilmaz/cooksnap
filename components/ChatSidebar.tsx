@@ -44,7 +44,7 @@ function HistoryRow({
       <button
         type="button"
         onClick={() => dispatch(toggleHistoryFavorite(entry.id))}
-        aria-label={entry.isFavorite ? "Favoriden çıkar" : "Favorilere ekle"}
+        aria-label={entry.isFavorite ? "Sohbeti favorilerden çıkar" : "Sohbeti favorilere ekle"}
         aria-pressed={entry.isFavorite}
         className="shrink-0 text-surface-text-muted hover:text-brand-orange"
       >
