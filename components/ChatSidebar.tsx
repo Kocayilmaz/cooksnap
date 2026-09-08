@@ -243,7 +243,42 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
       }`}
     >
       <div className="flex flex-col gap-1">
-        <div className={`flex items-center ${collapsed ? "justify-center" : ""}`}>
+        {/* Genişken arama ikonu solda, kenar çubuğu kapatma ikonu en sağda
+         * aynı satırda; daraltılmışken tek sütun yeterli genişlik olmadığı
+         * için kapatma/arama ayrı satırlara döner (aşağıya bkz.). */}
+        <div className={`flex items-center gap-1 ${collapsed ? "justify-center" : "justify-between"}`}>
+          {!collapsed &&
+            (searchOpen ? (
+              <div className="relative min-w-0 flex-1">
+                <Search
+                  size={14}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-surface-text-muted"
+                />
+                <input
+                  autoFocus
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  onBlur={() => {
+                    if (!searchTerm.trim()) setSearchOpen(false);
+                  }}
+                  placeholder="Sohbetlerde ara"
+                  className="w-full rounded-full border border-surface-border bg-surface-warm py-2 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-surface-text-muted focus:border-brand-orange"
+                />
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                title="Ara"
+                aria-label="Ara"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+              >
+                <Search size={16} aria-hidden="true" />
+              </button>
+            ))}
+
           <button
             type="button"
             onClick={() => setCollapsed((prev) => !prev)}
@@ -269,37 +304,16 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
           {!collapsed && "Yeni sohbet"}
         </button>
 
-        {searchOpen && !collapsed ? (
-          <div className="relative">
-            <Search
-              size={14}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-surface-text-muted"
-            />
-            <input
-              autoFocus
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              onBlur={() => {
-                if (!searchTerm.trim()) setSearchOpen(false);
-              }}
-              placeholder="Sohbetlerde ara"
-              className="w-full rounded-full border border-surface-border bg-surface-warm py-2 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-surface-text-muted focus:border-brand-orange"
-            />
-          </div>
-        ) : (
+        {collapsed && (
           <button
             type="button"
             onClick={() => {
-              if (collapsed) setCollapsed(false);
+              setCollapsed(false);
               setSearchOpen(true);
             }}
             title="Ara"
             aria-label="Ara"
-            className={`flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark ${
-              collapsed ? "mx-auto" : ""
-            }`}
+            className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
           >
             <Search size={16} aria-hidden="true" />
           </button>
