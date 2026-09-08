@@ -285,8 +285,12 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
     // yaslanir; gecmis coksa da ayni alan icinde kendi icinde kaydirilir.
     // Ayrica kutu/kart görünümü yok — ana içerikten sadece sağdaki tek
     // çizgiyle (border-r) ayrılıyor, arka planı sayfanınkiyle aynı.
+    // -mt-12, sayfanın üst dolgusunu (py-12) sadece sidebar için iptal
+    // eder — aksi halde sayfa hiç kaydırılmamışken sticky hedefiyle
+    // (top-[4.75rem]) doğal akış konumu arasında görünür bir boşluk
+    // oluşuyordu.
     <aside
-      className={`sticky top-[4.75rem] hidden h-[calc(100vh-11rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
+      className={`sticky top-[4.75rem] -mt-12 hidden h-[calc(100vh-11rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
         collapsed ? "w-16" : "w-72"
       }`}
     >
