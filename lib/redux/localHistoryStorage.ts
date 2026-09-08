@@ -20,7 +20,9 @@ function isHistoryEntry(value: unknown): value is HistoryEntry {
     typeof record.createdAt === "number" &&
     // isFavorite alanı sonradan eklendi — eski (alansız) kayıtlarla geriye
     // dönük uyum için burada opsiyonel kabul edilir, okurken false'a normalize edilir.
-    (record.isFavorite === undefined || typeof record.isFavorite === "boolean")
+    (record.isFavorite === undefined || typeof record.isFavorite === "boolean") &&
+    // customTitle da sonradan eklendi (bkz. "Yeniden adlandır") — eski kayıtlarda yok.
+    (record.customTitle === undefined || typeof record.customTitle === "string")
   );
 }
 
