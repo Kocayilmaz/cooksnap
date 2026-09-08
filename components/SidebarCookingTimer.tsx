@@ -5,6 +5,8 @@ import { Pause, Play, RotateCcw, Timer as TimerIcon } from "lucide-react";
 
 const PRESET_MINUTES = [5, 10, 20];
 const DEFAULT_MINUTES = PRESET_MINUTES[0];
+const MIN_MINUTES = 1;
+const MAX_MINUTES = 180;
 
 function formatTime(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
@@ -48,6 +50,10 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_MINUTES * 60);
   const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_MINUTES * 60);
   const [isRunning, setIsRunning] = useState(false);
+  // Hazır süre butonlarından bağımsız, kullanıcının elle yazdığı dakika
+  // değeri — serbestçe yazabilsin diye metin olarak tutulur, sadece
+  // commit edilince (blur/Enter) sayıya çevrilip uygulanır.
+  const [manualMinutes, setManualMinutes] = useState(String(DEFAULT_MINUTES));
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -69,10 +75,26 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
     };
   }, [isRunning]);
 
+  function applyMinutes(minutes: number) {
+    const clamped = Math.min(MAX_MINUTES, Math.max(MIN_MINUTES, minutes));
+    setTotalSeconds(clamped * 60);
+    setRemainingSeconds(clamped * 60);
+    setManualMinutes(String(clamped));
+  }
+
   function handleSelectPreset(minutes: number) {
     if (isRunning) return;
-    setTotalSeconds(minutes * 60);
-    setRemainingSeconds(minutes * 60);
+    applyMinutes(minutes);
+  }
+
+  function handleManualMinutesCommit() {
+    if (isRunning) return;
+    const parsed = Number(manualMinutes);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setManualMinutes(String(totalSeconds / 60));
+      return;
+    }
+    applyMinutes(Math.round(parsed));
   }
 
   function handleToggle() {
