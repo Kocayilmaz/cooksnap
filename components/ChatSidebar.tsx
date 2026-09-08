@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Ellipsis, MessageCircle, PanelLeft, PencilLine, Pin, PinOff, Search, SquarePen, Star, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
@@ -39,6 +39,30 @@ function displayTitle(entry: HistoryEntry): string {
   if (entry.customTitle) return entry.customTitle;
   if (entry.recipeTitles.length > 0) return entry.recipeTitles.join(", ");
   return summarize(entry);
+}
+
+/** Daraltılmış (ikon şeridi) haldeyken native `title` tooltip'i yerine
+ * özel, stillendirilebilir bir etiket gösterir (yuvarlak köşeler, turuncu
+ * yazı, ikon hover'ıyla aynı arka plan). Genişkenken sarmalama yapmadan
+ * çocukları doğrudan döner — o zaman zaten görünür bir metin etiketi var. */
+function IconWithTooltip({
+  label,
+  collapsed,
+  children,
+}: {
+  label: string;
+  collapsed: boolean;
+  children: ReactNode;
+}) {
+  if (!collapsed) return <>{children}</>;
+  return (
+    <div className="group relative mx-auto">
+      {children}
+      <span className="pointer-events-none absolute left-full top-1/2 z-20 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-surface-warm px-2.5 py-1.5 text-xs font-medium text-brand-orange-dark opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+        {label}
+      </span>
+    </div>
+  );
 }
 
 function HistoryRow({
@@ -237,107 +261,116 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
     // kullanildigi icin gecmis az/bos olsa bile sidebar viewport'un ayni
     // dilimini kaplar ve alttaki zamanlayici gercekten ekranin altina
     // yaslanir; gecmis coksa da ayni alan icinde kendi icinde kaydirilir.
+    // Ayrica kutu/kart görünümü yok — ana içerikten sadece sağdaki tek
+    // çizgiyle (border-r) ayrılıyor, arka planı sayfanınkiyle aynı.
     <aside
-      className={`sticky top-[4.75rem] hidden h-[calc(100vh-11rem)] shrink-0 flex-col gap-4 overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-3 shadow-sm transition-[width] lg:flex ${
+      className={`sticky top-[4.75rem] hidden h-[calc(100vh-11rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
         collapsed ? "w-16" : "w-72"
       }`}
     >
-      <div className="flex flex-col gap-1">
-        {/* Genişken arama ikonu solda, kenar çubuğu kapatma ikonu en sağda
-         * aynı satırda; daraltılmışken tek sütun yeterli genişlik olmadığı
-         * için kapatma/arama ayrı satırlara döner (aşağıya bkz.). */}
-        <div className={`flex items-center gap-1 ${collapsed ? "justify-center" : "justify-between"}`}>
-          {!collapsed &&
-            (searchOpen ? (
-              <div className="relative min-w-0 flex-1">
-                <Search
-                  size={14}
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-surface-text-muted"
-                />
-                <input
-                  autoFocus
-                  type="search"
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  onBlur={() => {
-                    if (!searchTerm.trim()) setSearchOpen(false);
-                  }}
-                  placeholder="Sohbetlerde ara"
-                  className="w-full rounded-full border border-surface-border bg-surface-warm py-2 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-surface-text-muted focus:border-brand-orange"
-                />
-              </div>
-            ) : (
+      {/* Başlık (kapatma/arama/yeni sohbet) tek kaydırma alanının İÇİNDE,
+       * sticky top-0 ile — böylece kaydırma çubuğu görsel olarak sidebar'ın
+       * en tepesinden başlar, ama işlev aynı: bu kısım kayarken yerinde
+       * sabit kalır. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="sticky top-0 z-10 flex flex-col gap-1 bg-surface-warm pb-3">
+          <div className={`flex items-center gap-1 ${collapsed ? "justify-center" : "justify-between"}`}>
+            {!collapsed &&
+              (searchOpen ? (
+                <div className="relative min-w-0 flex-1">
+                  <Search
+                    size={14}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-surface-text-muted"
+                  />
+                  <input
+                    autoFocus
+                    type="search"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    onBlur={() => {
+                      if (!searchTerm.trim()) setSearchOpen(false);
+                    }}
+                    placeholder="Sohbetlerde ara"
+                    className="w-full rounded-full border border-surface-border bg-surface-card py-2 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-surface-text-muted focus:border-brand-orange"
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  title="Ara"
+                  aria-label="Ara"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+                >
+                  <Search size={16} aria-hidden="true" />
+                </button>
+              ))}
+
+            <IconWithTooltip label={collapsed ? "Kenar çubuğunu aç" : "Kenar çubuğunu kapat"} collapsed={collapsed}>
               <button
                 type="button"
-                onClick={() => setSearchOpen(true)}
-                title="Ara"
-                aria-label="Ara"
+                onClick={() => setCollapsed((prev) => !prev)}
+                aria-label={collapsed ? "Kenar çubuğunu aç" : "Kenar çubuğunu kapat"}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
               >
-                <Search size={16} aria-hidden="true" />
+                <PanelLeft size={16} aria-hidden="true" />
               </button>
-            ))}
+            </IconWithTooltip>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setCollapsed((prev) => !prev)}
-            title={collapsed ? "Kenar çubuğunu aç" : "Kenar çubuğunu kapat"}
-            aria-label={collapsed ? "Kenar çubuğunu aç" : "Kenar çubuğunu kapat"}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
-          >
-            <PanelLeft size={16} aria-hidden="true" />
-          </button>
+          <IconWithTooltip label="Yeni sohbet" collapsed={collapsed}>
+            <button
+              type="button"
+              onClick={onNewChat}
+              disabled={disabled}
+              title={collapsed ? undefined : "Yeni sohbet"}
+              aria-label="Yeni sohbet"
+              className={
+                collapsed
+                  ? "flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+                  : "flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+              }
+            >
+              <SquarePen size={16} aria-hidden="true" />
+              {!collapsed && "Yeni sohbet"}
+            </button>
+          </IconWithTooltip>
+
+          {collapsed && (
+            <>
+              <IconWithTooltip label="Ara" collapsed={collapsed}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCollapsed(false);
+                    setSearchOpen(true);
+                  }}
+                  aria-label="Ara"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+                >
+                  <Search size={16} aria-hidden="true" />
+                </button>
+              </IconWithTooltip>
+              <IconWithTooltip label="Son sohbetler" collapsed={collapsed}>
+                <button
+                  type="button"
+                  onClick={() => setCollapsed(false)}
+                  aria-label="Son sohbetler"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+                >
+                  <MessageCircle size={16} aria-hidden="true" />
+                </button>
+              </IconWithTooltip>
+            </>
+          )}
         </div>
 
-        <button
-          type="button"
-          onClick={onNewChat}
-          disabled={disabled}
-          title="Yeni sohbet"
-          className={
-            collapsed
-              ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
-              : "flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
-          }
-        >
-          <SquarePen size={16} aria-hidden="true" />
-          {!collapsed && "Yeni sohbet"}
-        </button>
-
-        {collapsed && (
-          <>
-            <button
-              type="button"
-              onClick={() => {
-                setCollapsed(false);
-                setSearchOpen(true);
-              }}
-              title="Ara"
-              aria-label="Ara"
-              className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
-            >
-              <Search size={16} aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setCollapsed(false)}
-              title="Son sohbetler"
-              aria-label="Son sohbetler"
-              className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
-            >
-              <MessageCircle size={16} aria-hidden="true" />
-            </button>
-          </>
-        )}
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
         {/* Daraltılmış (ikon şeridi) haldeyken tek tek sohbet geçmişi
          * gösterilmiyor — sadece yeni sohbet/arama/zamanlayıcı ile sınırlı
-         * kalıyor, bu boş alan zamanlayıcıyı sidebar'ın altına iter. */}
+         * kalıyor. */}
         {!collapsed && (
-          <>
+          <div className="flex flex-col gap-4 pt-3">
             {favorites.length > 0 && (
               <div className="flex flex-col gap-2">
                 <span className="flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wide text-surface-text-muted">
@@ -380,7 +413,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
                 {term ? "Eşleşen bir sohbet bulunamadı." : "Henüz bir sohbet geçmişin yok."}
               </p>
             )}
-          </>
+          </div>
         )}
       </div>
 
