@@ -282,7 +282,8 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
           <button
             type="button"
             onClick={() => setCollapsed((prev) => !prev)}
-            aria-label={collapsed ? "Kenar çubuğunu genişlet" : "Kenar çubuğunu daralt"}
+            title={collapsed ? "Kenar çubuğunu aç" : "Kenar çubuğunu kapat"}
+            aria-label={collapsed ? "Kenar çubuğunu aç" : "Kenar çubuğunu kapat"}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
           >
             <PanelLeft size={16} aria-hidden="true" />
@@ -296,7 +297,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
           title="Yeni sohbet"
           className={
             collapsed
-              ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg bg-brand-orange text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+              ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
               : "flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
           }
         >
@@ -305,18 +306,29 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
         </button>
 
         {collapsed && (
-          <button
-            type="button"
-            onClick={() => {
-              setCollapsed(false);
-              setSearchOpen(true);
-            }}
-            title="Ara"
-            aria-label="Ara"
-            className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
-          >
-            <Search size={16} aria-hidden="true" />
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setCollapsed(false);
+                setSearchOpen(true);
+              }}
+              title="Ara"
+              aria-label="Ara"
+              className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+            >
+              <Search size={16} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setCollapsed(false)}
+              title="Son sohbetler"
+              aria-label="Son sohbetler"
+              className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+            >
+              <MessageCircle size={16} aria-hidden="true" />
+            </button>
+          </>
         )}
       </div>
 
