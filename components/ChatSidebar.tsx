@@ -140,9 +140,11 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
           onClick={onNewChat}
           disabled={disabled}
           title="Yeni sohbet"
-          className={`flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60 ${
-            collapsed ? "h-9 w-9 px-0" : ""
-          }`}
+          className={
+            collapsed
+              ? "mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-brand-orange text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+              : "flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+          }
         >
           <Plus size={16} aria-hidden="true" />
           {!collapsed && "Yeni sohbet"}
