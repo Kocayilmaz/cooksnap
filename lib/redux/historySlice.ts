@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Equipment } from "./equipmentSlice";
-import type { RecipeMode } from "./recipeModeSlice";
+import { EQUIPMENT_KEYS, type Equipment } from "./equipmentSlice";
+import { RECIPE_MODE_KEYS, type RecipeMode } from "./recipeModeSlice";
 
 export interface HistoryEntry {
   id: string;
@@ -24,7 +24,55 @@ export const MAX_HISTORY_ENTRIES = 20;
 
 export type HistoryState = HistoryEntry[];
 
-const initialState: HistoryState = [];
+/** Örnek sohbet başlıkları — sidebar'ı boş bir kullanıcıda bile "yaşayan" bir
+ * uygulama gibi göstermek için kullanılan tanıtım verisi (bkz. buildDemoHistory). */
+const DEMO_DISHES: string[][] = [
+  ["Ispanaklı Omlet"],
+  ["Fırında Sebzeli Tavuk"],
+  ["Mercimek Çorbası"],
+  ["Karnıyarık"],
+  ["Mantı", "Yoğurtlu Sos"],
+  ["Izgara Köfte"],
+  ["Sebzeli Pilav"],
+  ["Tavuklu Noodle"],
+  ["Patlıcan Musakka"],
+  ["Kremalı Mantar Makarna"],
+  ["Fırında Somon"],
+  ["Nohut Yemeği"],
+  ["Kıymalı Börek"],
+  ["Sütlaç"],
+  ["Tavuk Sote"],
+  ["Kabak Mücveri"],
+  ["Etli Kuru Fasulye"],
+  ["Zeytinyağlı Yaprak Sarma"],
+  ["Fırında Patates"],
+  ["Tavuklu Sezar Salata"],
+];
+
+function buildDemoHistory(): HistoryState {
+  const now = Date.now();
+  return DEMO_DISHES.map((recipeTitles, index) => ({
+    id: `demo-${index}`,
+    ingredientsText: index % 4 === 0 ? undefined : "2 yumurta, biraz sebze, baharatlar",
+    hadPhoto: index % 4 === 0,
+    personCount: 2 + (index % 4),
+    equipment: [
+      EQUIPMENT_KEYS[index % EQUIPMENT_KEYS.length],
+      EQUIPMENT_KEYS[(index + 3) % EQUIPMENT_KEYS.length],
+    ],
+    mode: RECIPE_MODE_KEYS[index % RECIPE_MODE_KEYS.length],
+    recipeTitles,
+    createdAt: now - index * 3600_000,
+    isFavorite: index < 5,
+  }));
+}
+
+// e2e testleri (bkz. playwright.config.ts webServer.env) bu demo veriyi kapatıp
+// "boş geçmiş" durumunu deterministik tutmak için NEXT_PUBLIC_DEMO_HISTORY'yi
+// "false" olarak ayarlar — o dışındaki her ortamda (yerel geliştirme, canlı)
+// demo veri varsayılan başlangıç durumudur.
+const initialState: HistoryState =
+  process.env.NEXT_PUBLIC_DEMO_HISTORY === "false" ? [] : buildDemoHistory();
 
 const historySlice = createSlice({
   name: "history",
