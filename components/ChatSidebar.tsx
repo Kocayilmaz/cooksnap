@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, PanelLeft, Plus, Search, Star } from "lucide-react";
+import { MessageCircle, PanelLeft, Search, SquarePen, Star } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { setHistory, toggleHistoryFavorite, type HistoryEntry } from "@/lib/redux/historySlice";
 import { EQUIPMENT_LABELS } from "@/lib/redux/equipmentSlice";
@@ -134,11 +134,11 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
           title="Yeni sohbet"
           className={
             collapsed
-              ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg bg-brand-orange text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
-              : "flex items-center justify-center gap-2 rounded-full bg-brand-orange px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+              ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg border border-surface-border text-foreground transition-colors hover:border-brand-orange hover:text-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
+              : "flex items-center justify-center gap-2 rounded-full border border-surface-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-brand-orange hover:text-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
           }
         >
-          <Plus size={16} aria-hidden="true" />
+          <SquarePen size={16} aria-hidden="true" />
           {!collapsed && "Yeni sohbet"}
         </button>
 
