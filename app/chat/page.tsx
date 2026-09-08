@@ -232,8 +232,12 @@ function ChatPageContent() {
 
       <div className="flex flex-1 justify-center">
         {hasStartedChat ? (
-          <div className="flex w-full max-w-2xl flex-col gap-4">
-            <div aria-live="polite" className="flex flex-1 flex-col gap-4">
+          // Sidebar'daki sabit yükseklik deseniyle aynı (bkz. ChatSidebar.tsx
+          // h-[calc(100vh-11rem)]) — mesaj kutusu her zaman ekranın gerçek
+          // altına yaslanır, mesaj listesi ise kendi içinde kayar; az mesajla
+          // (kısa sohbet) da giriş kutusu sayfanın üst kısmında kalmaz.
+          <div className="sticky top-[4.75rem] flex h-[calc(100vh-11rem)] w-full max-w-2xl flex-col gap-4">
+            <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
               {messages.map((message) => (
                 <ChatMessageBubble key={message.id} message={message} />
               ))}
