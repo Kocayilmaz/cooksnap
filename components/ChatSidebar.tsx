@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { MessageCircle, PanelLeft, Search, SquarePen, Star } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Ellipsis, MessageCircle, PanelLeft, PencilLine, Pin, PinOff, Search, SquarePen, Star, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { setHistory, toggleHistoryFavorite, type HistoryEntry } from "@/lib/redux/historySlice";
+import {
+  deleteHistoryEntry,
+  renameHistoryEntry,
+  setHistory,
+  toggleHistoryFavorite,
+  type HistoryEntry,
+} from "@/lib/redux/historySlice";
 import { EQUIPMENT_LABELS } from "@/lib/redux/equipmentSlice";
 import SidebarCookingTimer from "@/components/SidebarCookingTimer";
 
@@ -27,6 +33,14 @@ function summarize(entry: HistoryEntry): string {
   return `${entry.equipment.map((key) => EQUIPMENT_LABELS[key]).join(", ")} · ${entry.personCount} kişilik`;
 }
 
+/** Kullanıcı yeniden adlandırmadıysa tarif başlıklarından, o da yoksa
+ * ekipman/kişi sayısı özetinden bir görünen başlık türetir. */
+function displayTitle(entry: HistoryEntry): string {
+  if (entry.customTitle) return entry.customTitle;
+  if (entry.recipeTitles.length > 0) return entry.recipeTitles.join(", ");
+  return summarize(entry);
+}
+
 function HistoryRow({
   entry,
   onSelectEntry,
@@ -37,41 +51,151 @@ function HistoryRow({
   disabled?: boolean;
 }) {
   const dispatch = useAppDispatch();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [draftTitle, setDraftTitle] = useState(() => displayTitle(entry));
+  const actionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handlePointerDown(event: PointerEvent) {
+      if (actionsRef.current && !actionsRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [menuOpen]);
+
+  function startRenaming() {
+    setMenuOpen(false);
+    setDraftTitle(displayTitle(entry));
+    setIsRenaming(true);
+  }
+
+  function commitRename() {
+    dispatch(renameHistoryEntry({ id: entry.id, title: draftTitle }));
+    setIsRenaming(false);
+  }
+
+  function cancelRename() {
+    setDraftTitle(displayTitle(entry));
+    setIsRenaming(false);
+  }
+
+  function handleDelete() {
+    setMenuOpen(false);
+    if (window.confirm("Bu sohbeti silmek istediğine emin misin?")) {
+      dispatch(deleteHistoryEntry(entry.id));
+    }
+  }
 
   return (
-    <li className="group relative flex items-center gap-2 rounded-lg border border-surface-border px-2 py-2 text-xs text-surface-text-muted">
-      <button
-        type="button"
-        onClick={() => onSelectEntry(entry)}
-        disabled={disabled}
-        className="flex min-w-0 flex-1 items-center gap-2 text-left disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        <span className="min-w-0 flex-1">
-          <span className="flex items-center justify-between gap-2">
-            <span className="truncate font-semibold text-foreground">{summarize(entry)}</span>
-            <span className="shrink-0">{DATE_FORMATTER.format(entry.createdAt)}</span>
-          </span>
-          {entry.recipeTitles.length > 0 && (
-            <span className="mt-0.5 block truncate">{entry.recipeTitles.join(", ")}</span>
-          )}
-        </span>
-      </button>
-      <button
-        type="button"
-        onClick={() => dispatch(toggleHistoryFavorite(entry.id))}
-        aria-label={entry.isFavorite ? "Sohbeti sabitlemeyi kaldır" : "Sohbeti sabitle"}
-        aria-pressed={entry.isFavorite}
-        className={`shrink-0 text-surface-text-muted hover:text-brand-orange ${
-          entry.isFavorite ? "" : "invisible group-hover:visible"
-        }`}
-      >
-        <Star
-          size={14}
-          aria-hidden="true"
-          fill={entry.isFavorite ? "currentColor" : "none"}
-          className={entry.isFavorite ? "text-brand-orange" : undefined}
+    <li className="group relative flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs hover:bg-surface-warm">
+      {isRenaming ? (
+        <input
+          autoFocus
+          value={draftTitle}
+          onChange={(event) => setDraftTitle(event.target.value)}
+          onFocus={(event) => event.currentTarget.select()}
+          onBlur={commitRename}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              commitRename();
+            } else if (event.key === "Escape") {
+              event.preventDefault();
+              cancelRename();
+            }
+          }}
+          className="min-w-0 flex-1 rounded-md border border-brand-orange bg-surface-card px-1.5 py-1 text-xs text-foreground outline-none"
         />
-      </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => onSelectEntry(entry)}
+          disabled={disabled}
+          title={`${summarize(entry)} · ${DATE_FORMATTER.format(entry.createdAt)}`}
+          className="min-w-0 flex-1 truncate text-left font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {displayTitle(entry)}
+        </button>
+      )}
+
+      {!isRenaming && (
+        <div
+          ref={actionsRef}
+          className={`relative flex shrink-0 items-center gap-0.5 ${
+            menuOpen ? "visible" : "invisible group-hover:visible"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => dispatch(toggleHistoryFavorite(entry.id))}
+            aria-label={entry.isFavorite ? "Sohbeti sabitlemeyi kaldır" : "Sohbeti sabitle"}
+            aria-pressed={entry.isFavorite}
+            className="flex h-6 w-6 items-center justify-center rounded-md text-surface-text-muted hover:bg-surface-border hover:text-brand-orange-dark"
+          >
+            {entry.isFavorite ? (
+              <PinOff size={13} aria-hidden="true" />
+            ) : (
+              <Pin size={13} aria-hidden="true" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Sohbet seçenekleri"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            className="flex h-6 w-6 items-center justify-center rounded-md text-surface-text-muted hover:bg-surface-border hover:text-brand-orange-dark"
+          >
+            <Ellipsis size={14} aria-hidden="true" />
+          </button>
+
+          {menuOpen && (
+            <div
+              role="menu"
+              className="absolute right-0 top-7 z-10 w-44 overflow-hidden rounded-lg border border-surface-border bg-surface-card py-1 shadow-md"
+            >
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  dispatch(toggleHistoryFavorite(entry.id));
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-foreground hover:bg-surface-warm"
+              >
+                {entry.isFavorite ? (
+                  <PinOff size={13} aria-hidden="true" />
+                ) : (
+                  <Pin size={13} aria-hidden="true" />
+                )}
+                {entry.isFavorite ? "Sabitlemeyi kaldır" : "Sohbeti sabitle"}
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={startRenaming}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-foreground hover:bg-surface-warm"
+              >
+                <PencilLine size={13} aria-hidden="true" />
+                Yeniden adlandır
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={handleDelete}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-state-error hover:bg-surface-warm"
+              >
+                <Trash2 size={13} aria-hidden="true" />
+                Sil
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </li>
   );
 }
@@ -112,7 +236,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
     // yaslanir; gecmis coksa da ayni alan icinde kendi icinde kaydirilir.
     <aside
       className={`sticky top-[4.75rem] hidden h-[calc(100vh-11rem)] shrink-0 flex-col gap-4 overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-3 shadow-sm transition-[width] lg:flex ${
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-16" : "w-72"
       }`}
     >
       <div className="flex flex-col gap-3 border-b border-surface-border pb-3">
@@ -181,7 +305,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
                   <Star size={12} aria-hidden="true" />
                   Favoriler
                 </span>
-                <ul className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-0.5">
                   {favorites.map((entry) => (
                     <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} disabled={disabled} />
                   ))}
@@ -204,7 +328,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
                     Temizle
                   </button>
                 </div>
-                <ul className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-0.5">
                   {others.map((entry) => (
                     <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} disabled={disabled} />
                   ))}
