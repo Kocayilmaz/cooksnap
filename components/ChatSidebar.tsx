@@ -14,17 +14,6 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("tr-TR", {
   minute: "2-digit",
 });
 
-/** Gerçek veride tarife özel bir görsel/emoji tutulmuyor (bkz. historySlice) —
- * her sohbete id'sinden türetilen sabit (render'lar arası değişmeyen) bir
- * yemek emojisi atanır, salt görsel çeşitlilik için. */
-const ROW_EMOJIS = ["🍢", "🍲", "🍆", "🍳", "🍝", "🥗", "🍰", "🐟", "🍗", "🥘", "🍜", "🍛"];
-
-function pickEmoji(id: string): string {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  return ROW_EMOJIS[hash % ROW_EMOJIS.length];
-}
-
 interface ChatSidebarProps {
   onNewChat: () => void;
   onSelectEntry: (entry: HistoryEntry) => void;
@@ -42,61 +31,47 @@ function HistoryRow({
   entry,
   onSelectEntry,
   disabled,
-  collapsed,
 }: {
   entry: HistoryEntry;
   onSelectEntry: (entry: HistoryEntry) => void;
   disabled?: boolean;
-  collapsed: boolean;
 }) {
   const dispatch = useAppDispatch();
 
   return (
-    <li
-      className={`group relative flex items-center gap-2 rounded-lg border border-surface-border px-2 py-2 text-xs text-surface-text-muted ${
-        collapsed ? "justify-center" : ""
-      }`}
-    >
+    <li className="group relative flex items-center gap-2 rounded-lg border border-surface-border px-2 py-2 text-xs text-surface-text-muted">
       <button
         type="button"
         onClick={() => onSelectEntry(entry)}
         disabled={disabled}
-        title={collapsed ? summarize(entry) : undefined}
         className="flex min-w-0 flex-1 items-center gap-2 text-left disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-surface-border bg-surface-warm text-sm">
-          {pickEmoji(entry.id)}
-        </span>
-        {!collapsed && (
-          <span className="min-w-0 flex-1">
-            <span className="flex items-center justify-between gap-2">
-              <span className="truncate font-semibold text-foreground">{summarize(entry)}</span>
-              <span className="shrink-0">{DATE_FORMATTER.format(entry.createdAt)}</span>
-            </span>
-            {entry.recipeTitles.length > 0 && (
-              <span className="mt-0.5 block truncate">{entry.recipeTitles.join(", ")}</span>
-            )}
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center justify-between gap-2">
+            <span className="truncate font-semibold text-foreground">{summarize(entry)}</span>
+            <span className="shrink-0">{DATE_FORMATTER.format(entry.createdAt)}</span>
           </span>
-        )}
+          {entry.recipeTitles.length > 0 && (
+            <span className="mt-0.5 block truncate">{entry.recipeTitles.join(", ")}</span>
+          )}
+        </span>
       </button>
-      {!collapsed && (
-        <button
-          type="button"
-          onClick={() => dispatch(toggleHistoryFavorite(entry.id))}
-          aria-label={entry.isFavorite ? "Sohbeti sabitlemeyi kaldır" : "Sohbeti sabitle"}
-          aria-pressed={entry.isFavorite}
-          className={`shrink-0 text-surface-text-muted hover:text-brand-orange ${
-            entry.isFavorite ? "" : "invisible group-hover:visible"
-          }`}
-        >
-          <Star
-            size={14}
-            aria-hidden="true"
-            fill={entry.isFavorite ? "currentColor" : "none"}
-            className={entry.isFavorite ? "text-brand-orange" : undefined}
-          />
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={() => dispatch(toggleHistoryFavorite(entry.id))}
+        aria-label={entry.isFavorite ? "Sohbeti sabitlemeyi kaldır" : "Sohbeti sabitle"}
+        aria-pressed={entry.isFavorite}
+        className={`shrink-0 text-surface-text-muted hover:text-brand-orange ${
+          entry.isFavorite ? "" : "invisible group-hover:visible"
+        }`}
+      >
+        <Star
+          size={14}
+          aria-hidden="true"
+          fill={entry.isFavorite ? "currentColor" : "none"}
+          className={entry.isFavorite ? "text-brand-orange" : undefined}
+        />
+      </button>
     </li>
   );
 }
@@ -201,63 +176,54 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
-        {favorites.length > 0 && (
-          <div className="flex flex-col gap-2">
-            {!collapsed && (
-              <span className="flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wide text-surface-text-muted">
-                <Star size={12} aria-hidden="true" />
-                Favoriler
-              </span>
-            )}
-            <ul className="flex flex-col gap-2">
-              {favorites.map((entry) => (
-                <HistoryRow
-                  key={entry.id}
-                  entry={entry}
-                  onSelectEntry={onSelectEntry}
-                  disabled={disabled}
-                  collapsed={collapsed}
-                />
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {others.length > 0 && (
-          <div className="flex flex-col gap-2">
-            {!collapsed && (
-              <div className="flex items-center justify-between px-1">
-                <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-surface-text-muted">
-                  <MessageCircle size={12} aria-hidden="true" />
-                  Sohbetler
+        {/* Daraltılmış (ikon şeridi) haldeyken tek tek sohbet geçmişi
+         * gösterilmiyor — sadece yeni sohbet/arama/zamanlayıcı ile sınırlı
+         * kalıyor, bu boş alan zamanlayıcıyı sidebar'ın altına iter. */}
+        {!collapsed && (
+          <>
+            {favorites.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <span className="flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wide text-surface-text-muted">
+                  <Star size={12} aria-hidden="true" />
+                  Favoriler
                 </span>
-                <button
-                  type="button"
-                  onClick={handleClearOthers}
-                  className="text-[11px] text-surface-text-muted hover:text-brand-orange"
-                >
-                  Temizle
-                </button>
+                <ul className="flex flex-col gap-2">
+                  {favorites.map((entry) => (
+                    <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} disabled={disabled} />
+                  ))}
+                </ul>
               </div>
             )}
-            <ul className="flex flex-col gap-2">
-              {others.map((entry) => (
-                <HistoryRow
-                  key={entry.id}
-                  entry={entry}
-                  onSelectEntry={onSelectEntry}
-                  disabled={disabled}
-                  collapsed={collapsed}
-                />
-              ))}
-            </ul>
-          </div>
-        )}
 
-        {favorites.length === 0 && others.length === 0 && !collapsed && (
-          <p className="px-1 text-xs text-surface-text-muted">
-            {term ? "Eşleşen bir sohbet bulunamadı." : "Henüz bir sohbet geçmişin yok."}
-          </p>
+            {others.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between px-1">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-surface-text-muted">
+                    <MessageCircle size={12} aria-hidden="true" />
+                    Sohbetler
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleClearOthers}
+                    className="text-[11px] text-surface-text-muted hover:text-brand-orange"
+                  >
+                    Temizle
+                  </button>
+                </div>
+                <ul className="flex flex-col gap-2">
+                  {others.map((entry) => (
+                    <HistoryRow key={entry.id} entry={entry} onSelectEntry={onSelectEntry} disabled={disabled} />
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {favorites.length === 0 && others.length === 0 && (
+              <p className="px-1 text-xs text-surface-text-muted">
+                {term ? "Eşleşen bir sohbet bulunamadı." : "Henüz bir sohbet geçmişin yok."}
+              </p>
+            )}
+          </>
         )}
       </div>
 
