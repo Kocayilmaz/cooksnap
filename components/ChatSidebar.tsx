@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Ellipsis, MessageCircle, PanelLeft, PencilLine, Pin, PinOff, Search, SquarePen, Star, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
@@ -43,8 +44,13 @@ function displayTitle(entry: HistoryEntry): string {
 
 /** Daraltılmış (ikon şeridi) haldeyken native `title` tooltip'i yerine
  * özel, stillendirilebilir bir etiket gösterir (yuvarlak köşeler, turuncu
- * yazı, ikon hover'ıyla aynı arka plan). Genişkenken sarmalama yapmadan
- * çocukları doğrudan döner — o zaman zaten görünür bir metin etiketi var. */
+ * yazı, ikon hover'ıyla aynı arka plan). `position: fixed` ile document.body'ye
+ * portallanır — normal `absolute` konumlandırma, sidebar'ın kaydırılabilir
+ * kutusunun (overflow-y-auto) taşma alanına dahil olup görünmez bir yatay
+ * kaydırma çubuğuna yol açıyordu; fixed+portal bu kutunun tamamen dışında
+ * kaldığı için hem çubuk kayboluyor hem tooltip asla kırpılmıyor. Genişkenken
+ * sarmalama yapmadan çocukları doğrudan döner — o zaman zaten görünür bir
+ * metin etiketi var. */
 function IconWithTooltip({
   label,
   collapsed,
@@ -54,13 +60,29 @@ function IconWithTooltip({
   collapsed: boolean;
   children: ReactNode;
 }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [rect, setRect] = useState<DOMRect | null>(null);
+
   if (!collapsed) return <>{children}</>;
+
   return (
-    <div className="group relative mx-auto">
+    <div
+      ref={wrapperRef}
+      className="mx-auto"
+      onMouseEnter={() => setRect(wrapperRef.current?.getBoundingClientRect() ?? null)}
+      onMouseLeave={() => setRect(null)}
+    >
       {children}
-      <span className="pointer-events-none absolute left-full top-1/2 z-20 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-surface-warm px-2.5 py-1.5 text-xs font-medium text-brand-orange-dark opacity-0 shadow-md transition-opacity group-hover:opacity-100">
-        {label}
-      </span>
+      {rect &&
+        createPortal(
+          <span
+            style={{ position: "fixed", top: rect.top + rect.height / 2, left: rect.right + 8 }}
+            className="pointer-events-none z-50 -translate-y-1/2 whitespace-nowrap rounded-lg bg-surface-warm px-2.5 py-1.5 text-xs font-medium text-brand-orange-dark shadow-md"
+          >
+            {label}
+          </span>,
+          document.body,
+        )}
     </div>
   );
 }
