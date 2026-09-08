@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import reducer, {
   addHistoryEntry,
   clearHistory,
+  deleteHistoryEntry,
   MAX_HISTORY_ENTRIES,
+  renameHistoryEntry,
   setHistory,
   toggleHistoryFavorite,
   type HistoryEntry,
@@ -78,5 +80,33 @@ describe("historySlice", () => {
 
     expect(state).toHaveLength(MAX_HISTORY_ENTRIES + 1);
     expect(state.some((entry) => entry.recipeTitles[0] === "Favori")).toBe(true);
+  });
+
+  it("renameHistoryEntry customTitle alanini gunceller", () => {
+    let state = reducer([], addHistoryEntry(baseEntry));
+    const id = state[0].id;
+
+    state = reducer(state, renameHistoryEntry({ id, title: "Pazar kahvaltisi" }));
+    expect(state[0].customTitle).toBe("Pazar kahvaltisi");
+  });
+
+  it("renameHistoryEntry bos baslikta customTitle'i undefined'a dusurur", () => {
+    let state = reducer([], addHistoryEntry(baseEntry));
+    const id = state[0].id;
+
+    state = reducer(state, renameHistoryEntry({ id, title: "Bir isim" }));
+    state = reducer(state, renameHistoryEntry({ id, title: "   " }));
+    expect(state[0].customTitle).toBeUndefined();
+  });
+
+  it("deleteHistoryEntry sadece verilen kaydi listeden cikarir", () => {
+    let state = reducer([], addHistoryEntry({ ...baseEntry, recipeTitles: ["Birinci"] }));
+    state = reducer(state, addHistoryEntry({ ...baseEntry, recipeTitles: ["Ikinci"] }));
+    const idToDelete = state.find((entry) => entry.recipeTitles[0] === "Birinci")!.id;
+
+    state = reducer(state, deleteHistoryEntry(idToDelete));
+
+    expect(state).toHaveLength(1);
+    expect(state[0].recipeTitles).toEqual(["Ikinci"]);
   });
 });

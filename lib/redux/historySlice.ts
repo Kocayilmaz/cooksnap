@@ -17,6 +17,9 @@ export interface HistoryEntry {
   /** Kullanıcı bu sohbeti favoriledi mi (bkz. ChatSidebar) — favorilenen kayıtlar
    * MAX_HISTORY_ENTRIES kırpmasından muaf tutulur. */
   isFavorite: boolean;
+  /** Kullanıcı "Yeniden adlandır" ile elle bir başlık girdiyse burada tutulur;
+   * girmediyse sidebar recipeTitles'tan otomatik bir başlık türetir. */
+  customTitle?: string;
 }
 
 /** Geçmişte tutulan en fazla arama sayısı; localStorage'ın şişmesini önler. */
@@ -107,6 +110,13 @@ const historySlice = createSlice({
       const entry = state.find((item) => item.id === action.payload);
       if (entry) entry.isFavorite = !entry.isFavorite;
     },
+    renameHistoryEntry(state, action: PayloadAction<{ id: string; title: string }>) {
+      const entry = state.find((item) => item.id === action.payload.id);
+      if (entry) entry.customTitle = action.payload.title.trim() || undefined;
+    },
+    deleteHistoryEntry(state, action: PayloadAction<string>) {
+      return state.filter((item) => item.id !== action.payload);
+    },
     setHistory(_state, action: PayloadAction<HistoryState>) {
       return action.payload;
     },
@@ -116,6 +126,12 @@ const historySlice = createSlice({
   },
 });
 
-export const { addHistoryEntry, toggleHistoryFavorite, setHistory, clearHistory } =
-  historySlice.actions;
+export const {
+  addHistoryEntry,
+  toggleHistoryFavorite,
+  renameHistoryEntry,
+  deleteHistoryEntry,
+  setHistory,
+  clearHistory,
+} = historySlice.actions;
 export default historySlice.reducer;
