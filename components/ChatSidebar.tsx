@@ -288,9 +288,10 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
     // -mt-12, sayfanın üst dolgusunu (py-12) sadece sidebar için iptal
     // eder — aksi halde sayfa hiç kaydırılmamışken sticky hedefiyle
     // (top-[4.75rem]) doğal akış konumu arasında görünür bir boşluk
-    // oluşuyordu.
+    // oluşuyordu. Yükseklik de ayni sebeple top ile birebir tamamlayacak
+    // sekilde (100vh - top) hesaplanıyor — altta da boşluk kalmasın.
     <aside
-      className={`sticky top-[4.75rem] -mt-12 hidden h-[calc(100vh-11rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
+      className={`sticky top-[4.75rem] -mt-12 hidden h-[calc(100vh-4.75rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
         collapsed ? "w-16" : "w-72"
       }`}
     >
