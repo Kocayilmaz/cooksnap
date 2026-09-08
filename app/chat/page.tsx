@@ -227,66 +227,68 @@ function ChatPageContent() {
   }
 
   return (
-    <div className="flex flex-1 justify-center gap-6 bg-surface-warm px-4 py-12">
+    <div className="flex flex-1 items-start gap-6 bg-surface-warm px-4 py-12">
       <ChatSidebar onNewChat={handleNewChat} onSelectEntry={handleSelectEntry} disabled={isSendingFollowUp} />
 
-      {hasStartedChat ? (
-        <div className="flex w-full max-w-2xl flex-col gap-4">
-          <div aria-live="polite" className="flex flex-1 flex-col gap-4">
-            {messages.map((message) => (
-              <ChatMessageBubble key={message.id} message={message} />
-            ))}
-            {isSendingFollowUp && (
-              <div className="flex justify-start">
-                <div className="rounded-2xl rounded-bl-md border border-surface-border bg-surface-card px-4 py-2.5 text-sm text-surface-text-muted">
-                  Tarif hazırlanıyor…
+      <div className="flex flex-1 justify-center">
+        {hasStartedChat ? (
+          <div className="flex w-full max-w-2xl flex-col gap-4">
+            <div aria-live="polite" className="flex flex-1 flex-col gap-4">
+              {messages.map((message) => (
+                <ChatMessageBubble key={message.id} message={message} />
+              ))}
+              {isSendingFollowUp && (
+                <div className="flex justify-start">
+                  <div className="rounded-2xl rounded-bl-md border border-surface-border bg-surface-card px-4 py-2.5 text-sm text-surface-text-muted">
+                    Tarif hazırlanıyor…
+                  </div>
                 </div>
-              </div>
-            )}
-            {followUpError && (
-              <p role="alert" className="text-center text-sm text-state-error">
-                {followUpError}
+              )}
+              {followUpError && (
+                <p role="alert" className="text-center text-sm text-state-error">
+                  {followUpError}
+                </p>
+              )}
+              <div ref={threadEndRef} />
+            </div>
+
+            <ChatMessageInput
+              value={followUpText}
+              onChange={setFollowUpText}
+              onSend={handleFollowUpSend}
+              disabled={isSendingFollowUp || limitReached}
+              mode={recipeMode}
+              onCycleMode={handleCycleMode}
+              photoDataUrl={followUpPhoto}
+              onAttachPhoto={setFollowUpPhoto}
+            />
+
+            {isFreeMode && (
+              <p
+                className={`text-center text-xs ${limitReached ? "text-state-error" : "text-surface-text-muted"}`}
+              >
+                {limitReached
+                  ? `Ücretsiz mod limitine ulaştın (${usageCount}/${FREE_USAGE_LIMIT}).`
+                  : `Ücretsiz modda kullanılan istek: ${usageCount}/${FREE_USAGE_LIMIT}`}
               </p>
             )}
-            <div ref={threadEndRef} />
           </div>
-
-          <ChatMessageInput
-            value={followUpText}
-            onChange={setFollowUpText}
-            onSend={handleFollowUpSend}
-            disabled={isSendingFollowUp || limitReached}
-            mode={recipeMode}
-            onCycleMode={handleCycleMode}
-            photoDataUrl={followUpPhoto}
-            onAttachPhoto={setFollowUpPhoto}
+        ) : (
+          <NewChatForm
+            ingredientsText={ingredientsText}
+            onIngredientsChange={setIngredientsText}
+            onPhotoSelected={setPhoto}
+            onSubmit={handleSubmit}
+            canSubmit={Boolean(photo) || hasIngredientsText}
+            isLoading={status === "loading"}
+            limitReached={limitReached}
+            isFreeMode={isFreeMode}
+            usageCount={usageCount}
+            freeUsageLimit={FREE_USAGE_LIMIT}
+            error={status === "error" ? error : null}
           />
-
-          {isFreeMode && (
-            <p
-              className={`text-center text-xs ${limitReached ? "text-state-error" : "text-surface-text-muted"}`}
-            >
-              {limitReached
-                ? `Ücretsiz mod limitine ulaştın (${usageCount}/${FREE_USAGE_LIMIT}).`
-                : `Ücretsiz modda kullanılan istek: ${usageCount}/${FREE_USAGE_LIMIT}`}
-            </p>
-          )}
-        </div>
-      ) : (
-        <NewChatForm
-          ingredientsText={ingredientsText}
-          onIngredientsChange={setIngredientsText}
-          onPhotoSelected={setPhoto}
-          onSubmit={handleSubmit}
-          canSubmit={Boolean(photo) || hasIngredientsText}
-          isLoading={status === "loading"}
-          limitReached={limitReached}
-          isFreeMode={isFreeMode}
-          usageCount={usageCount}
-          freeUsageLimit={FREE_USAGE_LIMIT}
-          error={status === "error" ? error : null}
-        />
-      )}
+        )}
+      </div>
 
       <CookingTimer />
     </div>

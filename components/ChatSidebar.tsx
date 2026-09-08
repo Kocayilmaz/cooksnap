@@ -130,8 +130,13 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
   }
 
   return (
+    // top/max-h, NavBar'in gercek yuksekligiyle (~76px, bkz. NavBar.tsx py-3 +
+    // logo 50px) eslesecek sekilde ayarlandi: sohbet gecmisi ne kadar uzun
+    // olursa olsun sidebar sayfa scroll'una ihtiyac duymadan viewport'a sigar,
+    // alttaki zamanlayici her zaman gorunur kalir (sadece gecmis listesi kendi
+    // icinde kaydırılır).
     <aside
-      className={`hidden shrink-0 flex-col gap-4 self-start rounded-2xl border border-surface-border bg-surface-card p-3 shadow-sm transition-[width] lg:flex ${
+      className={`sticky top-[4.75rem] hidden max-h-[calc(100vh-11rem)] shrink-0 flex-col gap-4 overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-3 shadow-sm transition-[width] lg:flex ${
         collapsed ? "w-16" : "w-64"
       }`}
     >
@@ -195,7 +200,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
         {favorites.length > 0 && (
           <div className="flex flex-col gap-2">
             {!collapsed && (
