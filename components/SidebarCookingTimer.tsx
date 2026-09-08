@@ -157,6 +157,27 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
         ))}
       </div>
 
+      <div className="flex items-center gap-1.5">
+        <input
+          type="number"
+          inputMode="numeric"
+          min={MIN_MINUTES}
+          max={MAX_MINUTES}
+          value={manualMinutes}
+          disabled={isRunning}
+          onChange={(event) => setManualMinutes(event.target.value)}
+          onBlur={handleManualMinutesCommit}
+          onKeyDown={(event) => {
+            if (event.key !== "Enter") return;
+            event.preventDefault();
+            handleManualMinutesCommit();
+          }}
+          aria-label="Zamanlayıcı süresini dakika olarak gir"
+          className="w-full min-w-0 rounded-lg border border-surface-border bg-surface-warm px-2 py-1.5 text-center text-xs font-semibold text-foreground outline-none focus:border-brand-orange disabled:cursor-not-allowed disabled:opacity-60"
+        />
+        <span className="shrink-0 text-xs text-surface-text-muted">dk</span>
+      </div>
+
       <div className="flex gap-1.5">
         <button
           type="button"
