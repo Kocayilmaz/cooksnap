@@ -45,6 +45,11 @@ export default defineConfig({
       NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: "",
       NEXT_PUBLIC_FIREBASE_APP_ID: "",
       MEALDB_API_KEY: "",
+      // historySlice varsayilan olarak sidebar'i "yasayan" gostermek icin ornek
+      // sohbetlerle basliyor (bkz. lib/redux/historySlice.ts) — testler bos
+      // gecmis durumunu (ör. "Henüz bir sohbet geçmişin yok.") deterministik
+      // varsayabilsin diye bu demo veri testlerde kapatiliyor.
+      NEXT_PUBLIC_DEMO_HISTORY: "false",
     },
   },
   projects: [
