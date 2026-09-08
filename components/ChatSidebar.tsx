@@ -297,18 +297,11 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
             }}
             title="Ara"
             aria-label="Ara"
-            className={
-              collapsed
-                ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
-                : "flex h-9 items-center gap-2 rounded-lg px-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-warm"
-            }
+            className={`flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark ${
+              collapsed ? "mx-auto" : ""
+            }`}
           >
             <Search size={16} aria-hidden="true" />
-            {/* Buton metni bilerek "Sohbetler" grup başlığıyla çakışmayan
-             * kısa bir etiket ("Ara") — aksi halde getByText('Sohbetler')
-             * her ikisiyle de eşleşip e2e testlerini strict-mode ihlaline
-             * düşürüyordu (bkz. Playwright'ın alt-string eşleştirmesi). */}
-            {!collapsed && "Ara"}
           </button>
         )}
       </div>
