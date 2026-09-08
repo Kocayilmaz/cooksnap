@@ -208,6 +208,9 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
   const dispatch = useAppDispatch();
   const [collapsed, setCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  // Arama, ChatGPT'deki gibi varsayılan olarak sadece bir ikon — tıklanınca
+  // gerçek arama kutusuna dönüşür, boşken odak kaybedince tekrar ikona döner.
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const term = searchTerm.trim().toLowerCase();
   const visible = term
@@ -239,13 +242,13 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
         collapsed ? "w-16" : "w-72"
       }`}
     >
-      <div className="flex flex-col gap-3 border-b border-surface-border pb-3">
-        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-end"}`}>
+      <div className="flex flex-col gap-1">
+        <div className={`flex items-center ${collapsed ? "justify-center" : ""}`}>
           <button
             type="button"
             onClick={() => setCollapsed((prev) => !prev)}
             aria-label={collapsed ? "Kenar çubuğunu genişlet" : "Kenar çubuğunu daralt"}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
           >
             <PanelLeft size={16} aria-hidden="true" />
           </button>
@@ -266,16 +269,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
           {!collapsed && "Yeni sohbet"}
         </button>
 
-        {collapsed ? (
-          <button
-            type="button"
-            onClick={() => setCollapsed(false)}
-            aria-label="Sohbetlerde ara"
-            className="mx-auto flex h-9 w-9 items-center justify-center rounded-full text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
-          >
-            <Search size={16} aria-hidden="true" />
-          </button>
-        ) : (
+        {searchOpen && !collapsed ? (
           <div className="relative">
             <Search
               size={14}
@@ -283,13 +277,39 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-surface-text-muted"
             />
             <input
+              autoFocus
               type="search"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
+              onBlur={() => {
+                if (!searchTerm.trim()) setSearchOpen(false);
+              }}
               placeholder="Sohbetlerde ara"
               className="w-full rounded-full border border-surface-border bg-surface-warm py-2 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-surface-text-muted focus:border-brand-orange"
             />
           </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              if (collapsed) setCollapsed(false);
+              setSearchOpen(true);
+            }}
+            title="Ara"
+            aria-label="Ara"
+            className={
+              collapsed
+                ? "mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-surface-text-muted transition-colors hover:bg-surface-warm hover:text-brand-orange-dark"
+                : "flex h-9 items-center gap-2 rounded-lg px-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-warm"
+            }
+          >
+            <Search size={16} aria-hidden="true" />
+            {/* Buton metni bilerek "Sohbetler" grup başlığıyla çakışmayan
+             * kısa bir etiket ("Ara") — aksi halde getByText('Sohbetler')
+             * her ikisiyle de eşleşip e2e testlerini strict-mode ihlaline
+             * düşürüyordu (bkz. Playwright'ın alt-string eşleştirmesi). */}
+            {!collapsed && "Ara"}
+          </button>
         )}
       </div>
 
