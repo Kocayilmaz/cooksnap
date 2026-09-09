@@ -22,7 +22,10 @@ function isHistoryEntry(value: unknown): value is HistoryEntry {
     // dönük uyum için burada opsiyonel kabul edilir, okurken false'a normalize edilir.
     (record.isFavorite === undefined || typeof record.isFavorite === "boolean") &&
     // customTitle da sonradan eklendi (bkz. "Yeniden adlandır") — eski kayıtlarda yok.
-    (record.customTitle === undefined || typeof record.customTitle === "string")
+    (record.customTitle === undefined || typeof record.customTitle === "string") &&
+    // messages sadece tanıtım amaçlı "Test uzun sohbet" kaydında dolu gelir
+    // (bkz. historySlice.ts buildLongTestConversation) — normal kayıtlarda yok.
+    (record.messages === undefined || Array.isArray(record.messages))
   );
 }
 

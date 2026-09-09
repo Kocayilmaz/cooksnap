@@ -200,8 +200,17 @@ function ChatPageContent() {
     dispatch(setEquipment(buildEquipmentState(entry.equipment)));
     dispatch(setRecipeMode(entry.mode));
 
-    // Gecmis kayitlarda sadece tarif basliklari saklaniyor (fotograf/tam
-    // adimlar tutulmuyor, bkz. lib/redux/historySlice.ts) — bu yuzden eski
+    if (entry.messages && entry.messages.length > 0) {
+      // "Test uzun sohbet" gibi tam mesaj dizisi saklanan tanıtım kayıtları
+      // (bkz. historySlice.ts buildLongTestConversation) doğrudan kullanılır.
+      setMessages(entry.messages);
+      setStatus("idle");
+      setFollowUpError(null);
+      return;
+    }
+
+    // Gecmis kayitlarda normalde sadece tarif basliklari saklaniyor (fotograf/
+    // tam adimlar tutulmuyor, bkz. lib/redux/historySlice.ts) — bu yuzden eski
     // bir sohbet secildiginde tam RecipeMessageCard yeniden olusturulamiyor,
     // en iyi caba (best-effort) olarak baslikları metin balonu ile gosteriyoruz.
     const equipmentLabels = entry.equipment.map((key) => EQUIPMENT_LABELS[key]).join(", ");

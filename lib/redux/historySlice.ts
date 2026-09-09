@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { EQUIPMENT_KEYS, type Equipment } from "./equipmentSlice";
 import { RECIPE_MODE_KEYS, type RecipeMode } from "./recipeModeSlice";
+import type { ChatMessage } from "@/lib/types/chat";
 
 export interface HistoryEntry {
   id: string;
@@ -20,6 +21,12 @@ export interface HistoryEntry {
   /** Kullanıcı "Yeniden adlandır" ile elle bir başlık girdiyse burada tutulur;
    * girmediyse sidebar recipeTitles'tan otomatik bir başlık türetir. */
   customTitle?: string;
+  /** Sohbetin tam mesaj dizisi — normal kayıtlarda tutulmaz (yalnızca
+   * başlıklar saklanır, bkz. recipeTitles), sadece tanıtım amaçlı örnek
+   * "Test uzun sohbet" kaydında dolu gelir. Doluysa app/chat/page.tsx
+   * handleSelectEntry bunu doğrudan kullanır; yoksa eskisi gibi
+   * recipeTitles'tan iki balonluk bir özet üretir. */
+  messages?: ChatMessage[];
 }
 
 /** Geçmişte tutulan en fazla arama sayısı; localStorage'ın şişmesini önler. */
@@ -52,9 +59,54 @@ const DEMO_DISHES: string[][] = [
   ["Tavuklu Sezar Salata"],
 ];
 
+/** Kaydırma çubuğunun sohbet akışında doğru (ekranın gerçek sağ kenarında)
+ * göründüğünü canlıda göstermek için uzun, çok mesajlı örnek bir sohbet —
+ * her kullanıcıda "Test uzun sohbet" olarak Favoriler'in başında görünür. */
+function buildLongTestConversation(): HistoryEntry {
+  const now = Date.now();
+  const messages: ChatMessage[] = [];
+  let createdAt = now;
+
+  function pushExchange(userText: string, recipeTitle: string) {
+    messages.push({ id: `test-convo-u${messages.length}`, role: "user", text: userText, createdAt: createdAt++ });
+    messages.push({
+      id: `test-convo-a${messages.length}`,
+      role: "assistant",
+      recipes: [
+        {
+          equipment: "oven",
+          title: recipeTitle,
+          steps: ["Fırını ısıt", "Malzemeleri hazırla", "Pişir"],
+          videoId: null,
+        },
+      ],
+      createdAt: createdAt++,
+    });
+  }
+
+  pushExchange("Test uzun sohbet", "Test Tarifi 1");
+  for (let i = 1; i <= 7; i++) {
+    pushExchange(`Takip sorusu ${i}`, `Test Tarifi ${i + 1}`);
+  }
+
+  return {
+    id: "demo-long-test-conversation",
+    ingredientsText: "Test uzun sohbet",
+    hadPhoto: false,
+    personCount: 2,
+    equipment: ["oven"],
+    mode: "home",
+    recipeTitles: ["Test Tarifi 8"],
+    customTitle: "Test uzun sohbet",
+    createdAt: now,
+    isFavorite: true,
+    messages,
+  };
+}
+
 function buildDemoHistory(): HistoryState {
   const now = Date.now();
-  return DEMO_DISHES.map((recipeTitles, index) => ({
+  const dishEntries = DEMO_DISHES.map((recipeTitles, index) => ({
     id: `demo-${index}`,
     ingredientsText: index % 4 === 0 ? undefined : "2 yumurta, biraz sebze, baharatlar",
     hadPhoto: index % 4 === 0,
@@ -68,6 +120,8 @@ function buildDemoHistory(): HistoryState {
     createdAt: now - index * 3600_000,
     isFavorite: index < 5,
   }));
+
+  return [buildLongTestConversation(), ...dishEntries];
 }
 
 // e2e testleri (bkz. playwright.config.ts webServer.env) bu demo veriyi kapatıp
