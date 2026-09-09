@@ -48,9 +48,11 @@ function displayTitle(entry: HistoryEntry): string {
  * portallanır — normal `absolute` konumlandırma, sidebar'ın kaydırılabilir
  * kutusunun (overflow-y-auto) taşma alanına dahil olup görünmez bir yatay
  * kaydırma çubuğuna yol açıyordu; fixed+portal bu kutunun tamamen dışında
- * kaldığı için hem çubuk kayboluyor hem tooltip asla kırpılmıyor. Genişkenken
- * sarmalama yapmadan çocukları doğrudan döner — o zaman zaten görünür bir
- * metin etiketi var. */
+ * kaldığı için hem çubuk kayboluyor hem tooltip asla kırpılmıyor. Fare
+ * hover'ının yanı sıra klavye ile Tab'lanıp odaklanınca da gösterilir
+ * (React'ın onFocus/onBlur'u alt elemandan sarmalayıcıya köpürür).
+ * Genişkenken sarmalama yapmadan çocukları doğrudan döner — o zaman
+ * zaten görünür bir metin etiketi var. */
 function IconWithTooltip({
   label,
   collapsed,
@@ -65,12 +67,22 @@ function IconWithTooltip({
 
   if (!collapsed) return <>{children}</>;
 
+  function showTooltip() {
+    setRect(wrapperRef.current?.getBoundingClientRect() ?? null);
+  }
+
+  function hideTooltip() {
+    setRect(null);
+  }
+
   return (
     <div
       ref={wrapperRef}
       className="mx-auto"
-      onMouseEnter={() => setRect(wrapperRef.current?.getBoundingClientRect() ?? null)}
-      onMouseLeave={() => setRect(null)}
+      onMouseEnter={showTooltip}
+      onMouseLeave={hideTooltip}
+      onFocus={showTooltip}
+      onBlur={hideTooltip}
     >
       {children}
       {rect &&
