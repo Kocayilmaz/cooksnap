@@ -2,37 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Minus, Pause, Play, Plus, RotateCcw, Timer as TimerIcon, X } from "lucide-react";
+import { clampMinutes, formatTimerDuration, playTimerBeep } from "@/lib/cookingTimerUtils";
 
 const MIN_MINUTES = 1;
 const MAX_MINUTES = 60;
 const DEFAULT_MINUTES = 5;
-
-function formatTime(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-/** Zil sesi için harici dosya eklemek yerine Web Audio API ile kısa bir bip
- * üretilir — ağ isteği/asset gerekmez, tarayıcı desteklemiyorsa sessizce yutulur. */
-function playBeep() {
-  try {
-    const AudioContextClass =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const context = new AudioContextClass();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.frequency.value = 880;
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    gain.gain.setValueAtTime(0.2, context.currentTime);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.4);
-    oscillator.onended = () => context.close();
-  } catch {
-    // AudioContext desteklenmiyorsa sessizce geç, görsel "Süre doldu!" uyarısı yeterli.
-  }
-}
 
 /** Mutfakta kullanırken süre tutmak için sağ altta sabit duran zamanlayıcı
  * (bkz. app/chat/page.tsx). Masaüstünde (lg+) bunun yerine ChatSidebar'a gömülü
@@ -56,7 +30,7 @@ export default function CookingTimer() {
         if (prev <= 1) {
           setIsRunning(false);
           setIsDone(true);
-          playBeep();
+          playTimerBeep();
           return 0;
         }
         return prev - 1;
@@ -89,7 +63,7 @@ export default function CookingTimer() {
   }
 
   function adjustMinutes(delta: number) {
-    setMinutes((prev) => Math.min(MAX_MINUTES, Math.max(MIN_MINUTES, prev + delta)));
+    setMinutes((prev) => clampMinutes(prev + delta, MIN_MINUTES, MAX_MINUTES));
   }
 
   return (
@@ -119,7 +93,7 @@ export default function CookingTimer() {
               <Minus size={14} aria-hidden="true" />
             </button>
             <span className="min-w-16 text-center text-2xl font-semibold text-brand-orange">
-              {remainingSeconds === null ? `${minutes}:00` : formatTime(remainingSeconds)}
+              {remainingSeconds === null ? `${minutes}:00` : formatTimerDuration(remainingSeconds)}
             </span>
             <button
               type="button"
