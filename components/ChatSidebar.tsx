@@ -160,6 +160,7 @@ function HistoryRow({
       {isRenaming ? (
         <input
           autoFocus
+          aria-label="Sohbet başlığını düzenle"
           value={draftTitle}
           onChange={(event) => setDraftTitle(event.target.value)}
           onFocus={(event) => event.currentTarget.select()}
