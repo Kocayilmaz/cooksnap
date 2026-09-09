@@ -236,46 +236,56 @@ function ChatPageContent() {
           // h-[calc(100vh-11rem)]) — mesaj kutusu her zaman ekranın gerçek
           // altına yaslanır, mesaj listesi ise kendi içinde kayar; az mesajla
           // (kısa sohbet) da giriş kutusu sayfanın üst kısmında kalmaz.
-          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full max-w-2xl flex-col gap-4">
-            <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
-              {messages.map((message) => (
-                <ChatMessageBubble key={message.id} message={message} />
-              ))}
-              {isSendingFollowUp && (
-                <div className="flex justify-start">
-                  <div className="rounded-2xl rounded-bl-md border border-surface-border bg-surface-card px-4 py-2.5 text-sm text-surface-text-muted">
-                    Tarif hazırlanıyor…
+          // İç mesaj listesi tam genişlikte (w-full) taşıyor, kaydırma
+          // çubuğu bu yüzden ekranın gerçek sağına yaslanıyor; mesaj
+          // baloncukları ise içteki max-w-2xl sarmalayıcıyla ortada dar
+          // kalıyor — önceden overflow-y-auto doğrudan dar sütunda olduğu
+          // için kaydırma çubuğu sayfanın ortasında, boşlukla çevrili
+          // görünüyordu.
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col gap-4">
+            <div aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto">
+              <div className="flex w-full max-w-2xl flex-col gap-4">
+                {messages.map((message) => (
+                  <ChatMessageBubble key={message.id} message={message} />
+                ))}
+                {isSendingFollowUp && (
+                  <div className="flex justify-start">
+                    <div className="rounded-2xl rounded-bl-md border border-surface-border bg-surface-card px-4 py-2.5 text-sm text-surface-text-muted">
+                      Tarif hazırlanıyor…
+                    </div>
                   </div>
-                </div>
-              )}
-              {followUpError && (
-                <p role="alert" className="text-center text-sm text-state-error">
-                  {followUpError}
-                </p>
-              )}
-              <div ref={threadEndRef} />
+                )}
+                {followUpError && (
+                  <p role="alert" className="text-center text-sm text-state-error">
+                    {followUpError}
+                  </p>
+                )}
+                <div ref={threadEndRef} />
+              </div>
             </div>
 
-            <ChatMessageInput
-              value={followUpText}
-              onChange={setFollowUpText}
-              onSend={handleFollowUpSend}
-              disabled={isSendingFollowUp || limitReached}
-              mode={recipeMode}
-              onCycleMode={handleCycleMode}
-              photoDataUrl={followUpPhoto}
-              onAttachPhoto={setFollowUpPhoto}
-            />
+            <div className="mx-auto w-full max-w-2xl">
+              <ChatMessageInput
+                value={followUpText}
+                onChange={setFollowUpText}
+                onSend={handleFollowUpSend}
+                disabled={isSendingFollowUp || limitReached}
+                mode={recipeMode}
+                onCycleMode={handleCycleMode}
+                photoDataUrl={followUpPhoto}
+                onAttachPhoto={setFollowUpPhoto}
+              />
 
-            {isFreeMode && (
-              <p
-                className={`text-center text-xs ${limitReached ? "text-state-error" : "text-surface-text-muted"}`}
-              >
-                {limitReached
-                  ? `Ücretsiz mod limitine ulaştın (${usageCount}/${FREE_USAGE_LIMIT}).`
-                  : `Ücretsiz modda kullanılan istek: ${usageCount}/${FREE_USAGE_LIMIT}`}
-              </p>
-            )}
+              {isFreeMode && (
+                <p
+                  className={`mt-2 text-center text-xs ${limitReached ? "text-state-error" : "text-surface-text-muted"}`}
+                >
+                  {limitReached
+                    ? `Ücretsiz mod limitine ulaştın (${usageCount}/${FREE_USAGE_LIMIT}).`
+                    : `Ücretsiz modda kullanılan istek: ${usageCount}/${FREE_USAGE_LIMIT}`}
+                </p>
+              )}
+            </div>
           </div>
         ) : (
           // hasStartedChat dalıyla aynı sabit yükseklik bandı — form uzun
@@ -285,20 +295,22 @@ function ChatPageContent() {
           // yaslanma bir anlığına bozuluyordu (bkz. commit geçmişi) —
           // /chat'i asla page-scroll gerektirmeyecek şekilde tutmak bunu
           // kökünden ortadan kaldırıyor.
-          <div className="sticky top-[4.75rem] -mt-12 h-[calc(100vh-11rem)] w-full max-w-2xl overflow-y-auto">
-            <NewChatForm
-              ingredientsText={ingredientsText}
-              onIngredientsChange={setIngredientsText}
-              onPhotoSelected={setPhoto}
-              onSubmit={handleSubmit}
-              canSubmit={Boolean(photo) || hasIngredientsText}
-              isLoading={status === "loading"}
-              limitReached={limitReached}
-              isFreeMode={isFreeMode}
-              usageCount={usageCount}
-              freeUsageLimit={FREE_USAGE_LIMIT}
-              error={status === "error" ? error : null}
-            />
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col items-center overflow-y-auto">
+            <div className="w-full max-w-2xl">
+              <NewChatForm
+                ingredientsText={ingredientsText}
+                onIngredientsChange={setIngredientsText}
+                onPhotoSelected={setPhoto}
+                onSubmit={handleSubmit}
+                canSubmit={Boolean(photo) || hasIngredientsText}
+                isLoading={status === "loading"}
+                limitReached={limitReached}
+                isFreeMode={isFreeMode}
+                usageCount={usageCount}
+                freeUsageLimit={FREE_USAGE_LIMIT}
+                error={status === "error" ? error : null}
+              />
+            </div>
           </div>
         )}
       </div>
