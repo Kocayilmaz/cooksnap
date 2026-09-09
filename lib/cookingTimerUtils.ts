@@ -6,6 +6,13 @@ export function formatTimerDuration(totalSeconds: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+/** Bir dakika değerini [min, max] aralığına sıkıştırır — CookingTimer'ın
+ * +/- adım butonlarında ve SidebarCookingTimer'ın elle girilen dakika
+ * değerinde aynı sınırlama mantığı ayrı ayrı yazılmıştı. */
+export function clampMinutes(minutes: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, minutes));
+}
+
 /** Zil sesi için harici dosya eklemek yerine Web Audio API ile kısa bir bip
  * üretilir — ağ isteği/asset gerekmez, tarayıcı desteklemiyorsa sessizce yutulur.
  * CookingTimer ve SidebarCookingTimer'da aynen tekrar ediyordu. */
