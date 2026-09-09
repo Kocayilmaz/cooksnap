@@ -2,38 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw, Timer as TimerIcon } from "lucide-react";
+import { clampMinutes, formatTimerDuration, playTimerBeep } from "@/lib/cookingTimerUtils";
 
 const PRESET_MINUTES = [5, 10, 20];
 const DEFAULT_MINUTES = PRESET_MINUTES[0];
 const MIN_MINUTES = 1;
 const MAX_MINUTES = 180;
-
-function formatTime(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-/** Zil sesi için harici dosya eklemek yerine Web Audio API ile kısa bir bip
- * üretilir (bkz. components/CookingTimer.tsx — aynı desen). */
-function playBeep() {
-  try {
-    const AudioContextClass =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const context = new AudioContextClass();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.frequency.value = 880;
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    gain.gain.setValueAtTime(0.2, context.currentTime);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.4);
-    oscillator.onended = () => context.close();
-  } catch {
-    // AudioContext desteklenmiyorsa sessizce geç, görsel "Süre doldu!" uyarısı yeterli.
-  }
-}
 
 interface SidebarCookingTimerProps {
   /** ChatSidebar daraltılmışken (ikon şeridi) true — panel yerine sadece
@@ -63,7 +37,7 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
           setIsRunning(false);
-          playBeep();
+          playTimerBeep();
           return 0;
         }
         return prev - 1;
@@ -76,7 +50,7 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
   }, [isRunning]);
 
   function applyMinutes(minutes: number) {
-    const clamped = Math.min(MAX_MINUTES, Math.max(MIN_MINUTES, minutes));
+    const clamped = clampMinutes(minutes, MIN_MINUTES, MAX_MINUTES);
     setTotalSeconds(clamped * 60);
     setRemainingSeconds(clamped * 60);
     setManualMinutes(String(clamped));
@@ -113,7 +87,7 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
           className={`flex h-8 w-8 items-center justify-center rounded-lg ${
             isRunning ? "bg-brand-orange text-white" : "bg-surface-warm text-brand-orange-dark"
           }`}
-          title={`Zamanlayıcı: ${formatTime(remainingSeconds)}`}
+          title={`Zamanlayıcı: ${formatTimerDuration(remainingSeconds)}`}
         >
           <TimerIcon size={16} aria-hidden="true" />
         </div>
@@ -129,7 +103,7 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
       </div>
 
       <p className="text-center font-mono text-lg font-bold tabular-nums text-brand-orange-dark">
-        {formatTime(remainingSeconds)}
+        {formatTimerDuration(remainingSeconds)}
       </p>
 
       {remainingSeconds === 0 && !isRunning && (
