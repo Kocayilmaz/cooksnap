@@ -84,7 +84,7 @@ export default function SidebarCookingTimer({ collapsed }: SidebarCookingTimerPr
     return (
       <div className="relative flex justify-center border-t border-surface-border pt-4">
         <div
-          className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+          className={`flex h-9 w-9 items-center justify-center rounded-lg ${
             isRunning ? "bg-brand-orange text-white" : "bg-surface-warm text-brand-orange-dark"
           }`}
           title={`Zamanlayıcı: ${formatTimerDuration(remainingSeconds)}`}
