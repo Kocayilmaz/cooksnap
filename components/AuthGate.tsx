@@ -64,11 +64,17 @@ export default function AuthGate({ children }: { children: ReactNode }) {
     return null;
   }
 
+  // Chat sayfası kendi sabit yükseklikte (viewport'a göre) düzenine sahip
+  // (bkz. app/chat/page.tsx, ChatSidebar.tsx) — altına Footer eklemek bu
+  // düzenle çakışıyor ve zaten sayfa hiç kaydırılmadığı için görünmesi
+  // anlamsız, o yüzden sadece bu rotada gizleniyor.
+  const isChatRoute = pathname === "/chat";
+
   return (
     <>
       <NavBar />
       {children}
-      <Footer />
+      {!isChatRoute && <Footer />}
     </>
   );
 }
