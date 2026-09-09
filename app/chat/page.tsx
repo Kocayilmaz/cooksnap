@@ -227,7 +227,7 @@ function ChatPageContent() {
   }
 
   return (
-    <div className="flex flex-1 items-start gap-6 bg-surface-warm px-4 py-12">
+    <div className="flex flex-1 items-start gap-6 bg-surface-warm px-4 pt-12">
       <ChatSidebar onNewChat={handleNewChat} onSelectEntry={handleSelectEntry} disabled={isSendingFollowUp} />
 
       <div className="flex flex-1 justify-center">
@@ -236,7 +236,7 @@ function ChatPageContent() {
           // h-[calc(100vh-11rem)]) — mesaj kutusu her zaman ekranın gerçek
           // altına yaslanır, mesaj listesi ise kendi içinde kayar; az mesajla
           // (kısa sohbet) da giriş kutusu sayfanın üst kısmında kalmaz.
-          <div className="sticky top-[4.75rem] flex h-[calc(100vh-11rem)] w-full max-w-2xl flex-col gap-4">
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full max-w-2xl flex-col gap-4">
             <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
               {messages.map((message) => (
                 <ChatMessageBubble key={message.id} message={message} />
@@ -278,19 +278,28 @@ function ChatPageContent() {
             )}
           </div>
         ) : (
-          <NewChatForm
-            ingredientsText={ingredientsText}
-            onIngredientsChange={setIngredientsText}
-            onPhotoSelected={setPhoto}
-            onSubmit={handleSubmit}
-            canSubmit={Boolean(photo) || hasIngredientsText}
-            isLoading={status === "loading"}
-            limitReached={limitReached}
-            isFreeMode={isFreeMode}
-            usageCount={usageCount}
-            freeUsageLimit={FREE_USAGE_LIMIT}
-            error={status === "error" ? error : null}
-          />
+          // hasStartedChat dalıyla aynı sabit yükseklik bandı — form uzun
+          // olduğunda (ekipman seçenekleriyle) kendi içinde kayar, sayfanın
+          // kendisi hiç kaydırılmaz. Sayfa gerçekten kaydırıldığında,
+          // ChatSidebar'ın sticky+negatif margin ile sağladığı NavBar'a
+          // yaslanma bir anlığına bozuluyordu (bkz. commit geçmişi) —
+          // /chat'i asla page-scroll gerektirmeyecek şekilde tutmak bunu
+          // kökünden ortadan kaldırıyor.
+          <div className="sticky top-[4.75rem] -mt-12 h-[calc(100vh-11rem)] w-full max-w-2xl overflow-y-auto">
+            <NewChatForm
+              ingredientsText={ingredientsText}
+              onIngredientsChange={setIngredientsText}
+              onPhotoSelected={setPhoto}
+              onSubmit={handleSubmit}
+              canSubmit={Boolean(photo) || hasIngredientsText}
+              isLoading={status === "loading"}
+              limitReached={limitReached}
+              isFreeMode={isFreeMode}
+              usageCount={usageCount}
+              freeUsageLimit={FREE_USAGE_LIMIT}
+              error={status === "error" ? error : null}
+            />
+          </div>
         )}
       </div>
 
