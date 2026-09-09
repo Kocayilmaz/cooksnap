@@ -62,3 +62,40 @@ test("sohbet '...' menüsünden sabitlenebilir ve yeniden adlandırılabilir", a
   await expect(sidebar.getByText("Pazar Kahvaltısı")).toBeVisible();
   await expect(sidebar.getByText("Fırında Sebzeli Tavuk")).toBeHidden();
 });
+
+test("sohbet '...' menüsündeki Sil ile silinebilir", async ({ page }) => {
+  await mockRecipeResponse(page);
+  await page.goto("/chat");
+  await submitWithPhoto(page);
+
+  const sidebar = page.locator("aside");
+  const row = sidebar.locator("li", { hasText: "Fırında Sebzeli Tavuk" });
+  await expect(row).toBeVisible();
+
+  await row.hover();
+  await row.getByRole("button", { name: "Sohbet seçenekleri" }).click();
+
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("menuitem", { name: "Sil" }).click();
+
+  await expect(sidebar.getByText("Fırında Sebzeli Tavuk")).toBeHidden();
+  await expect(sidebar.getByText("Henüz bir sohbet geçmişin yok.")).toBeVisible();
+});
+
+test("Sil onayı reddedilirse sohbet silinmez", async ({ page }) => {
+  await mockRecipeResponse(page);
+  await page.goto("/chat");
+  await submitWithPhoto(page);
+
+  const sidebar = page.locator("aside");
+  const row = sidebar.locator("li", { hasText: "Fırında Sebzeli Tavuk" });
+  await expect(row).toBeVisible();
+
+  await row.hover();
+  await row.getByRole("button", { name: "Sohbet seçenekleri" }).click();
+
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await page.getByRole("menuitem", { name: "Sil" }).click();
+
+  await expect(sidebar.getByText("Fırında Sebzeli Tavuk")).toBeVisible();
+});
