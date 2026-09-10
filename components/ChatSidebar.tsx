@@ -311,7 +311,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
     // oluşuyordu. Yükseklik de ayni sebeple top ile birebir tamamlayacak
     // sekilde (100vh - top) hesaplanıyor — altta da boşluk kalmasın.
     <aside
-      className={`sticky top-[4.75rem] -mt-12 hidden h-[calc(100vh-5.5rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
+      className={`sticky top-[4.75rem] -mt-12 hidden h-[calc(100vh-4.75rem)] shrink-0 flex-col border-r border-surface-border p-3 transition-[width] lg:flex ${
         collapsed ? "w-16" : "w-72"
       }`}
     >
