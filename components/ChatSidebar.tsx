@@ -6,20 +6,15 @@ import { Ellipsis, MessageCircle, PanelLeft, PencilLine, Pin, PinOff, Search, Sq
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   deleteHistoryEntry,
+  HISTORY_DATE_FORMATTER as DATE_FORMATTER,
+  historyEntryTitle as displayTitle,
   renameHistoryEntry,
   setHistory,
+  summarizeHistoryEntry as summarize,
   toggleHistoryFavorite,
   type HistoryEntry,
 } from "@/lib/redux/historySlice";
-import { EQUIPMENT_LABELS } from "@/lib/redux/equipmentSlice";
 import SidebarCookingTimer from "@/components/SidebarCookingTimer";
-
-const DATE_FORMATTER = new Intl.DateTimeFormat("tr-TR", {
-  day: "2-digit",
-  month: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 interface ChatSidebarProps {
   onNewChat: () => void;
@@ -28,18 +23,6 @@ interface ChatSidebarProps {
    * yanıtın kaybolmaması için "Yeni sohbet" ve geçmiş seçimi geçici olarak
    * kapatılır (bkz. app/chat/page.tsx isSendingFollowUp). */
   disabled?: boolean;
-}
-
-function summarize(entry: HistoryEntry): string {
-  return `${entry.equipment.map((key) => EQUIPMENT_LABELS[key]).join(", ")} · ${entry.personCount} kişilik`;
-}
-
-/** Kullanıcı yeniden adlandırmadıysa tarif başlıklarından, o da yoksa
- * ekipman/kişi sayısı özetinden bir görünen başlık türetir. */
-function displayTitle(entry: HistoryEntry): string {
-  if (entry.customTitle) return entry.customTitle;
-  if (entry.recipeTitles.length > 0) return entry.recipeTitles.join(", ");
-  return summarize(entry);
 }
 
 /** Daraltılmış (ikon şeridi) haldeyken native `title` tooltip'i yerine
@@ -422,7 +405,7 @@ export default function ChatSidebar({ onNewChat, onSelectEntry, disabled }: Chat
               <div className="flex flex-col gap-2">
                 <span className="flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wide text-surface-text-muted">
                   <Star size={12} aria-hidden="true" />
-                  Favoriler
+                  Sohbet Favorileri
                 </span>
                 <ul className="flex flex-col gap-0.5">
                   {favorites.map((entry) => (
