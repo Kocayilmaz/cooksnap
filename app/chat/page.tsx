@@ -242,7 +242,7 @@ function ChatPageContent() {
       <div className="flex flex-1 justify-center">
         {hasStartedChat ? (
           // Sidebar'daki sabit yükseklik deseniyle aynı (bkz. ChatSidebar.tsx
-          // h-[calc(100vh-11rem)]) — mesaj kutusu her zaman ekranın gerçek
+          // h-[calc(100vh-4.75rem)]) — mesaj kutusu her zaman ekranın gerçek
           // altına yaslanır, mesaj listesi ise kendi içinde kayar; az mesajla
           // (kısa sohbet) da giriş kutusu sayfanın üst kısmında kalmaz.
           // İç mesaj listesi tam genişlikte (w-full) taşıyor, kaydırma
@@ -251,7 +251,7 @@ function ChatPageContent() {
           // kalıyor — önceden overflow-y-auto doğrudan dar sütunda olduğu
           // için kaydırma çubuğu sayfanın ortasında, boşlukla çevrili
           // görünüyordu.
-          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col gap-4">
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-4.75rem)] w-full flex-col gap-4">
             <div aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto pt-6">
               <div className="flex w-full max-w-2xl flex-col gap-4">
                 {messages.map((message) => (
@@ -304,7 +304,7 @@ function ChatPageContent() {
           // yaslanma bir anlığına bozuluyordu (bkz. commit geçmişi) —
           // /chat'i asla page-scroll gerektirmeyecek şekilde tutmak bunu
           // kökünden ortadan kaldırıyor.
-          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col items-center overflow-y-auto pt-6">
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-4.75rem)] w-full flex-col items-center overflow-y-auto pt-6">
             <div className="w-full max-w-2xl">
               <NewChatForm
                 ingredientsText={ingredientsText}
