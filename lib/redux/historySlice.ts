@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { EQUIPMENT_KEYS, type Equipment } from "./equipmentSlice";
+import { EQUIPMENT_KEYS, EQUIPMENT_LABELS, type Equipment } from "./equipmentSlice";
 import { RECIPE_MODE_KEYS, type RecipeMode } from "./recipeModeSlice";
 import type { ChatMessage } from "@/lib/types/chat";
 
@@ -33,6 +33,26 @@ export interface HistoryEntry {
 export const MAX_HISTORY_ENTRIES = 20;
 
 export type HistoryState = HistoryEntry[];
+
+export const HISTORY_DATE_FORMATTER = new Intl.DateTimeFormat("tr-TR", {
+  day: "2-digit",
+  month: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+/** Ekipman + kişi sayısından kısa bir özet üretir (bkz. ChatSidebar, /favorites). */
+export function summarizeHistoryEntry(entry: HistoryEntry): string {
+  return `${entry.equipment.map((key) => EQUIPMENT_LABELS[key]).join(", ")} · ${entry.personCount} kişilik`;
+}
+
+/** Kullanıcı yeniden adlandırmadıysa tarif başlıklarından, o da yoksa
+ * ekipman/kişi sayısı özetinden bir görünen başlık türetir. */
+export function historyEntryTitle(entry: HistoryEntry): string {
+  if (entry.customTitle) return entry.customTitle;
+  if (entry.recipeTitles.length > 0) return entry.recipeTitles.join(", ");
+  return summarizeHistoryEntry(entry);
+}
 
 /** Örnek sohbet başlıkları — sidebar'ı boş bir kullanıcıda bile "yaşayan" bir
  * uygulama gibi göstermek için kullanılan tanıtım verisi (bkz. buildDemoHistory). */
