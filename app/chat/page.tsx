@@ -54,6 +54,7 @@ function ChatPageContent() {
   const [isSendingFollowUp, setIsSendingFollowUp] = useState(false);
   const [followUpError, setFollowUpError] = useState<string | null>(null);
 
+  const history = useAppSelector((state) => state.history);
   const equipmentState = useAppSelector((state) => state.equipment);
   const personCount = useAppSelector((state) => state.personCount.value);
   const recipeMode = useAppSelector((state) => state.recipeMode.value);
@@ -234,6 +235,25 @@ function ChatPageContent() {
     setStatus("idle");
     setFollowUpError(null);
   }
+
+  // /favorites'teki "Sohbet Favorileri" bir kaydı ?entryId=... ile buraya
+  // yönlendiriyor — history localStorage'dan asenkron rehydrate olduğu için
+  // (bkz. StoreProvider.tsx) entry ilk render'da henüz bulunamayabilir, bu
+  // yüzden history değişince tekrar denenir; appliedEntryId bir kez
+  // uygulandıktan sonra tekrar tekrar seçilmesini engeller.
+  const appliedEntryId = useRef<string | null>(null);
+  useEffect(() => {
+    const entryId = searchParams.get("entryId");
+    if (!entryId || appliedEntryId.current === entryId) return;
+    const entry = history.find((item) => item.id === entryId);
+    if (!entry) return;
+    appliedEntryId.current = entryId;
+    queueMicrotask(() => handleSelectEntry(entry));
+    // handleSelectEntry her render'da yeniden tanımlanıyor (useCallback yok);
+    // deps'e eklemek yerine yukarıdaki appliedEntryId koruması tek seferlik
+    // uygulanmasını garanti ediyor.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, history]);
 
   return (
     <div className="flex flex-1 items-start gap-6 bg-surface-warm px-4 pt-12">
