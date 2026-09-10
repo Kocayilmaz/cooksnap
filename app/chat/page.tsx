@@ -252,7 +252,7 @@ function ChatPageContent() {
           // için kaydırma çubuğu sayfanın ortasında, boşlukla çevrili
           // görünüyordu.
           <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col gap-4">
-            <div aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto">
+            <div aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto pt-3">
               <div className="flex w-full max-w-2xl flex-col gap-4">
                 {messages.map((message) => (
                   <ChatMessageBubble key={message.id} message={message} />
@@ -304,7 +304,7 @@ function ChatPageContent() {
           // yaslanma bir anlığına bozuluyordu (bkz. commit geçmişi) —
           // /chat'i asla page-scroll gerektirmeyecek şekilde tutmak bunu
           // kökünden ortadan kaldırıyor.
-          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col items-center overflow-y-auto">
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-11rem)] w-full flex-col items-center overflow-y-auto pt-3">
             <div className="w-full max-w-2xl">
               <NewChatForm
                 ingredientsText={ingredientsText}
