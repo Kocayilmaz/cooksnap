@@ -251,7 +251,7 @@ function ChatPageContent() {
           // kalıyor — önceden overflow-y-auto doğrudan dar sütunda olduğu
           // için kaydırma çubuğu sayfanın ortasında, boşlukla çevrili
           // görünüyordu.
-          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-4.75rem)] w-full flex-col gap-4">
+          <div className="sticky top-[4.75rem] -mt-12 flex h-[calc(100vh-4.75rem)] w-full flex-col gap-4 pb-3">
             <div aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto pt-6">
               <div className="flex w-full max-w-2xl flex-col gap-4">
                 {messages.map((message) => (
