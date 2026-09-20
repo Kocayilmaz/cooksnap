@@ -1,5 +1,5 @@
 import { ProviderNotConfiguredError, ProviderRequestError } from "@/lib/ai/providers";
-import type { RecipeLanguage } from "@/lib/firebase/recipesClient";
+import type { RecipeLanguage } from "@/lib/supabase/recipesClient";
 import type { MealIngredient } from "@/lib/types/meal";
 
 const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";

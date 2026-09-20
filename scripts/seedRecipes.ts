@@ -1,36 +1,28 @@
 /**
- * CookSnap'in kendi Firestore tarif veritabanını besleyen tek script — iki modu var:
+ * CookSnap'in kendi Supabase tarif veritabanını besleyen tek script — iki modu var:
  *
  *   npx tsx --env-file=.env.local scripts/seedRecipes.ts --append
  *     scripts/manualRecipes.ts'teki elle yazılmış (Türkçe kaynak) tarifleri okuyup
- *     RECIPE_LANGUAGES'teki diğer 5 dile çevirip Firestore'a yazar/günceller.
+ *     RECIPE_LANGUAGES'teki diğer 5 dile çevirip Supabase'e yazar/günceller.
  *
  *   npx tsx --env-file=.env.local scripts/seedRecipes.ts --bulk [--limit N]
  *     TheMealDB'nin tüm kategorilerini gezip her tarifi çekip 5 dile çevirir ve
- *     Firestore'a yazar (sourceProvider: "themealdb"). SADECE TheMealDB Supporter
+ *     Supabase'e yazar (source_provider: "themealdb"). SADECE TheMealDB Supporter
  *     key alındıktan sonra çalıştırılmalı — bkz. plan (logical-sauteeing-oasis.md),
  *     ücretsiz test key ile toplu kopyalama ToS açısından uygun değil.
  *
  * Uygulamanın deploy edilen bir parçası DEĞİL — sadece yerel/manuel çalıştırılır,
- * firebase-service-account.json (gitignore'da) ile admin yetkisiyle yazar.
+ * SUPABASE_SERVICE_ROLE_KEY (.env.local, gitignore'da) ile RLS'i bypass ederek yazar.
  */
-import { readFileSync } from "node:fs";
-import { cert, initializeApp } from "firebase-admin/app";
-import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { getCategories, getMealById, getMealsByCategory } from "@/lib/mealdb/client";
-import { RECIPE_LANGUAGES, type RecipeLanguage } from "@/lib/firebase/recipesClient";
+import { getSupabaseAdminClient } from "@/lib/supabase/adminClient";
+import { RECIPE_LANGUAGES, type RecipeLanguage } from "@/lib/supabase/recipesClient";
 import { translateRecipeToLanguage, type RecipeTextInput } from "@/lib/ai/translateRecipe";
 import { MANUAL_RECIPES } from "./manualRecipes";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-const SERVICE_ACCOUNT_PATH = "./firebase-service-account.json";
 const SOURCE_LANGUAGE: RecipeLanguage = "tr";
-const COLLECTION = "recipes";
-
-function getDb(): Firestore {
-  const serviceAccount = JSON.parse(readFileSync(SERVICE_ACCOUNT_PATH, "utf8"));
-  initializeApp({ credential: cert(serviceAccount) });
-  return getFirestore();
-}
+const TABLE = "recipes";
 
 interface TranslationsMap {
   [lang: string]: { title: string; ingredients: { name: string; measure: string }[]; steps: string[] };
@@ -58,7 +50,7 @@ async function buildTranslations(
   return translations;
 }
 
-async function seedAppend(db: Firestore): Promise<void> {
+async function seedAppend(supabase: SupabaseClient): Promise<void> {
   console.log(`${MANUAL_RECIPES.length} el yapımı tarif işlenecek.\n`);
 
   for (const recipe of MANUAL_RECIPES) {
@@ -73,21 +65,23 @@ async function seedAppend(db: Firestore): Promise<void> {
       SOURCE_LANGUAGE,
     );
 
-    await db
-      .collection(COLLECTION)
-      .doc(recipe.id)
-      .set({
-        imageURL: recipe.imageURL,
-        category: recipe.category,
-        sourceProvider: "manual",
-        translations,
-        createdAt: Date.now(),
-      });
-    console.log(`  Firestore'a yazıldı.\n`);
+    const { error } = await supabase.from(TABLE).upsert({
+      id: recipe.id,
+      image_url: recipe.imageURL,
+      category: recipe.category,
+      source_provider: "manual",
+      translations,
+    });
+
+    if (error) {
+      console.error(`  ✗ Supabase'e yazılamadı:`, error.message);
+      continue;
+    }
+    console.log(`  Supabase'e yazıldı.\n`);
   }
 }
 
-async function seedBulk(db: Firestore, limit?: number): Promise<void> {
+async function seedBulk(supabase: SupabaseClient, limit?: number): Promise<void> {
   const categories = await getCategories();
   console.log(`${categories.length} TheMealDB kategorisi bulundu.\n`);
 
@@ -102,8 +96,9 @@ async function seedBulk(db: Firestore, limit?: number): Promise<void> {
         return;
       }
 
-      const docRef = db.collection(COLLECTION).doc(`themealdb-${summary.id}`);
-      if ((await docRef.get()).exists) {
+      const id = `themealdb-${summary.id}`;
+      const { data: existing } = await supabase.from(TABLE).select("id").eq("id", id).maybeSingle();
+      if (existing) {
         console.log(`  (zaten var, atlandı) ${summary.name}`);
         processed += 1;
         continue;
@@ -119,14 +114,19 @@ async function seedBulk(db: Firestore, limit?: number): Promise<void> {
         "en",
       );
 
-      await docRef.set({
-        imageURL: detail.thumbnail,
+      const { error } = await supabase.from(TABLE).upsert({
+        id,
+        image_url: detail.thumbnail,
         category: category.name,
-        sourceProvider: "themealdb",
+        source_provider: "themealdb",
         translations,
-        createdAt: Date.now(),
       });
-      console.log(`  Firestore'a yazıldı.\n`);
+
+      if (error) {
+        console.error(`  ✗ Supabase'e yazılamadı:`, error.message);
+        continue;
+      }
+      console.log(`  Supabase'e yazıldı.\n`);
       processed += 1;
     }
   }
@@ -137,12 +137,12 @@ async function main() {
   const limitArg = process.argv.indexOf("--limit");
   const limit = limitArg !== -1 ? Number(process.argv[limitArg + 1]) : undefined;
 
-  const db = getDb();
+  const supabase = getSupabaseAdminClient();
 
   if (mode === "--append") {
-    await seedAppend(db);
+    await seedAppend(supabase);
   } else if (mode === "--bulk") {
-    await seedBulk(db, limit);
+    await seedBulk(supabase, limit);
   } else {
     console.error("Kullanım: tsx scripts/seedRecipes.ts --append | --bulk [--limit N]");
     process.exit(1);
