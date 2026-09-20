@@ -34,8 +34,12 @@ interface RecipeRow {
   translations: Partial<Record<RecipeLanguage, StoredTranslation>>;
 }
 
+/** İstenen dil yoksa Türkçe'ye, o da yoksa İngilizce'ye düşer — GROQ_API_KEY
+ * olmadan toplu ithal edilen tarifler (bkz. scripts/seedRecipes.ts --bulk)
+ * sadece "en" ile kaydediliyor; bu fallback olmasaydı "tr" istendiğinde
+ * hiçbir çeviri bulunamayıp tarif anasayfada hiç görünmezdi. */
 function pickTranslation(row: RecipeRow, lang: RecipeLanguage): StoredTranslation | null {
-  return row.translations[lang] ?? row.translations[DEFAULT_LANGUAGE] ?? null;
+  return row.translations[lang] ?? row.translations[DEFAULT_LANGUAGE] ?? row.translations.en ?? null;
 }
 
 function toSearchResult(row: RecipeRow, translation: StoredTranslation): MealSearchResult {
