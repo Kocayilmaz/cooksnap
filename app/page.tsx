@@ -3,34 +3,31 @@ import IngredientPicker from "@/components/IngredientPicker";
 import CategoryNav from "@/components/CategoryNav";
 import CategoryMealsSection from "@/components/CategoryMealsSection";
 import CategoryIngredientFilter from "@/components/CategoryIngredientFilter";
-import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
-import { FEATURED_CATEGORY_ORDER, sortCategoriesFeaturedFirst } from "@/lib/mealdb/categoryMeta";
-import { searchMealsByQuery } from "@/lib/spoonacular/client";
-import { getOwnMealsByCategory } from "@/lib/firebase/recipesClient";
+import { FEATURED_CATEGORY_ORDER } from "@/lib/mealdb/categoryMeta";
+import { getOwnMealsByCategory } from "@/lib/supabase/recipesClient";
+import type { MealCategory } from "@/lib/types/meal";
 
-/** Her kategori satırına TheMealDB sonuçlarının yanına eklenecek ek Spoonacular
- * tarif sayısı — genel çeşitliliği artırmak icin (bkz. lib/spoonacular/client.ts). */
-const EXTRA_MEALS_PER_CATEGORY = 6;
-/** Kendi Firestore tarif veritabanımızdan (bkz. lib/firebase/recipesClient.ts)
- * kategori başına çekilecek en fazla kayıt — kota/ToS riski yok, sınır yok
- * denecek kadar cömert tutuluyor. */
-const OWN_MEALS_PER_CATEGORY = 20;
-
-const SECTIONS_TO_SHOW = FEATURED_CATEGORY_ORDER;
+/** Kendi Supabase tarif veritabanımızdan (bkz. lib/supabase/recipesClient.ts)
+ * kategori başına çekilecek en fazla kayıt — artık anasayfanın TEK kaynağı
+ * bu tablo, TheMealDB/Spoonacular canlı çağrıları kaldırıldı (bkz. plan:
+ * logical-sauteeing-oasis.md). */
+const MEALS_PER_CATEGORY = 40;
 
 export default async function Home() {
-  const categories = await getCategories().catch(() => []);
-  const orderedCategories = sortCategoriesFeaturedFirst(categories);
+  // CategoryNav sadece kategori adını (getCategoryLabel ile) render ediyor,
+  // thumbnail/description hiç kullanılmıyor — bu yüzden artık TheMealDB'den
+  // kategori listesi çekmeye gerek yok, FEATURED_CATEGORY_ORDER yeterli.
+  const categories: MealCategory[] = FEATURED_CATEGORY_ORDER.map((name) => ({
+    name,
+    thumbnail: "",
+    description: "",
+  }));
 
   const sections = await Promise.all(
-    SECTIONS_TO_SHOW.map(async (categoryName) => {
-      const [ownMeals, mealdbMeals, spoonacularMeals] = await Promise.all([
-        getOwnMealsByCategory(categoryName, OWN_MEALS_PER_CATEGORY).catch(() => []),
-        getMealsByCategory(categoryName).catch(() => []),
-        searchMealsByQuery(categoryName, EXTRA_MEALS_PER_CATEGORY, categoryName).catch(() => []),
-      ]);
-      return { categoryName, meals: [...ownMeals, ...mealdbMeals, ...spoonacularMeals] };
-    }),
+    FEATURED_CATEGORY_ORDER.map(async (categoryName) => ({
+      categoryName,
+      meals: await getOwnMealsByCategory(categoryName, MEALS_PER_CATEGORY).catch(() => []),
+    })),
   );
 
   return (
@@ -40,9 +37,9 @@ export default async function Home() {
 
         <IngredientPicker />
 
-        {orderedCategories.length > 0 && (
+        {categories.length > 0 && (
           <div className="flex flex-col gap-6">
-            <CategoryNav categories={orderedCategories} />
+            <CategoryNav categories={categories} />
             <CategoryIngredientFilter>
               <div className="flex flex-col gap-6">
                 {sections.map(({ categoryName, meals }) => (

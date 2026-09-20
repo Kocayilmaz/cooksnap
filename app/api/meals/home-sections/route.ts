@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { getCategories, getMealsByCategory } from "@/lib/mealdb/client";
-import { FEATURED_CATEGORY_ORDER, sortCategoriesFeaturedFirst } from "@/lib/mealdb/categoryMeta";
-import { searchMealsByQuery } from "@/lib/spoonacular/client";
-import { getOwnMealsByCategory } from "@/lib/firebase/recipesClient";
+import { FEATURED_CATEGORY_ORDER } from "@/lib/mealdb/categoryMeta";
+import { getOwnMealsByCategory } from "@/lib/supabase/recipesClient";
 import type { MealCategory, MealSearchResult } from "@/lib/types/meal";
 
 export interface MealHomeSectionsResponse {
@@ -12,30 +10,31 @@ export interface MealHomeSectionsResponse {
 
 /**
  * cooksnap-mobile'ın anasayfa kategori bölümü için ortak endpoint — app/page.tsx'in
- * (web) server component içinde yaptığı aynı veri birleştirmeyi (kendi Firestore
- * tarifleri + TheMealDB + Spoonacular) burada tekrarlıyor, çünkü mobilde React
- * Server Component yok, client'tan tek bir istekle bu veriye ulaşılması gerekiyor.
+ * (web) aynı Supabase sorgusunu burada tekrarlıyor, çünkü mobilde React Server
+ * Component yok, client'tan tek bir istekle bu veriye ulaşılması gerekiyor.
+ *
+ * Artık tek kaynak Supabase'deki `recipes` tablosu (bkz. supabase/schema.sql,
+ * lib/supabase/recipesClient.ts) — TheMealDB/Spoonacular canlı çağrıları
+ * anasayfadan kaldırıldı (bkz. plan: logical-sauteeing-oasis.md).
  */
-const EXTRA_MEALS_PER_CATEGORY = 6;
-const OWN_MEALS_PER_CATEGORY = 20;
+const MEALS_PER_CATEGORY = 40;
 
 export async function GET() {
   try {
-    const categories = await getCategories().catch(() => []);
-    const orderedCategories = sortCategoriesFeaturedFirst(categories);
+    const categories: MealCategory[] = FEATURED_CATEGORY_ORDER.map((name) => ({
+      name,
+      thumbnail: "",
+      description: "",
+    }));
 
     const sections = await Promise.all(
-      FEATURED_CATEGORY_ORDER.map(async (categoryName) => {
-        const [ownMeals, mealdbMeals, spoonacularMeals] = await Promise.all([
-          getOwnMealsByCategory(categoryName, OWN_MEALS_PER_CATEGORY).catch(() => []),
-          getMealsByCategory(categoryName).catch(() => []),
-          searchMealsByQuery(categoryName, EXTRA_MEALS_PER_CATEGORY, categoryName).catch(() => []),
-        ]);
-        return { categoryName, meals: [...ownMeals, ...mealdbMeals, ...spoonacularMeals] };
-      }),
+      FEATURED_CATEGORY_ORDER.map(async (categoryName) => ({
+        categoryName,
+        meals: await getOwnMealsByCategory(categoryName, MEALS_PER_CATEGORY).catch(() => []),
+      })),
     );
 
-    return NextResponse.json<MealHomeSectionsResponse>({ categories: orderedCategories, sections });
+    return NextResponse.json<MealHomeSectionsResponse>({ categories, sections });
   } catch {
     return NextResponse.json<MealHomeSectionsResponse>({ categories: [], sections: [] });
   }

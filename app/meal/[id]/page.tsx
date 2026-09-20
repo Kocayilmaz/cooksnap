@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getMealById } from "@/lib/mealdb/client";
 import { getSpoonacularMealById, isSpoonacularId, stripSpoonacularPrefix } from "@/lib/spoonacular/client";
-import { getOwnMealById, isOwnRecipeId, stripOwnRecipePrefix } from "@/lib/firebase/recipesClient";
+import { getOwnMealById, isOwnRecipeId, stripOwnRecipePrefix } from "@/lib/supabase/recipesClient";
 import { translateMealToTurkish } from "@/lib/ai/groqTranslate";
 import RecipeVideoEmbed from "@/components/RecipeVideoEmbed";
 
@@ -24,7 +24,7 @@ export default async function MealPage({ params }: MealPageProps) {
 
   if (!rawMeal) notFound();
 
-  // Kendi tariflerimiz (lib/firebase/recipesClient.ts) Firestore'da zaten
+  // Kendi tariflerimiz (lib/supabase/recipesClient.ts) Supabase'de zaten
   // Türkçe tutuluyor, tekrar çeviriye gerek yok. Diğer kaynaklar İngilizce
   // geldiği için çeviri en iyi çaba (best-effort) — Groq yapılandırılmamışsa ya
   // da hata verirse orijinal içerikle devam edilir, sayfa çökmez.

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getMealById } from "@/lib/mealdb/client";
 import { getSpoonacularMealById, isSpoonacularId, stripSpoonacularPrefix } from "@/lib/spoonacular/client";
-import { getOwnMealById, isOwnRecipeId, stripOwnRecipePrefix } from "@/lib/firebase/recipesClient";
+import { getOwnMealById, isOwnRecipeId, stripOwnRecipePrefix } from "@/lib/supabase/recipesClient";
 import { translateMealToTurkish } from "@/lib/ai/groqTranslate";
 import type { ApiErrorResponse } from "@/lib/types/recipe";
 import type { MealDetail } from "@/lib/types/meal";
