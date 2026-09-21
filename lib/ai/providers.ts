@@ -3,7 +3,7 @@ import { buildRecipePrompt } from "@/lib/ai/buildRecipePrompt";
 import { InvalidDataUrlError, parseDataUrl } from "@/lib/ai/parseDataUrl";
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
-const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
+const GROQ_MODEL = process.env.GROQ_MODEL ?? "openai/gpt-oss-120b";
 
 export class ProviderNotConfiguredError extends Error {}
 export class ProviderRequestError extends Error {}

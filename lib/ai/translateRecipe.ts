@@ -2,7 +2,7 @@ import { ProviderNotConfiguredError, ProviderRequestError } from "@/lib/ai/provi
 import type { RecipeLanguage } from "@/lib/firebase/recipesClient";
 import type { MealIngredient } from "@/lib/types/meal";
 
-const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
+const GROQ_MODEL = process.env.GROQ_MODEL ?? "openai/gpt-oss-120b";
 
 const LANGUAGE_NAMES: Record<RecipeLanguage, string> = {
   tr: "Turkish",

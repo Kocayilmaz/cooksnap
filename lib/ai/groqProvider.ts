@@ -2,7 +2,7 @@ import type { RecipeRequest, RecipeSuggestion } from "@/lib/types/recipe";
 import { buildRecipePrompt } from "@/lib/ai/buildRecipePrompt";
 import { ProviderRequestError } from "@/lib/ai/providers";
 
-const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
+const GROQ_MODEL = process.env.GROQ_MODEL ?? "openai/gpt-oss-120b";
 
 /**
  * Kullanıcının kendi Groq anahtarıyla malzeme/ürün tanımına göre tarif(ler) üretir.
